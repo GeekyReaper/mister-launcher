@@ -1,0 +1,280 @@
+<ng-container *ngIf="(managercache$ | async) as cache">
+
+  <c-row ngPreserveWhitespaces>
+    <c-col xs="12">
+
+      <c-card class="mb-4" *ngIf="modulehealth == null">
+        <c-card-header>
+          <strong>MiSTer Remote</strong>
+        </c-card-header>
+        <c-card-body>
+          Erreur API
+        </c-card-body>
+      </c-card>
+
+      <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState!='OK'">
+        <c-card-header>
+          <strong>MiSTer Remote</strong>
+        </c-card-header>
+
+        <c-card-body>
+          {{modulehealth.message}}
+          Please turn on your MiSTer
+        </c-card-body>
+      </c-card>
+
+      <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState=='OK'">
+        <c-card-header>
+          <strong>MiSTer Remote</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-tabs [activeItemKey]="'global'">
+            <c-tabs-list variant="tabs">
+              <button cTab itemKey="global">Global</button>
+              <button cTab itemKey="keyboard">Keyboard</button>            
+            </c-tabs-list>
+            <c-tabs-content>
+              <c-tab-panel class="p-3" itemKey="global">
+                <table cTable calign="top" hover class="w-100">
+                  <tbody class="m-0 border-1">
+                    <tr>
+                      <td>
+                        <button (click)="sendRemoteCmd('reset')" cButton color="primary" class="m-2">
+                          <svg cIcon name="cilPowerStandby" size="2xl" title="Home"></svg>
+                          Home
+                        </button>
+                        <button (click)="sendRemoteCmd('osd')" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilSettings" size="2xl" title="Back"></svg>
+                          Core
+                        </button>
+                        <button (click)="sendRemoteCmd('user')" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilSync" size="2xl" title="Back"></svg>
+                          Reset
+                        </button>
+                        <button (click)="sendRemoteCmd('1', true)" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilImage" size="2xl" title="Back"></svg>
+                          Esc
+                        </button>
+                        <button (click)="sendRemoteCmd('change_background')" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilImage" size="2xl" title="Back"></svg>
+                          Next Wallpaper
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="d-flex">
+                        <button (click)="sendRemoteCmd('volume_mute')" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilVolumeOff" size="2xl" title="Mute"></svg>
+                          Mute
+                        </button>
+                        <button (click)="sendRemoteCmd('volume_down')" cButton color="secondary" class="m-2">
+                          <svg cIcon name="cilVolumeLow" size="2xl" title="Volume Down"></svg>
+
+                        </button>
+                        <button (click)="sendRemoteCmd('volume_up')" cButton color="secondary" class="m-2 justify-content-end">
+                          <svg cIcon name="cilVolumeHigh" size="2xl" title="Volume Up"></svg>
+
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="keyboard">
+                <table cTable calign="top" class="w-100" [responsive]="true">
+                  <tbody class="m-0 border-1">
+                    <tr>
+                      <td>
+                        <button (click)="sendRemoteCmd('1', true)" cButton color="primary" class="m-2">
+                          Esc
+                        </button>
+                        <button (click)="sendRemoteCmd('28', true)" cButton color="primary" class="m-2">
+                          Enter
+                        </button>
+                        <button (click)="sendRemoteCmd('57', true)" cButton color="primary" class="m-2">
+                          Space
+                        </button>
+                        <button (click)="sendRemoteCmd('14', true)" cButton color="secondary" class="m-2">
+                          BackSpace
+                        </button>
+                        <button (click)="sendRemoteCmd('111', true)" cButton color="secondary" class="m-2">
+                          Delete
+                        </button>
+                        <button (click)="sendRemoteCmd('15', true)" cButton color="secondary" class="m-2">
+                          Tab
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <button (click)="sendRemoteCmd('up')" cButton color="secondary" class="m-2">
+                          Up
+                        </button>
+                        <button (click)="sendRemoteCmd('down')" cButton color="secondary" class="m-2">
+                          Down
+                        </button>
+                        <button (click)="sendRemoteCmd('left')" cButton color="secondary" class="m-2 justify-content-end">
+                          Left
+                        </button>
+                        <button (click)="sendRemoteCmd('right')" cButton color="secondary" class="m-2 justify-content-end">
+                          Right
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <button (click)="sendRemoteCmd('59', true)" cButton color="primary" class="m-2" variant="outline">
+                          F1
+                        </button>
+                        <button (click)="sendRemoteCmd('60', true)" cButton color="primary" class="m-2" variant="outline">
+                          F2
+                        </button>
+                        <button (click)="sendRemoteCmd('61', true)" cButton color="primary" class="m-2" variant="outline">
+                          F3
+                        </button>
+                        <button (click)="sendRemoteCmd('62', true)" cButton color="primary" class="m-2" variant="outline">
+                          F4
+                        </button>
+                        <button (click)="sendRemoteCmd('63', true)" cButton color="primary" class="m-2" variant="outline">
+                          F5
+                        </button>
+                        <button (click)="sendRemoteCmd('64', true)" cButton color="primary" class="m-2 justify-content-end" variant="outline">
+                          F6
+                        </button>
+                        <button (click)="sendRemoteCmd('65', true)" cButton color="primary" class="m-2 justify-content-end" variant="outline">
+                          F7
+                        </button>
+                        <button (click)="sendRemoteCmd('66', true)" cButton color="primary" class="m-2 justify-content-end" variant="outline">
+                          F8
+                        </button>
+                        <button (click)="sendRemoteCmd('67', true)" cButton color="primary" class="m-2 justify-content-end" variant="outline">
+                          F9
+                        </button>
+                        <button (click)="sendRemoteCmd('68', true)" cButton color="primary" class="m-2 justify-content-end" variant="outline">
+                          F10
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </c-tab-panel>             
+            </c-tabs-content>
+          </c-tabs>
+        
+
+          <c-container *ngIf="playingvideogame!=null && playingvideogame.isPlaying">
+            <c-row class="mb-2">
+              <strong>Current Game Playing</strong>
+            </c-row>
+
+
+
+
+
+
+            <c-row *ngIf="(playingvideogame?.currentVideogame) as videogame">
+              <c-col [sm]="4" class="d-flex justify-content-center">
+                <div class="position-relative mx-2 ">
+                  <img src="{{playingvideogame?.currentVideogame?.media_screenshot | mediaurl }}" 
+                       cImg align="center" rounded
+                       alt="Screenshot"
+                       height="150"
+                       loading="lazy"
+                       class="m-2" />
+                  <c-badge position="top-end" style="margin-top: 10px; margin-left: -10px;" color="{{ ratingBadgeColor }}"
+                           shape="rounded-pill">
+                    {{playingvideogame?.currentVideogame?.rating}}
+                  </c-badge>
+                </div>
+              </c-col>
+              <c-col [sm]="8" class="align-self-start">
+                <table cTable [striped]="false" calign="top" hover class="w-100">
+                  <tbody class="m-0 border-1">
+                    <tr>
+                      <th cTableColor="light" scope="row">Name</th>
+                      <td>
+                        {{playingvideogame?.currentVideogame?.name}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Rom</th>
+                      <td>
+                        {{playingvideogame?.playingRomdb?.name}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">System</th>
+                      <td>
+                        <button cButton color="secondary" class="m-0 p-1 text-center" routerLink="/systems/sys/{{playingvideogame?.systemDb?._id}}">
+                          <svg cIcon name="cilLaptop" size="2xl" title="Favorite"></svg>
+                          {{playingvideogame?.systemDb?.name}}
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Category</th>
+                      <td><c-badge *ngFor="let cat of playingvideogame?.currentVideogame?.gametype" style="margin:4px" color="info" shape="rounded-pill">{{cat}}</c-badge> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </c-col>
+            </c-row>
+            <c-row *ngIf="savestates != undefined">
+              <c-col [sm]="12" [md]="12" [xs]="12" [lg]="6" [xl]="3" *ngFor="let savestate of savestates" class="mb-2">
+                <c-card class="h-100">
+                  <c-card-header align="center">
+                    <strong> Slot {{savestate.slot}}</strong>
+                  </c-card-header>
+
+                  <c-card-body>
+                    <div *ngIf="savestate.isEmpty == false">
+                      <img src="{{savestate.mediaId | mediaurl }}"
+                           cImg align="center" rounded fluid
+                           alt="SaveSlot"
+                           loading="lazy"
+                           class="m-2" />
+
+                    </div>
+                    <div *ngIf="savestate.isEmpty">
+                      <img src="assets/images/emptysaveslot.png"
+                           cImg align="center" rounded fluid
+                           alt="SaveSlot"
+                           loading="lazy"
+                           class="m-2" />
+                    </div>
+                  </c-card-body>
+                  <c-card-footer align="center">
+                    <button class="m-2" (click)="this.SaveSaveState(savestate)" cButton color="primary" [disabled]="saveStateIsDisable('save',savestate)">
+                      <svg *ngIf="!(saveStateIsLoading('save',savestate))" cIcon name="cilSave" size="2xl" title="Play"></svg>
+                      <c-spinner aria-hidden="true" *ngIf="saveStateIsLoading('save',savestate)" size="sm" />
+                      Save
+                    </button>
+                    <button *ngIf="!savestate.isEmpty" class="m-2" (click)="this.LoadSaveState(savestate)" cButton color="secondary" [disabled]="saveStateIsDisable('save',savestate)">
+                      <c-spinner aria-hidden="true" *ngIf="saveStateIsLoading('load',savestate)" size="sm" />
+                      <svg cIcon name="cilShareBoxed" *ngIf="!(saveStateIsLoading('load',savestate))" size="2xl" title="Play"></svg>
+                      Load
+                    </button>
+
+                  </c-card-footer>
+                </c-card>
+              </c-col>
+            </c-row>
+
+            <c-row *ngIf="allowMemorySave">
+              <c-col xs="12">
+                <button class="m-2" (click)="this.sendSaveMemoryCmd()" cButton color="primary">
+                  <svg cIcon name="cilSave" size="2xl" title="Play"></svg>
+                  Save Memory
+                </button>
+              </c-col>
+            </c-row>
+          </c-container>
+
+
+
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</ng-container>

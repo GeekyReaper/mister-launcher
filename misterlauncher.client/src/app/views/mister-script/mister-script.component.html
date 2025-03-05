@@ -1,0 +1,58 @@
+<ng-container *ngIf="(managercache$ | async) as cache">
+
+  <c-row ngPreserveWhitespaces>
+    <c-col xs="12">
+
+      <c-card class="mb-4" *ngIf="modulehealth == null">
+        <c-card-header>
+          <strong>MiSTer Sripts</strong>
+        </c-card-header>
+        <c-card-body>
+          Erreur API
+        </c-card-body>
+      </c-card>
+
+      <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState!='OK'">
+        <c-card-header>
+          <strong>MiSTer Scripts</strong>
+        </c-card-header>
+
+        <c-card-body>
+          {{modulehealth.message}}
+          Please turn on your MiSTer
+        </c-card-body>
+      </c-card>
+
+      <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState=='OK'">
+        <c-card-header>
+          <strong>MiSTer Scripts</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-container *ngIf="scriptinfo.scripts.length==0">
+            <c-alert color="info">
+              No Script available
+            </c-alert>
+          </c-container>
+          <c-container *ngIf="scriptinfo.scripts.length>0">
+            <table cTable calign="top" class="m-0 w-100 border-1" [responsive]="true">
+              <tbody class="m-0 border-1">
+                <tr>
+                  <th scope="col" class="bg-light">Name</th>               
+                  <th scope="col" class="bg-light"><c-badge color="{{scriptinfo.canLaunch ? 'success' : 'warning'}}">{{scriptinfo.canLaunch ? 'Launch' : 'Busy'}}</c-badge></th>
+                </tr>
+                <tr *ngFor="let script of scriptinfo.scripts">
+                  <td>{{script.name}}</td>                
+                  <td>
+                    <button (click)="executeScript(script.name)" cButton color="primary" variant="outline" disabled="{{scriptinfo.canLaunch ? false : true}}">
+                      <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                    </button>                  
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </c-container>
+        </c-card-body>
+      </c-card>
+</c-col>
+    </c-row>
+  </ng-container>

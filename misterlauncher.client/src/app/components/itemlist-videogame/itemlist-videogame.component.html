@@ -1,0 +1,24 @@
+<c-card class="h-100">
+  <a routerLink="/videogames/id/{{videogame._id}}">
+    <img cCardImg="top" src="{{videogame.media_screenshot | mediaurl}}">
+    <c-badge color="{{ videogame.rating > 17 ? 'success' : videogame.rating > 14 ? 'primary' : videogame.rating > 10 ? 'info' : videogame.rating > 5 ? 'warning' : 'danger' }}" position="top-end" style="margin-top: 15px; margin-left: -20px;" shape="rounded-pill">{{videogame.rating}}<br /></c-badge>
+  </a>
+  <c-card-body>
+    <a routerLink="/videogames/id/{{videogame._id}}" style="color: inherit; text-decoration: inherit;">
+      <div class="d-flex w-100 justify-content-between align-items-center">
+        <h5 cCardTitle>{{videogame.name}} </h5>
+        <c-badge color="primary" class="top-0">{{videogame.year}}</c-badge>
+      </div>
+      <small>{{videogame.systemname}}<br /><br /></small>
+      <p cCardText>
+        {{videogame.desc.substring(0,200) }}{{ videogame.desc.length > 200 ? '...'  : '' }}<br />
+        <app-part-videogame-categories [categories]="videogame.gametype" />
+      </p>
+      </a>
+  </c-card-body>
+  <c-card-footer class="align-content-between">
+  
+    <app-part-videogame-launchbutton [videogame]="videogame" [rom]="videogame.roms[0]" [canLaunch]="canLaunch" />
+  </c-card-footer>
+</c-card>
+

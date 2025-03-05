@@ -1,0 +1,42 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Playlist</strong>
+      </c-card-header>
+      <c-card-body>
+        <c-tabs [activeItemKey]="'year'">
+          <!--(activeItemKeyChange)="handleChange($event)">-->
+          <c-tabs-list variant="tabs">
+            <button cTab itemKey="favorite">Favorite</button>
+            <button cTab itemKey="playlater">Play Later</button>
+            <button cTab itemKey="issue">Issue</button>
+          </c-tabs-list>
+          <c-tabs-content>
+            <c-tab-panel class="p-3" itemKey="favorite">
+              <c-row *ngIf="videogamesFavorite!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+                <c-col *ngFor="let game of videogamesFavorite.videogames">
+                  <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+                </c-col>
+              </c-row>
+            </c-tab-panel>
+            <c-tab-panel class="p-3" itemKey="playlater">
+              <c-row *ngIf="videogamesPlaylater!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+                <c-col *ngFor="let game of videogamesPlaylater.videogames">
+                  <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+                </c-col>
+              </c-row>
+            </c-tab-panel>
+            <c-tab-panel class="p-3" itemKey="issue">
+              <c-row *ngIf="videogamesIssue!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+                <c-col *ngFor="let game of videogamesIssue.videogames">
+                  <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+                </c-col>
+              </c-row>
+            </c-tab-panel>
+          </c-tabs-content>
+        </c-tabs>
+        </c-card-body>
+          </c-card>
+          </c-col>
+</c-row>

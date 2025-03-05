@@ -1,0 +1,12 @@
+<c-row class="mb-2" xs="auto" [gutter]="2">
+  <c-col *ngFor="let page of pagination">
+    <button *ngIf="page.selected" cButton color="secondary" class="m-0" >     
+      {{page.label}}
+    </button>
+    <button *ngIf="!page.selected" cButton color="primary" class="m-0" (click)="OnPageChange(page.value)" variant="outline">
+      <svg cIcon *ngIf="page.icon!=''" name="{{page.icon}}" size="1xl" class="m-0" color="primary" title="link"></svg>
+      {{ page.icon!='' ? '' : page.label}}
+    </button>
+
+  </c-col>
+</c-row>

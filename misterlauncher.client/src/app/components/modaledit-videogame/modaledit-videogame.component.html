@@ -1,0 +1,192 @@
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleVisibilityChange($event)">
+  <form cForm [formGroup]="formEdit" (ngSubmit)="onSubmit()" #formDirective="ngForm">
+    <c-modal-header>
+      <svg cIcon name="cilVideogame" size="3xl" class="m-2" color="primary" title="VideoGame"></svg>
+      <h5 cModalTitle>{{videogame.name}}</h5>
+      <button (click)="toggleVisibility()" cButtonClose size="sm"></button>
+    </c-modal-header>
+    <c-modal-body>
+      <c-container>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Id</span>
+              <span class="w-75" cInputGroupText>{{videogame._id}}</span>
+             
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Name</span>
+              <input cFormControl
+                     formControlName="formName"
+                     placeholder="Extension"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Year</span>
+              <input cFormControl
+                     formControlName="formYear"
+                     placeholder="Extension"
+                     type="number" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Editor</span>
+              <input cFormControl
+                     formControlName="formEditoName"
+                     placeholder="Editor Name"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Studio</span>
+              <input cFormControl
+                     formControlName="formDevelopname"
+                     placeholder="Developer Studio"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Players</span>
+              <input cFormControl
+                     formControlName="formnbPlayers"
+                     placeholder="Number of players"
+                     type="search" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Rating</span>
+              <input cFormControl
+                     formControlName="formRating"
+                     placeholder="1..20"
+                     type="number" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span cInputGroupText> Collection</span>
+              <input cFormControl class="w-50"
+                     formControlName="formCollection"
+                     placeholder="Collection Name"
+                     type="text" />
+              <span cInputGroupText>Id</span>
+              <input cFormControl
+                     formControlName="formCollectionId"
+                     placeholder="id"
+                     type="number" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+      </c-container>
+
+
+      <!--<table cTable calign="top" class="m-0 w-100 border-1">
+        <tbody class="m-0 border-1">
+          <tr>
+            <th class="w-25">Name</th>
+            <td>
+              <input cFormControl
+                     formControlName="formName"
+                     placeholder="Extension"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Editor</th>
+            <td>
+              <input cFormControl
+                     formControlName="formEditoName"
+                     placeholder="Editor Name"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Developer Studio</th>
+            <td>
+              <input cFormControl
+                     formControlName="formDevelopname"
+                     placeholder="Developer Studio"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Players</th>
+            <td>
+              <input cFormControl
+                     formControlName="formnbPlayers"
+                     placeholder="Number of players"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Rating</th>
+            <td>
+              <input cFormControl
+                     formControlName="formRating"
+                     placeholder="19xx"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Collection</th>
+            <td>
+              <input cFormControl
+                     formControlName="formCollection"
+                     placeholder="Collection Name"
+                     type="search" />
+            </td>
+          </tr>
+          <tr>
+            <th class="w-25">Collection Id</th>
+            <td>
+              <input cFormControl
+                     formControlName="formCollectionId"
+                     placeholder="id"
+                     type="search" />
+            </td>
+          </tr>
+        </tbody>
+      </table>-->
+
+
+    </c-modal-body>
+    <c-modal-footer>
+      <button cButton class="me-1 text-white" color="danger" (click)="this.showConfirmationDelete()">
+        <svg cIcon name="cilTrash" size="1xl" class="m-0" color="primary" title="cancel"></svg>
+        Delete
+      </button>
+      <app-modal-confirmation [options]="confirmationModalOptionsForDelete" message="Videogame {{videogame.name}} will be deleted and roms linked will be set to unmatch. Do you confirm ?" color="warning" [visible]="confirmationShow" title="Delete videogame" (onSelectedOption)="DeleteVideogame($event)"></app-modal-confirmation>
+      <!--[message]="'Roms linked will be set to unmatch status. Do you confirm this deletion ?'" [color]="'warning'" -->
+      <button (click)="toggleVisibility()" cButton color="secondary">
+        <svg cIcon name="cilActionUndo" size="1xl" class="m-0" color="primary" title="cancel"></svg>
+        Cancel
+      </button>
+      <button cButton class="me-1" color="primary" type="submit">
+        <svg cIcon name="cilSave" size="1xl" class="m-0" color="primary" title="cancel"></svg>
+        Save
+      </button>
+
+    </c-modal-footer>
+  </form>
+</c-modal>

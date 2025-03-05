@@ -1,0 +1,299 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <div *ngIf="game!=null">
+      <c-card class="mb-4">
+        <c-card-header>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-8">
+                <strong>{{ game.gameDb.name }}</strong>
+              </div>
+              <div class="col-sm-4 text-sm-end">
+                <c-badge color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" position="end" style="margin-top: 10px; margin-left: -10px;" shape="rounded-pill"><h2>&nbsp;{{ game.gameDb.rating }}&nbsp;</h2><small style="margin-top:20px">/ 20</small></c-badge>
+              </div>
+              </div>
+            </div>               
+        </c-card-header>
+        <c-card-body>
+          <c-container fluid>
+            <c-row>
+              <c-col [sm]="6" class="align-self-center">
+                <c-carousel [interval]="0" [animate]="false" transition="crossfade" class="m-3 d-block w-100 bg-secondary-subtle">
+                  <c-carousel-indicators></c-carousel-indicators>
+                  <c-carousel-inner>
+                    <c-carousel-item *ngIf="game.gameDb.media_screenshot !=''">
+                      <img [src]="game.gameDb.media_screenshot"
+                           cImg align="center" rounded
+                           alt="Screenshot"                           
+                           loading="lazy"
+                           class="d-block w-100"
+                           fluid />
+  <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+                           
+                           
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="game.gameDb.media_title !=''">
+                      <img [src]="game.gameDb.media_title"
+                           cImg align="center"
+                           alt="Title"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="game.gameDb.media_fanart !=''">
+                      <img [src]="game.gameDb.media_fanart"
+                           alt="Fanart"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="game.gameDb.media_video !=''">
+                      <!--style="display: block; max-height: 400px; width: auto; height: auto; max-width: 400px"-->
+                      <div class="video d-block w-100 img-fluid">
+                        <video controls #videoPlayer class="video d-block w-100 align-content-end img-fluid">
+                          <source src="{{game.gameDb.media_video}}" type="video/mp4" />
+                          Browser not supported
+                        </video>
+                      </div>
+                    </c-carousel-item>
+                  </c-carousel-inner>
+                  <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>
+                  <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>
+                </c-carousel>
+                
+              </c-col>
+              <c-col [sm]="6">
+                <!--<img class="align-self-start mr-3" src="{{game.gameDb.media_title}}"/>-->
+                <table cTable calign="top" hover class="m-3 d-block w-100">
+                  <tbody>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Released</th>
+                      <td>{{game.gameDb.gamedate |  date:'dd MMM. yyyy'}}</td>
+                    </tr>
+                    <!--<tr>
+                      <th cTableColor="light" class="w-25" scope="row">Rating</th>
+                      <td> <c-progress value="{{game.gameDb.rating}}" [max]="20" color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" variant="striped">{{game.gameDb.rating }}</c-progress> </td>
+                    </tr>-->
+                    <tr>
+                      <th cTableColor="light"  class="w-25" scope="row">Players</th>
+                      <td>{{game.gameDb.nbplayers }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light"  class="w-25" scope="row">{{game.gameDb.systemcategory}}</th>
+                      <td> <button cButton color="secondary" class="m-0 p-1 text-center" routerLink="/systems/sys/{{game.gameDb.systemid}}">
+                              <svg cIcon name="cilLaptop" size="2xl" title="Favorite"></svg>
+                              {{game.gameDb.systemname}}
+                            </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light"  class="w-25" scope="row">Rom</th>
+                      <td>{{game.gameDb.romname}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Category</th>
+                      <td><c-badge *ngFor="let cat of game.gameDb.gametype" style="margin:4px" color="info" shape="rounded-pill">{{cat}}</c-badge> </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Editor</th>
+                      <td>{{game.gameDb.editorname }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Develop</th>
+                      <td>{{game.gameDb.developname }}</td>
+                    </tr>
+                  </tbody>
+                  </table>                  
+                </c-col>
+            </c-row>
+           
+            <c-row>
+              <c-col sm="8">
+                <div class="p-2 border bg-light">{{game.gameDb.desc}}</div>
+              </c-col>
+
+              <c-col sm="4">
+
+                <button cButton color="secondary" class="m-2 container-fluid text-start">
+                  <svg cIcon name="cilCloudDownload" size="2xl" title="Download"></svg>
+                  Manual
+                </button>
+                <button *ngIf="isFavorite" cButton color="primary" class="m-2 container-fluid text-start" (click)="setPlaylist('favorite',false)">
+                  <svg cIcon name="cilHeart" size="2xl" title="Favorite"></svg>
+                  Favorite
+                </button>
+                <button *ngIf="isFavorite == false" cButton color="secondary" class="m-2 container-fluid text-start" (click)="setPlaylist('favorite',true)">
+                  <svg cIcon name="cilHeart" size="2xl" title="Favorite"></svg>
+                  Favorite
+                </button>
+                <button cButton *ngIf="isPlaylater" color="primary" class="m-2  container-fluid text-start" (click)="setPlaylist('playlater',false)">
+                  <svg cIcon name="cilLibraryAdd" size="2xl" title="Later"></svg>
+                  Play later
+                </button>
+                <button cButton *ngIf="isPlaylater==false" color="secondary" class="m-2  container-fluid text-start" (click)="setPlaylist('playlater',true)">
+                  <svg cIcon name="cilLibraryAdd" size="2xl" title="Later"></svg>
+                  Play later
+                </button>
+                <button cButton *ngIf="isIssue" color="danger" class="m-2  container-fluid text-start" (click)="setPlaylist('issue',false)">
+                  <svg cIcon name="cilBug" size="2xl" title="Later"></svg>
+                  Issue
+                </button>
+                <button cButton *ngIf="isIssue==false" color="secondary" class="m-2  container-fluid text-start" (click)="setPlaylist('issue',true)">
+                  <svg cIcon name="cilBug" size="2xl" title="Later"></svg>
+                  Issue
+                </button>
+
+              </c-col>
+            </c-row>
+          </c-container>
+
+         
+          <!--<div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-8">
+              </div>
+              <div class="col-sm-4 text-sm-end">
+                <button (click)="this.goBack()" cButton color="primary">Back</button>
+              </div>
+            </div>
+          </div>
+                <p>game-detail works!</p>
+                <p>id : {{id }}</p>
+                <div *ngIf="game!=null">
+                  <p>Name :  {{ game.gameDb.name }}</p>
+                  <p>Desc : {{ game.gameDb.desc }}</p>
+                  <p>RAting :  {{ game.gameDb.rating }}</p>
+                </div>-->
+        </c-card-body>
+        <c-card-footer>
+          <c-container>
+            <c-row>
+              <c-col sm="6" class="align-content-start">
+                <button *ngFor="let action of game.gameActions" (click)="execAction(action)" cButton color="secondary" class="m-2">
+                  <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                  {{action.name}}
+                </button>
+              </c-col>
+              
+                <c-col sm="6" class="align-content-end">
+                  <button (click)="this.goBack()" cButton color="primary" class="m-2">
+                    <svg cIcon name="cilChevronCircleLeftAlt" size="2xl" title="Back"></svg>
+                    Back
+                  </button>
+                </c-col>
+            </c-row>
+          </c-container>
+        </c-card-footer>
+      </c-card>
+    </div>
+    </c-col>
+  </c-row>
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+
+    <c-tabs [activeItemKey]="'year'">
+      <!--(activeItemKeyChange)="handleChange($event)">-->
+      <c-tabs-list variant="tabs">
+        <button cTab itemKey="year">This year</button>
+        <button cTab itemKey="category">Category</button>
+        <button cTab itemKey="editor">Editor</button>
+      </c-tabs-list>
+      <c-tabs-content>
+        <c-tab-panel class="p-3" itemKey="year">
+          <c-row *ngIf="gamesSameYear!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameYear.games">
+              <c-card class="h-100">
+                <a routerLink="/games/id/{{game.gameDb._id}}">
+                  <img cCardImg="top" src="{{game.gameDb.media_screenshot}}">
+                  <c-badge color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" position="top-end" style="margin-top: 15px; margin-left: -20px;" shape="rounded-pill">{{game.gameDb.rating}}<br /></c-badge>
+                </a>
+                <c-card-body>
+                  <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 cCardTitle>{{game.gameDb.name}} </h5>
+                    <c-badge color="primary" class="top-0">{{game.gameDb.year}}</c-badge>
+                  </div>
+                  <p cCardText>
+                    {{game.gameDb.desc.substring(0,200) }}{{ game.gameDb.desc.length > 200 ? '...'  : '' }}<br />
+                    <c-badge *ngFor="let cat of game.gameDb.gametype" class="m-2" color="info" shape="rounded-pill">{{cat}}</c-badge>
+                  </p>
+                </c-card-body>
+                <c-card-footer class="align-content-between">
+                  <button *ngFor="let action of game.gameActions" class="m-2" (click)="execAction(action)" cButton color="secondary">
+                    <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                    {{action.name.replace('.zip','')}}
+                  </button>
+                </c-card-footer>
+
+              </c-card>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+        <c-tab-panel class="p-3" itemKey="editor">
+          <c-row *ngIf="gamesSameEditor!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameEditor.games">
+              <c-card class="h-100">
+                <a routerLink="/games/id/{{game.gameDb._id}}">
+                  <img cCardImg="top" src="{{game.gameDb.media_screenshot}}">
+                  <c-badge color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" position="top-end" style="margin-top: 15px; margin-left: -20px;" shape="rounded-pill">{{game.gameDb.rating}}<br /></c-badge>
+                </a>
+                <c-card-body>
+                  <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 cCardTitle>{{game.gameDb.name}} </h5>
+                    <c-badge color="primary" class="top-0">{{game.gameDb.year}}</c-badge>
+                  </div>
+                  <p cCardText>
+                    {{game.gameDb.desc.substring(0,200) }}{{ game.gameDb.desc.length > 200 ? '...'  : '' }}<br />
+                    <c-badge *ngFor="let cat of game.gameDb.gametype" class="m-2" color="info" shape="rounded-pill">{{cat}}</c-badge>
+                  </p>
+                </c-card-body>
+                <c-card-footer class="align-content-between">
+                  <button *ngFor="let action of game.gameActions" class="m-2" (click)="execAction(action)" cButton color="secondary">
+                    <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                    {{action.name.replace('.zip','')}}
+                  </button>
+                </c-card-footer>
+
+              </c-card>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+        <c-tab-panel class="p-3" itemKey="category">
+          <c-row *ngIf="gamesSameCategory!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameCategory.games">
+              <c-card class="h-100">
+                <a routerLink="/games/id/{{game.gameDb._id}}">
+                  <img cCardImg="top" src="{{game.gameDb.media_screenshot}}">
+                  <c-badge color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" position="top-end" style="margin-top: 15px; margin-left: -20px;" shape="rounded-pill">{{game.gameDb.rating}}<br /></c-badge>
+                </a>
+                <c-card-body>
+                  <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 cCardTitle>{{game.gameDb.name}} </h5>
+                    <c-badge color="primary" class="top-0">{{game.gameDb.year}}</c-badge>
+                  </div>
+                  <p cCardText>
+                    {{game.gameDb.desc.substring(0,200) }}{{ game.gameDb.desc.length > 200 ? '...'  : '' }}<br />
+                    <c-badge *ngFor="let cat of game.gameDb.gametype" class="m-2" color="info" shape="rounded-pill">{{cat}}</c-badge>
+                  </p>
+                </c-card-body>
+                <c-card-footer class="align-content-between">
+                  <button *ngFor="let action of game.gameActions" class="m-2" (click)="execAction(action)" cButton color="secondary">
+                    <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                    {{action.name.replace('.zip','')}}
+                  </button>
+                </c-card-footer>
+
+              </c-card>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+
+      </c-tabs-content>
+    </c-tabs>
+  </c-col>
+</c-row>
+
+

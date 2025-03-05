@@ -1,0 +1,65 @@
+<table cTable [striped]="true" calign="top" hover class="w-100">
+  <tbody>
+    <tr *ngFor="let rom of roms; index as i" class="m-0">
+      <td   style="align-content:center"><strong>{{i+1}}.</strong></td>
+      <td style="align-content:center">{{rom.name}}</td>
+      <td class="">
+        <app-part-videogame-launchbutton [videogame]="videogame" [rom]="rom" [haslabel]="false" btnclass="float-end" />        
+        <button (click)="toggleModal(rom.romid)" class="me-2 float-end" variant="outline" cButton>
+          <svg cIcon name="cilInfo" size="1xl" title="Info"></svg>
+        </button>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<c-modal  *ngFor="let rom of roms" id="modal_{{rom.romid}}" [visible]="modalvisible[rom.romid]" (visibleChange)="handleModalChange(rom.romid, $event)">
+  <c-modal-header>
+    <h5 cModalTitle>{{rom.name }}</h5>
+    <button (click)="toggleModal(rom.romid)" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <table cTable calign="top" hover class="m-0 d-block w-100 border-1">
+      <tbody class="m-0 border-1">
+        <tr>
+          <th cTableColor="light" class="w-25">Id</th>
+          <td class="w-100">{{rom.romid}}</td>
+        </tr>
+        <tr>
+          <th cTableColor="light" class="w-25">Path</th>
+          <td class="w-100">{{rom.fullpath}}</td>
+        </tr>
+        <tr *ngIf="rom.core!=''">
+          <th cTableColor="light" class="w-25">Arcade Core</th>
+          <td class="w-100">{{rom.core}}</td>
+        </tr>
+        <tr *ngIf="rom.supportType!=''">
+          <th cTableColor="light" class="w-25">Support</th>
+          <td class="w-100">{{rom.supportType}}</td>
+        </tr>
+        <tr *ngIf="rom.region!=''">
+          <th cTableColor="light" class="w-25">Region</th>
+          <td class="w-100">{{rom.region}}</td>
+        </tr>
+        <tr *ngIf="rom.language!=''">
+          <th cTableColor="light" class="w-25">Language</th>
+          <td class="w-100">{{rom.language}}</td>
+        </tr>
+        <tr *ngIf="rom.screenscrapperId!=0">
+          <th cTableColor="light" class="w-25">Scrapper Id</th>
+          <td class="w-100">{{rom.screenscrapperId}}</td>
+        </tr>
+
+      </tbody>
+        </table>
+</c-modal-body>
+  <c-modal-footer>
+    <button (click)="SetPrimary(rom.romid)" cButton color="secondary" variant="outline">
+      Set Primary
+    </button>
+    <button routerLink="/jobscan/rom/{{rom.romid}}" cButton color="primary">
+      Open
+    </button>
+  </c-modal-footer>
+</c-modal>

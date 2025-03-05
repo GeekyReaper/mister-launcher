@@ -1,0 +1,193 @@
+ <!--<c-header class="mb-4 d-print-none" position="sticky">-->
+<ng-container>
+  <c-container [fluid]="true" class="border-bottom px-4">
+    <button
+      [cSidebarToggle]="sidebarId"
+      cHeaderToggler
+      class="btn"
+      toggle="visible"
+      style="margin-inline-start: -14px;"
+      aria-label="Toggle sidebar navigation"
+    >
+      <svg cIcon name="cilMenu" size="lg"></svg>
+    </button>
+    <c-header-nav class="d-none d-md-flex">
+      <c-nav-item>
+        <a cNavLink routerLink="/videogames/search" routerLinkActive="active">Search</a>
+      </c-nav-item>
+      <c-nav-item>
+        <a cNavLink routerLink="/misterremote/remote" routerLinkActive="active">Remote</a>
+      </c-nav-item>
+      <c-nav-item>
+        <a cNavLink routerLink="/systems" routerLinkActive="active">Systems</a>
+      </c-nav-item>     
+    </c-header-nav>
+
+    <c-header-nav class="d-none d-md-flex ms-auto ">
+      <!--<a cNavLink>
+    <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
+  </a>-->
+      <!--<a cNavLink (click)="logout()">
+        <svg cIcon class="my-1" name="cilAccountLogout" size="lg"></svg>
+      </a>-->
+      <!--<a cNavLink>
+    <svg cIcon class="my-1" name="cilEnvelopeOpen" size="lg"></svg>
+  </a>-->
+    </c-header-nav>
+
+    <c-header-nav class="ms-auto ms-md-0">
+      <div class="nav-item py-1">
+        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+      </div>    
+      <ng-container *ngTemplateOutlet="themeDropdown" />
+      <div class="nav-item py-1">
+        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+      </div>
+
+    </c-header-nav>
+
+    <c-header-nav class="mx-0">
+      <ng-container *ngTemplateOutlet="userDropdown" />
+    </c-header-nav>
+
+  </c-container>
+  <c-container [fluid]="true" class="px-4">
+    <c-breadcrumb-router />
+  </c-container>
+</ng-container>
+<!--</c-header>-->
+
+<ng-template #userDropdown>
+ 
+  <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item" *ngIf="( managercache2$ | async) as mcache">
+    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
+
+      <c-avatar shape="rounded-1"
+                [size]="'md'"
+                src="./assets/images/cat_misterfpga.png"
+                status="{{ mcache?.health?.misterState == 'ERROR' ? 'danger' : mcache?.health?.misterState == 'WARNING' ? 'warning' : 'success' }}"
+                textColor="Mister"
+                alt="Mister Manager" />
+    </button>
+    <ul cDropdownMenu class="pt-0 w-auto" >
+      <li>
+        <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2 rounded-top">
+          Health
+        </h6>
+      </li>
+
+      <li *ngFor="let module of mcache?.health?.moduleHealthchecks" style="width: 250px">
+        <a cDropdownItem routerLink="">
+          <svg *ngIf="module.name=='MisterRemote'" cIcon name="cilCast" class="me-2"></svg>
+          <svg *ngIf="module.name=='MongoDb'" cIcon name="cilBook" class="me-2"></svg>
+          <svg *ngIf="module.name=='MisterFtp'" cIcon name="cilFile" class="me-2"></svg>
+          <svg *ngIf="module.name=='MisterMedia'" cIcon name="cilImage" class="me-2"></svg>
+          <svg *ngIf="module.name=='ScreenScrapper'" cIcon name="cilMagnifyingGlass" class="me-2"></svg>
+          <svg *ngIf="module.name=='MisterAuth'" cIcon name="cilShieldAlt" class="me-2"></svg>
+          <small>{{module.name }}</small>
+          <c-badge class="ms-2 float-end" color="{{module.misterState == 'OK' ? 'success' : module.misterState == 'WARNING' ? 'warning' : 'danger'}}"> {{module.misterState}}</c-badge>
+        </a>
+      </li>
+
+
+
+      <li>
+        <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2">
+          Stats
+        </h6>
+      </li>
+      <li></li>
+
+
+      <li>
+        <a cDropdownItem routerLink="/games/search">
+          <svg cIcon class="me-2" name="cilGamepad">
+          </svg>
+          <small>Games</small>
+          <c-badge class="ms-2 float-end" color="primary">
+            {{ mcache?.stats?.videogamesCount}}
+          </c-badge>
+        </a>
+      </li>
+      <li>
+        <a cDropdownItem routerLink="/systems/list">
+          <svg cIcon class="me-2" name="cilLaptop"></svg>
+          <small>Systems</small>
+          <c-badge class="ms-2 float-end" color="secondary">
+            {{ mcache?.stats?.systemsCount}}
+          </c-badge>
+        </a>
+      </li>
+      <li>
+        <hr cDropdownDivider />
+      </li>
+      <div *ngIf="playinggame!=''">
+      <li>
+        <a cDropdownItem routerLink="/systems/list">
+          <svg cIcon class="me-2" name="cilGamepad">
+          </svg>
+          <small> Playing </small>
+        </a>
+      </li>
+      <li>
+        <a cDropdownItem routerLink="/systems/list">
+          <small> &nbsp; </small>
+          <c-badge class="ms-2 float-end" color="secondary">
+            {{ playinggame }}
+          </c-badge>
+        </a>
+      </li>
+      <li>
+        <hr cDropdownDivider />
+      </li>
+      </div>
+      <li>
+        <a cDropdownItem routerLink="">
+          <svg cIcon class="me-2" name="cilSync">
+          </svg>
+
+          <small>Last update {{mcache?.lastUpdate | date:'HH:mm:ss'}}</small>
+        </a>
+
+      </li>
+
+
+
+
+      <!--<li>
+        <a cDropdownItem routerLink="">
+          <svg cIcon class="me-2" name="cilLockLocked"></svg>
+          Lock Account
+        </a>
+      </li>
+      <li>
+        <a cDropdownItem routerLink="">
+          <svg cIcon class="me-2" name="cilAccountLogout"></svg>
+          Logout
+        </a>
+      </li>-->
+    </ul>
+  </c-dropdown>
+</ng-template>
+
+<ng-template #themeDropdown>
+  <c-dropdown alignment="end" variant="nav-item">
+    <button [caret]="false" cDropdownToggle aria-label="Open theme picker">
+      <svg cIcon [name]="icons()" size="lg"></svg>
+    </button>
+    <div cDropdownMenu>
+      @for (mode of colorModes; track mode.name) {
+        <button
+          (click)="colorMode.set(mode.name)"
+          [active]="colorMode()===mode.name"
+          [routerLink]="[]"
+          cDropdownItem
+          class="d-flex align-items-center"
+        >
+          <svg cIcon class="me-2" [name]="mode.icon" size="lg"></svg>
+          {{ mode.text }}
+        </button>
+      }
+    </div>
+  </c-dropdown>
+</ng-template>

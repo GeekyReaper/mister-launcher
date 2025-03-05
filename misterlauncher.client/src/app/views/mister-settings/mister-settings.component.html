@@ -1,0 +1,303 @@
+<ng-container *ngIf="(managercache$ | async) as cache">
+
+  <c-row *ngIf="cache.health.misterState=='ERROR'" ngPreserveWhitespaces>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>MiSTer Remote</strong>
+        </c-card-header>
+        <c-card-body>
+          Erreur API
+        </c-card-body>
+      </c-card>
+  </c-col>
+  </c-row>
+  <c-row *ngIf="cache.health.misterState!='ERROR'" ngPreserveWhitespaces>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>Modules Settings</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-tabs [activeItemKey]="'year'">
+            <c-tabs-list variant="tabs">
+              <button cTab itemKey="remote">Mister Remote <c-badge class="ms-2 float-end" color="{{remotecurrenthealthcheck.misterState| misterstateColor}}"> {{remotecurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="ftp">Mister Ftp <c-badge class="ms-2 float-end" color="{{ftpcurrenthealthcheck.misterState| misterstateColor}}"> {{ftpcurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="screenscrapper">ScreenScrapper <c-badge class="ms-2 float-end" color="{{screenscrappercurrenthealthcheck.misterState| misterstateColor}}"> {{screenscrappercurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="auth">Auth <c-badge class="ms-2 float-end" color="{{authcurrenthealthcheck.misterState| misterstateColor}}"> {{authcurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="media">Media <c-badge class="ms-2 float-end" color="{{mediacurrenthealthcheck.misterState| misterstateColor}}"> {{mediacurrenthealthcheck.misterState}}</c-badge></button>
+            </c-tabs-list>
+            <c-tabs-content>
+              <c-tab-panel class="p-3" itemKey="remote">
+                <form cForm [formGroup]="formRemoteModule" (ngSubmit)="submitForm(formRemoteModule,RemoteModuleSettings)" #formDirective="ngForm">
+
+                  <c-alert color="light">
+                    <p><strong>Remote Module</strong> is used to communicate with the Mister FPGA.<br />Please install <a href="https://github.com/wizzomafizzo/mrext/blob/main/docs/remote.md">Remote extension.</a> on your MiSTer before setup this module.Mobile application is not necessary</p>
+                    <p>
+                      It is required for :
+                    </p>
+                    <ul>
+                      <li>Sending commons command to MiSTer(OSD, USER, RESET, Volume, ...)</li>
+                      <li>Get playing Video game informations</li>
+                      <li>Saving State if CORE handle it</li>
+                    </ul>
+                  </c-alert>
+                  <table cTable calign="top" class="m-0 w-100 border-1">
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let setting of RemoteModuleSettings">
+                        <th class="w-25">{{setting.name}}</th>
+                        <td>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder="Extension"
+                                 type="{{setting.valueType}}"
+                                 cTooltip="{{setting.description}}" cTooltipPlacement="right" />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+
+                          <button cButton class="me-1" color="secondary" (click)="checkForm(formRemoteModule,RemoteModuleSettings)" variant="outline">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(RemoteModuleSettings,'check')" size="sm" />
+                            Check
+                          </button>
+                          <button cButton class="me-1" color="primary" type="submit">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(RemoteModuleSettings,'save')" size="sm" />
+                            Save
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+
+                  </table>
+                </form>
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="ftp">
+                <c-alert color="light">
+                  <p><strong>FTP Module</strong> is used to get an access to file system.<br />Please run 'FTP' script on your MiSTer before setup this module.</p>
+                  <p>
+                    It is required for :
+                  </p>
+                  <ul>
+                    <li>Scan available ROMs</li>
+                    <li>Save MiSTer Settings</li>
+                    <li>Retreive ScreenShot files</li>
+                  </ul>
+                </c-alert>
+                <form cForm [formGroup]="formFtpModule" (ngSubmit)="submitForm(formFtpModule,FtpModuleSettings)" #formDirective="ngForm">
+                  <table cTable calign="top" class="m-0 w-100 border-1">
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let setting of FtpModuleSettings">
+                        <th class="w-25">{{setting.name}}</th>
+                        <td>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder=""
+                                 type="{{setting.valueType}}"
+                                 cTooltip="{{setting.description}}" cTooltipPlacement="right" />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+
+                          <button cButton class="me-1" color="secondary" (click)="checkForm(formFtpModule,FtpModuleSettings)"  variant="outline">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(FtpModuleSettings,'check')" size="sm" />
+                            Check
+                          </button>
+                          <button cButton class="me-1" color="primary" type="submit">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(FtpModuleSettings,'save')" size="sm" />
+                            Save
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+
+                  </table>
+                </form>
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="auth">
+                <c-alert color="light">
+                  <p><strong>Auth Module</strong> allow activated authentication<br /> It is highly recommanded to set up.</p>
+                  <p>
+                    It is required for :
+                  </p>
+                  <ul>
+                    <li>Admin access</li>
+                    <li>Guest access management</li>
+                    
+                  </ul>
+                </c-alert>
+                <form cForm [formGroup]="formAuthModule" (ngSubmit)="submitForm(formAuthModule,AuthModuleSettings)" #formDirective="ngForm">
+                  <table cTable calign="top" class="m-0 w-100 border-1">
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let setting of AuthModuleSettings">
+                        <th class="w-25">{{setting.name}}</th>
+                        <td>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder=""
+                                 type="{{setting.valueType}}"
+                                 cTooltip="{{setting.description}}" cTooltipPlacement="right" />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+
+                          <button cButton class="me-1" color="secondary" (click)="checkForm(formAuthModule,AuthModuleSettings)" variant="outline">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(AuthModuleSettings,'check')" size="sm" />
+                            Check
+                          </button>
+                          <button cButton class="me-1" color="primary" type="submit">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(AuthModuleSettings,'save')" size="sm" />
+                            Save
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+
+                  </table>
+                </form>
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="screenscrapper">
+                <c-alert color="light">
+                  <p><strong>ScreenScrapper Module</strong> is used to compte VideoGame and Systems informations and medias.<br />Go to on the <a href="https://www.screenscraper.fr/membreinscription.php">official site</a> to request an access. Do not hesitate to make a donation, they make a incredible work.</p>
+                  <p>Prefered region and language is used to retrieve only the right informations and media.</p>
+                  <p>
+                    It is required for :
+                  </p>
+                  <ul>
+                    <li>Setup systems available on MiSTer</li>
+                    <li>Match roms file with unique VideoGame</li>
+                    <li>Scrapping data</li>
+                  </ul>
+                </c-alert>
+                <form cForm [formGroup]="formScreenScrapperModule" (ngSubmit)="submitForm(formScreenScrapperModule,ScreenScrapperModuleSettings)" #formDirective="ngForm">
+                  <table cTable calign="top" class="m-0 w-100 border-1">
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let setting of ScreenScrapperModuleSettings">
+                        <th class="w-25">{{setting.name}}</th>
+                        <td>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder=""
+                                 type="{{setting.valueType}}"
+                                 cTooltip="{{setting.description}}" cTooltipPlacement="right" />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+
+                          <button cButton class="me-1" color="secondary" (click)="checkForm(formScreenScrapperModule,ScreenScrapperModuleSettings)" variant="outline">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(ScreenScrapperModuleSettings,'check')" size="sm" />
+                            Check
+                          </button>
+                          <button cButton class="me-1" color="primary" type="submit">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(ScreenScrapperModuleSettings,'save')" size="sm" />
+                            Save
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+
+                  </table>
+                </form>
+
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="media">
+                <c-alert color="light">
+                  <p>
+                    <strong>Media Module</strong> is used to store media fils on local.<br />Process running API must have read/write access to this path.
+                    For docker hosting create a volume to this path in order to persist local files.
+                  </p>
+                  <p>
+                    It is required for :
+                  </p>
+                  <ul>
+                    <li>Downloading media files from ScreenScrapper. It is strongly recommended by administrators to reduce the quota of queries.</li>
+                    <li>Improve media file access</li>
+                  </ul>
+
+                  Current Media Statistics :
+                  <ul>
+                    <li>Link : {{cache.stats.mediaCount}}</li>
+                    <li>Downloaded : {{cache.stats.mediaDownloadCount}}</li>
+                    <li>Size : {{(cache.stats.mediaDownloadSize / 1024 / 1024 / 1024) | number:'1.0-2' }} Gb</li>
+
+                  </ul>
+                </c-alert>
+                <form cForm [formGroup]="formMediaModule" (ngSubmit)="submitForm(formMediaModule,MediaModuleSettings)" #formDirective="ngForm">
+                  <table cTable calign="top" class="m-0 w-100 border-1">
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let setting of MediaModuleSettings">
+                        <th class="w-25">{{setting.name}}</th>
+                        <td>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder=""
+                                 type="search"
+                                 cTooltip="{{setting.description}}" cTooltipPlacement="right" />
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+
+                          <button cButton class="me-1" color="secondary" (click)="checkForm(formMediaModule,MediaModuleSettings)" variant="outline">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(MediaModuleSettings,'check')" size="sm" />
+                            Check
+                          </button>
+                          <button cButton class="me-1" color="primary" type="submit">
+                            <c-spinner aria-hidden="true" *ngIf="CheckSpinner(MediaModuleSettings,'save')" size="sm" />
+                            Save
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+
+                  </table>
+                </form>
+
+              </c-tab-panel>
+            </c-tabs-content>
+          </c-tabs>
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  <c-toaster [placement]="position" class="p-3" position="fixed">
+
+    <c-toast (timer)="onTimerChange($event)"
+             (visibleChange)="onVisibleChange($event)"
+             [visible]="visible()" color="light">
+
+      <c-toast-body>
+        <c-row>
+          <c-col class="w-100 ms-2 d-inline-flex">
+            <strong>{{tooltipmodulename}}</strong>
+            <c-badge class="ms-2" color="{{tooltipcolor}}"> {{tooltipmodulestate}}</c-badge>
+          </c-col>
+          <c-col> <button aria-label="close" cButtonClose black class="float-end" (click)="onClosed()"> </button></c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-alert color="{{tooltipcolor}}" class="m-2">
+              <small>{{tooltipmsg}}</small>
+            </c-alert>
+          </c-col>
+        </c-row>      
+      
+</c-toast-body>
+    </c-toast>
+
+  </c-toaster>
+</ng-container>

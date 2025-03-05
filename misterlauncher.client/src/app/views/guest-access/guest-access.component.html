@@ -1,0 +1,46 @@
+<ng-container>
+
+  <c-row ngPreserveWhitespaces>
+    <c-col xs="12">
+
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>Guest Access</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-container *ngIf="currentGuestAccess.length==0">
+            <c-alert color="info">
+              No Guest Access request
+            </c-alert>
+          </c-container>
+          <c-container *ngIf="currentGuestAccess.length>0">
+            <table cTable calign="top" class="m-0 w-100 border-1">
+              <tbody class="m-0 border-1">
+                <tr>
+                  <th scope="col"  class="bg-light">Code</th>
+                  <th scope="col" class="bg-light">State</th>
+                  <th scope="col" class="bg-light">Created</th>
+                  <th scope="col" class="bg-light">#</th>                  
+                </tr>
+                <tr *ngFor="let ga of currentGuestAccess">
+                  <td>{{ga.code}}</td>
+                  <td><c-badge color="{{guestAccessBadgeColor(ga.state)}}">{{ga.state}}</c-badge></td>
+                  <td>{{ga.created | timeofday}}</td>
+                  <td>
+                    <button (click)="requestaction(true, ga.code)" cButton color="success" variant="outline" *ngIf="ga.state=='PENDING'">
+                      Approuve
+                      </button>
+                    <button (click)="requestaction(false, ga.code)" cButton color="danger" variant="outline"  *ngIf="ga.state=='PENDING'">
+                      Denied
+                    </button>
+</td>
+                </tr>
+              </tbody>
+            </table>
+          </c-container>
+
+        </c-card-body>
+      </c-card>
+   </c-col>
+    </c-row>
+</ng-container>

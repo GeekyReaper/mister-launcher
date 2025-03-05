@@ -1,0 +1,48 @@
+<button *ngIf="rom" [class]="btnclass" (click)="LaunchRom(videogame._id, rom.romid)" cButton [color]="color" [disabled]="!canLaunch">
+  <c-spinner aria-hidden="true" *ngIf="launching" size="sm" />
+  <svg cIcon name="cilMediaPlay" *ngIf="!launching" size="2xl" title="Play"></svg>
+  <div class="d-inline" *ngIf="label!=''"> {{label}}</div>
+  <div class="d-inline" *ngIf="haslabel"> {{rom.name}}</div>
+</button>
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  
+  <c-toast (timer)="onTimerChange($event)"
+           (visibleChange)="onVisibleChange($event)"
+           [visible]="visible()" color="light">
+
+    <!--<c-toast-body>
+
+      <div class="d-flex m-0 p-1">
+        <a routerLink="/misterremote/remote" style="color: inherit; text-decoration: inherit;">
+          <div>
+            <strong>Launching game</strong><br />
+            <small>{{videogame.name}} on {{videogame.systemname}}</small>
+          </div>
+        </a>
+        <button aria-label="close" cButtonClose white class="me-2 m-auto" (click)="onClosed()">
+        </button>
+      </div>
+
+    </c-toast-body>-->
+    <c-toast-body>
+      <c-row>
+        <c-col class="w-100 ms-2 d-inline-flex">
+          <strong>Launching game</strong>
+          <c-badge class="ms-2 ps-2" color="{{toastcolor}}">{{toastbadge}}</c-badge>
+        </c-col>
+        <c-col> <button aria-label="close" cButtonClose black class="float-end" (click)="onClosed()"> </button></c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <a routerLink="/misterremote/remote" style="color: inherit; text-decoration: inherit;">
+            <c-alert color="{{toastcolor}}" class="m-2">
+              <small>{{videogame.name}} on {{videogame.systemname}}</small>
+            </c-alert>
+          </a>
+        </c-col>
+      </c-row>
+
+    </c-toast-body>
+  </c-toast>
+ 
+</c-toaster>  

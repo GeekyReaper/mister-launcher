@@ -1,0 +1,318 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <div *ngIf="videoGame!=null">
+      <c-card class="mb-4">
+        <c-card-header>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-8">
+                <strong>{{ videoGame.name }}</strong>
+              </div>
+              <div class="col-sm-4 text-sm-end">
+                <c-badge color="{{ videoGame.rating > 17 ? 'success' : videoGame.rating > 14 ? 'primary' : videoGame.rating > 10 ? 'info' : videoGame.rating > 5 ? 'warning' : 'danger' }}" position="end" style="margin-top: 10px; margin-left: -10px;" shape="rounded-pill"><h2>&nbsp;{{ videoGame.rating }}&nbsp;</h2><small style="margin-top:20px">/ 20</small></c-badge>
+              </div>
+            </div>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <c-container fluid>
+            <c-row>
+              <c-col [sm]="6" class="align-self-center">
+                <c-carousel [interval]="0" [animate]="false" transition="crossfade" class="m-3 d-block w-100 bg-secondary-subtle">
+                  <c-carousel-indicators></c-carousel-indicators>
+                  <c-carousel-inner>
+                    <c-carousel-item *ngIf="videoGame.media_screenshot !=''">
+                      <img src="{{videoGame.media_screenshot | mediaurl }}"
+                           cImg align="center" rounded
+                           alt="Screenshot"
+                           loading="lazy"
+                           class="d-block w-100"
+                           fluid />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_title !=''">
+                      <img src="{{ videoGame.media_title | mediaurl }}"
+                           cImg align="center"
+                           alt="Title"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_fanart !=''">
+                      <img src="{{ videoGame.media_fanart | mediaurl }}"
+                           alt="Fanart"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_video !=null">
+                      <!--style="display: block; max-height: 400px; width: auto; height: auto; max-width: 400px"-->
+                      <div class="video d-block w-100 img-fluid">
+                        <video controls #videoPlayer class="video d-block w-100 align-content-end img-fluid" [muted]="true" [autoplay]="false" [loop]="true">
+                          <source src="{{videoGame.media_video | mediaurl}}" type="video/mp4" />
+                          Browser not supported
+                        </video>
+                      </div>
+                    </c-carousel-item>
+                  </c-carousel-inner>
+                  <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>
+                  <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>
+                </c-carousel>
+                  
+
+              </c-col>
+              <c-col [sm]="6">
+                <table cTable calign="top" class="m-3 d-block w-100">
+                  <tbody>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Names</th>
+                      <td><div *ngFor="let name of videoGame.names"><span>{{name.value}}</span> <small>({{ name.regions?.join(',')}})</small></div></td>
+                    </tr>
+                    <tr *ngIf="videoGame.collectionId != null && videoGame.collectionId>0">
+                      <th cTableColor="light" class="w-25" scope="row">Collection</th>
+                      <td>{{videoGame.collection}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Released</th>
+                      <td>{{videoGame.gamedate | misterdatePipe }}</td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Players</th>
+                      <td>{{videoGame.nbplayers }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">{{videoGame.systemcategory}}</th>
+                      <td>
+                        <button cButton color="secondary" class="m-0 p-1 text-center" routerLink="/systems/sys/{{videoGame.systemid}}">
+                          <svg cIcon name="cilLaptop" size="2xl" title="Favorite"></svg>
+                          {{videoGame.systemname}}
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Category</th>
+                      <td>
+                        <app-part-videogame-categories [categories]="videoGame.gametype" />
+                        <!--<c-badge *ngFor="let cat of videoGame.gametype" style="margin:4px" color="info" shape="rounded-pill">{{cat}}</c-badge>-->
+                      </td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Editor</th>
+                      <td>{{videoGame.editorname }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Develop</th>
+                      <td>{{videoGame.developname }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Main Rom</th>
+                      <td>{{videoGame.roms[0].name}}</td>
+                    </tr>
+                  </tbody>
+                  <!--<tfoot>
+                    <tr>
+                      <td colspan="2">
+                        <button (click)="toggleLiveDemo()" cButton>
+                          <svg cIcon name="cilSettings" size="2xl" title="Settings"></svg>
+                        </button>
+                        <app-modaledit-videogame [videogame]="videoGame" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
+                        </app-modaledit-videogame>
+                      </td>
+                    </tr>
+                  </tfoot>-->
+                </table>
+                <!--<c-container class="m-3 mb-0 mt-0 p-0">
+                  <c-row class="m-0 p-0">
+                    <c-col class="ml-2 p-0">
+                      <button (click)="toggleLiveDemo()" cButton class="m-2">
+                        <svg cIcon name="cilPen" size="2xl" title="edit"></svg>
+                        Edit
+                      </button>
+                      <app-modaledit-videogame [videogame]="videoGame" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
+                      </app-modaledit-videogame>                     
+                    </c-col>
+                  </c-row>
+                </c-container>-->
+              </c-col>
+            </c-row>
+
+            <c-row>
+              <c-col sm="8" class=" mb-2">
+                <c-alert color="light" class="h-100">
+                  {{videoGame.desc}}
+                </c-alert>               
+              </c-col>
+
+              <c-col sm="4" class="m-0 mb-2">
+                <c-container class="m-0 mb-0 p-0">
+                  <c-row class="m-0">
+                    <c-col class="m-0 p-0">
+                      <app-part-videogame-launchbutton [videogame]="videoGame" [rom]="videoGame.roms[0]" [haslabel]="false" label="Launch" color="primary" btnclass="mb-2 container-fluid text-start" [canLaunch]="canLaunch" />
+                    </c-col>
+                  </c-row>
+                  <c-row class="m-0 p-0">
+                    <c-col  class="m-0 p-0 align-items-end">
+                      <a *ngIf="videoGame.media_manuel!=''" cButton color="secondary" href="{{videoGame.media_manuel | mediaurl }}" class="mt-2 mb-2 container-fluid text-start">
+                        <svg cIcon name="cilCloudDownload" size="2xl" title="Download"></svg>
+                        Manual
+                      </a>
+                      <button *ngIf="isFavorite" cButton color="danger" class="mt-2 container-fluid text-start" (click)="setPlaylist('favorite',false)">
+                        <svg cIcon name="cilHeart" size="2xl" title="Favorite"></svg>
+                        Favorite
+                      </button>
+                      <button *ngIf="isFavorite == false" variant="outline" cButton color="danger" class="mt-2 container-fluid text-start" (click)="setPlaylist('favorite',true)">
+                        <svg cIcon name="cilHeart" size="2xl" title="Favorite"></svg>
+                        Favorite
+                      </button>
+                      <button cButton *ngIf="isPlaylater" color="info" class="mt-2 container-fluid text-start" (click)="setPlaylist('playlater',false)">
+                        <svg cIcon name="cilLibraryAdd" size="2xl" title="Later"></svg>
+                        Play later
+                      </button>
+                      <button cButton *ngIf="isPlaylater==false" variant="outline" color="info" class="mt-2 container-fluid text-start" (click)="setPlaylist('playlater',true)">
+                        <svg cIcon name="cilLibraryAdd" size="2xl" title="Later"></svg>
+                        Play later
+                      </button>
+                      <button cButton *ngIf="isIssue" color="warning" class="mt-2 container-fluid text-start" (click)="setPlaylist('issue',false)">
+                        <svg cIcon name="cilBug" size="2xl" title="Later"></svg>
+                        Issue
+                      </button>
+                      <button cButton *ngIf="isIssue==false" variant="outline" color="warning" class="mt-2 container-fluid text-start" (click)="setPlaylist('issue',true)">
+                        <svg cIcon name="cilBug" size="2xl" title="Later"></svg>
+                        Issue
+                      </button>
+                    </c-col>
+                  </c-row>
+
+                </c-container>
+                
+
+               
+
+              </c-col>
+            </c-row>
+          </c-container>
+
+
+         
+        </c-card-body>
+        <c-card-footer class="d-flex">
+          
+          <!--<div>
+           
+          
+          </div>
+          <div>-->
+            <button (click)="toggleLiveDemo()" cButton class="m-2 float-start" variant="outline">
+              <svg cIcon name="cilPen" size="2xl" title="edit"></svg>
+              Edit
+            </button>
+            <app-modaledit-videogame [videogame]="videoGame" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
+            </app-modaledit-videogame>
+            <button (click)="this.goBack()" cButton color="primary" class="m-2 float-end">
+              <svg cIcon name="cilChevronCircleLeftAlt" size="2xl" title="Back"></svg>
+              Back
+            </button>
+          <!--</div>-->
+        </c-card-footer>
+      </c-card>
+    </div>
+  </c-col>
+</c-row>
+<c-row ngPreserveWhiteSpace>
+  <c-col xs="12">
+    <c-accordion *ngIf="videoGame!=null">
+      <c-accordion-item #item0="cAccordionItem" [visible]="false" >
+        <ng-template cTemplateId="accordionHeaderTemplate" >
+          <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" class="pt-1 pb-1" cAccordionButton>
+            <svg cIcon name="cilLink" size="2xl" class="m-2" color="primary" title="link"></svg>
+            <strong>{{ videoGame.romscount > 1 ? videoGame.romscount + ' Roms linked' : '1 Rom linked'}}</strong>
+          </button>
+        </ng-template>
+        <ng-template cTemplateId="accordionBodyTemplate">
+          <div class="accordion-body">
+            <app-list-roms [roms]="videoGame.roms" [videogame_id]="videoGame._id" [videogame]="videoGame" (NeedRefresh)="Refresh($event)">
+            </app-list-roms>            
+          </div>
+        </ng-template>
+      </c-accordion-item>
+      </c-accordion>
+  </c-col>
+</c-row>
+<c-row ngPreserveWhitespaces class="mt-3">
+  <c-col xs="12">
+
+    <c-tabs [activeItemKey]="'year'">
+      <!--(activeItemKeyChange)="handleChange($event)">-->
+      <c-tabs-list variant="tabs">
+        <button cTab itemKey="year">This year</button>
+        <button cTab itemKey="category">Category</button>
+        <button cTab *ngIf="gamesSameCollection!=null && gamesSameCollection.videogames.length>0" itemKey="collection">Collection</button>
+        <button cTab *ngIf="gamesSameEditor!=null && gamesSameEditor.videogames.length>0" itemKey="editor">Editor</button>
+      </c-tabs-list>
+      <c-tabs-content>
+        <c-tab-panel class="p-3" itemKey="year">
+          <c-row *ngIf="gamesSameYear!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameYear.videogames">
+              <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+            </c-col>
+            <c-col>
+              <button (click)="goSearch('year')" cButton color="primary" class="m-2">
+                <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                See more
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+        <c-tab-panel class="p-3" itemKey="editor">
+          <c-row *ngIf="gamesSameEditor!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameEditor.videogames">
+              <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+            </c-col>
+            <c-col>
+              <button (click)="goSearch('editor')" cButton color="primary" class="m-2">
+                <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                See more
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+        <c-tab-panel class="p-3" itemKey="collection">
+          <c-row *ngIf="gamesSameCollection!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameCollection.videogames">
+              <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+            </c-col>
+            <c-col>
+              <button (click)="goSearch('collection')" cButton color="primary" class="m-2">
+                <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                See more
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+        <c-tab-panel class="p-3" itemKey="category">
+          <c-row *ngIf="gamesSameCategory!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesSameCategory.videogames">
+              <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch"></app-itemlist-videogame>
+            </c-col>
+            <c-col>
+              <button (click)="goSearch('category')" cButton color="primary" class="m-2">
+                <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                See more
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-panel>
+      </c-tabs-content>
+    </c-tabs>
+  </c-col>
+</c-row>
+
+

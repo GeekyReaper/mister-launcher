@@ -1,0 +1,193 @@
+
+  <c-row ngPreserveWhitespaces>
+   <c-col xs="12">
+
+      <c-card class="mb-4" *ngIf="requiredModule == null">
+        <c-card-header>
+          <strong>MiSTer Remote</strong>
+        </c-card-header>
+        <c-card-body>
+          Erreur API
+        </c-card-body>
+      </c-card>
+
+      <c-card class="mb-4" *ngIf="requiredModule != null && requiredModule.misterState!='OK'">
+        <c-card-header>
+          <strong>MiSTer FTP</strong>
+        </c-card-header>
+
+        <c-card-body>
+          {{requiredModule.message}}
+          Please setup your FTP and turn on your MiSTer.
+        </c-card-body>
+      </c-card>
+
+      <c-tabs [activeItemKey]="activeTab" (activeItemKeyChange)="tabChange($event)">
+
+        <c-tabs-list variant="tabs">
+          <button cTab itemKey="system">System</button>
+          <button cTab itemKey="rom">Rom</button>
+        </c-tabs-list>
+        <c-tabs-content>
+          <c-tab-panel class="p-3 bg-white" itemKey="rom">
+            <c-card class="mb-4" *ngIf="requiredModule != null && requiredModule.misterState=='OK'">
+              <c-card-header>
+                <strong>Launch Scan</strong>
+              </c-card-header>
+              <c-card-body>
+
+                <form cForm [formGroup]="formJobScanRom" #formDirective="ngForm">
+                  <c-row>
+                    <c-col>
+                      <c-input-group class="mb-3">
+                        <span cInputGroupText>System</span>
+                        <select cSelect formControlName="selectSystem" (change)="onChangeSystem()">
+                          <option value="All">All</option>
+                          <option *ngFor="let system of systemlist" [value]="system.value">{{system.label}} ({{system.count}})</option>
+                        </select>
+                      </c-input-group>
+                      </c-col>
+                  </c-row>
+                  <c-row *ngIf="selectedSystem!=undefined">
+                    <c-col>
+                      <c-accordion class="w-100 pl-0 pr-0 pt-2 pb-2">
+                        <c-accordion-item #item0="cAccordionItem" [visible]="false">
+                          <ng-template cTemplateId="accordionHeaderTemplate">
+                            <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" class="p-2 bg-light" cAccordionButton>
+                              <strong>{{selectedSystem.name}} scan settings</strong>
+                            </button>
+                          </ng-template>
+                          <ng-template cTemplateId="accordionBodyTemplate">
+
+                            <table cTable calign="top" striped class="w-100">
+
+                              <tbody class="m-0 border-1">
+                                <tr>
+                                  <th>Path</th>
+                                  <td>
+                                    (fat|usb1..8)/Games/{{selectedSystem.gamepath}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>Extensions authorized</th>
+                                  <td>
+                                    {{selectedSystem.extensions}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>Excluded Roms paterns</th>
+                                  <td>
+                                    {{selectedSystem.excluderompaterns}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <th>UnOffical roms patterns</th>
+                                  <td>
+                                    {{selectedSystem.unofficalpathrompaterns}}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </ng-template>
+                        </c-accordion-item>
+                      </c-accordion>
+                    </c-col>
+                  </c-row>
+
+                  <c-row>
+                    <c-col>
+                      <button (click)="launchJobScanRom()" cButton color="primary" [disabled]="canlaunchJob" class="m-2 float-end">
+                        <svg cIcon name="cilPaperPlane" size="2xl" title="job"></svg>
+                        Scan Rom
+                      </button>
+                    </c-col>
+                  </c-row>
+                </form>
+              </c-card-body>
+            </c-card>
+
+            <app-view-job jobtypefilter="SCANROM" (changeJobRunning)="changeJobRunning($event)"></app-view-job>
+          </c-tab-panel>
+          <c-tab-panel class="p-3 bg-white" itemKey="system">
+            <h5>Systems found</h5>
+            <c-accordion class="w-100 pl-0 pr-0 pt-2 pb-2">
+              <c-accordion-item #item0="cAccordionItem" [visible]="false">
+                <ng-template cTemplateId="accordionHeaderTemplate">
+                  <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" class="p-2 bg-light" cAccordionButton>
+                    <strong>{{consolestat.systems}} Console{{consolestat.systems >1 ? "s": ""}} - {{consolestat.statvideogame}} videogames, {{consolestat.statrommatch}}/{{consolestat.statromfound}} roms match</strong>
+                  </button>
+                </ng-template>
+                <ng-template cTemplateId="accordionBodyTemplate">
+                  <table cTable calign="top" striped class="w-100">
+                    <thead>
+                      <tr>
+                        <th>System</th>
+                        <th>VideoGame</th>
+                        <th>Scan Roms</th>
+                        <th>Match Roms</th>
+                        <th>Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let system of consolesystemsfound">
+                        <td>{{system.name}}</td>
+                        <td>{{system.statvideogame}}</td>
+                        <td>{{system.statromfound}}</td>
+                        <td>{{system.statrommatch}}</td>
+                        <td><small>{{(system.statromfound >0 ? system.statrommatch*100/system.statromfound : 0) | number:'1.0-0'}}%</small></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </ng-template>
+              </c-accordion-item>
+              <c-accordion-item #item1="cAccordionItem" [visible]="false">
+                <ng-template cTemplateId="accordionHeaderTemplate">
+                  <button (click)="item1.toggleItem()" [collapsed]="!item1.visible" class="p-2 bg-light" cAccordionButton>
+                    <strong>{{arcadestat.systems}} Arcade System{{arcadestat.systems >1 ? "s": ""}} - {{arcadestat.statvideogame}} videogames, {{arcadestat.statrommatch}}/{{arcadestat.statromfound}} roms match</strong>
+                  </button>
+                </ng-template>
+                <ng-template cTemplateId="accordionBodyTemplate">
+                  <table cTable calign="top" striped class="w-100">
+                    <thead>
+                      <tr>
+                        <th>System</th>
+                        <th>VideoGame</th>
+                        <th>Scan Roms</th>
+                        <th>Match Roms</th>
+                      </tr>
+                    </thead>
+                    <tbody class="m-0 border-1">
+                      <tr *ngFor="let system of arcadesystemsfound">
+                        <td>{{system.name}}</td>
+                        <td>{{system.statvideogame}}</td>
+                        <td>{{system.statromfound}}</td>
+                        <td>{{system.statrommatch}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </ng-template>
+              </c-accordion-item>
+            </c-accordion>
+            <c-row>
+              <c-col>
+                <button (click)="launchJobScanSystem()" cButton color="primary" [disabled]="canlaunchJob" class="m-2 float-end">
+                  <svg cIcon name="cilPaperPlane" size="2xl" title="job"></svg>
+                  Scan System
+                </button>
+              </c-col>
+            </c-row>
+            <app-view-job jobtypefilter="SCANSYSTEM" (changeJobRunning)="changeJobRunning($event)"></app-view-job>
+            
+          </c-tab-panel>
+        </c-tabs-content>
+
+        </c-tabs>
+
+
+         
+
+    </c-col>
+    </c-row>
+
+
+

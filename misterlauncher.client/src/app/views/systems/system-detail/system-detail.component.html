@@ -1,0 +1,218 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <div *ngIf="system!=null">
+      <c-card class="mb-4">
+        <c-card-header>
+          <div class="container-fluid">
+            <div class="row">
+                <strong>{{ system.name }}</strong>              
+            </div>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <c-container fluid>
+            <c-row>
+              <c-col [sm]="6" class="align-self-center">
+                <c-carousel [interval]="0" [animate]="false" transition="crossfade" class="m-3 d-block w-100 bg-secondary-subtle">
+                  <c-carousel-indicators></c-carousel-indicators>
+                  <c-carousel-inner>
+                    <c-carousel-item *ngIf="system.media_photo !=''">
+                      <img [src]="system.media_photo | mediaurl"
+                           cImg align="center" rounded
+                           alt="Photo"
+                           loading="lazy"
+                           class="d-block w-100"
+                           fluid />
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="system.media_illustration !=''">
+                      <img [src]="system.media_illustration | mediaurl"
+                           cImg align="center"
+                           alt="Illustration"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="system.media_controller !=''">
+                      <img [src]="system.media_controller | mediaurl"
+                           alt="Controller"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="system.media_wheel !=''">
+                      <img [src]="system.media_wheel | mediaurl"
+                           alt="Wheel"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="system.media_BoitierConsole3D && system.media_BoitierConsole3D!=''">
+                      <img [src]="system.media_BoitierConsole3D | mediaurl"
+                           alt="BoitierConsole3D"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="system.media_video !=''">
+                      <div class="video d-block w-100 img-fluid">
+                        <video controls #videoPlayer class="video d-block w-100 align-content-end img-fluid">
+                          <source src="{{system.media_video | mediaurl}}" type="video/mp4" />
+                          Browser not supported
+                        </video>
+                      </div>
+                    </c-carousel-item>
+                    
+                  </c-carousel-inner>
+                  <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>
+                  <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>
+                </c-carousel>
+
+              </c-col>
+              <c-col [sm]="6">
+                <table cTable calign="top" hover class="m-3 d-block w-100">
+                  <tbody>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Released</th>
+                      <td>{{ system.startdate |  date:'yyyy'}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25">End</th>
+                      <td>{{system.enddate |  date:'yyyy'}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Videogames</th>
+                      <td>{{system.statvideogame}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Support</th>
+                      <td>{{system.supporttype}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Extensions</th>
+                      <td>{{system.extensions}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Company</th>
+                      <td><c-badge style="margin:4px" color="secondary" shape="rounded-pill">{{system.company}}</c-badge> </td>
+                    </tr>
+                  </tbody>                
+                </table>
+                <!--<c-container>
+                  <c-row>
+                    <c-col>
+                      <button (click)="toggleLiveDemo()" cButton class="m-2">
+                        <svg cIcon name="cilPen" size="2xl" title="Settings" />
+                        Edit
+                      </button>
+                      <app-modaledit-system [systeminfo]="system" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
+                      </app-modaledit-system>
+                    </c-col>
+                  </c-row>
+                </c-container>-->
+              </c-col>
+            </c-row>           
+          </c-container>
+
+         
+        </c-card-body>
+        <c-card-footer >          
+          <c-container class="m-0 p-0">
+            <c-row class="p-0 m-0">
+              <c-col>
+                <button (click)="toggleLiveDemo()" cButton class="m-2 float-start" variant="outline">
+                  <svg cIcon name="cilPen" size="2xl" title="edit" />
+                  Edit
+                </button>
+                <app-modaledit-system [systeminfo]="system" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
+                </app-modaledit-system>
+              </c-col>
+              <c-col class="p-0 m-0">
+                <button (click)="this.goBack()" cButton color="primary" class="m-2 float-end">
+                  <svg cIcon name="cilChevronCircleLeftAlt" size="2xl" title="Back"></svg>
+                  Back
+                </button>
+              </c-col>
+            </c-row>
+          </c-container>
+        </c-card-footer>
+      </c-card>
+    </div>
+  </c-col>
+</c-row>
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">  
+
+      <c-tabs [activeItemKey]="'top'">  
+        <c-tabs-list variant="tabs">
+          <button cTab itemKey="top">Top</button>
+          <button cTab itemKey="firstgame">First Games</button>
+          <button cTab *ngIf="gamesresultFavorite!=null && gamesresultFavorite.videogames.length>0" itemKey="favorite">Favorite</button>
+          <button cTab *ngIf="gamesresultPlaylater!=null && gamesresultPlaylater.videogames.length>0" itemKey="playlater">Play later</button>
+        </c-tabs-list>
+        <c-tabs-content>
+          <c-tab-panel class="p-2" itemKey="top">
+            <c-row *ngIf="gamesresultTop10!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+              <c-col *ngFor="let game of gamesresultTop10.videogames">
+                <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch" />
+              </c-col>
+              <c-col>
+                <button (click)="goSearch('top')" cButton color="primary" class="m-2">
+                  <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                  See more
+                </button>
+              </c-col>
+            </c-row>            
+          </c-tab-panel>
+          <c-tab-panel class="p-3" itemKey="firstgame">
+            <c-row *ngIf="gamesresultFirst!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+              <c-col *ngFor="let game of gamesresultFirst.videogames">
+                <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch" />
+              </c-col>
+              <c-col>
+                <button (click)="goSearch('first')" cButton color="primary" class="m-2">
+                  <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                  See more
+                </button>
+              </c-col>
+            </c-row>
+          </c-tab-panel>
+          <c-tab-panel class="p-2" itemKey="favorite">
+            <c-row *ngIf="gamesresultFavorite!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+              <c-col *ngFor="let game of gamesresultFavorite.videogames">
+                <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch" />
+              </c-col>
+              <c-col>
+                <button (click)="goSearch('favorite')" cButton color="primary" class="m-2">
+                  <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                  See more
+                </button>
+              </c-col>
+            </c-row>
+           
+          </c-tab-panel>
+          <c-tab-panel class="p-2" itemKey="playlater">
+            <c-row *ngIf="gamesresultPlaylater!=null" [gutter]="3" class="mb-0" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+              <c-col *ngFor="let game of gamesresultPlaylater.videogames">
+                <app-itemlist-videogame [videogame]="game" [canLaunch]="canLaunch" />
+              </c-col>
+              <c-col>
+                <button (click)="goSearch('playlater')" cButton color="primary" class="m-2">
+                  <svg cIcon name="cilSearch" size="2xl" title="Search"></svg>
+                  See more
+                </button>
+              </c-col>
+            </c-row>
+          </c-tab-panel>
+
+        </c-tabs-content>
+      </c-tabs>
+
+
+       
+  </c-col>
+  </c-row>
+
+

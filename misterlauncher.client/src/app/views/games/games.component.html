@@ -1,0 +1,87 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Search</strong>
+      </c-card-header>
+      <c-card-body>
+        <form cForm [formGroup]="formSearchGame" (ngSubmit)="onSubmit()" #formDirective="ngForm">
+          <div class="mb-3">
+            <input cFormControl
+                   formControlName="search"
+                   placeholder="Game Title"
+                   type="search" />
+
+            <div *ngIf="gamesresult != null" [visible]="formoptionVisible" cCollapse>
+              <c-card class="mt-3" color="light">
+                <c-card-body>
+                  <div class="d-flex w-100 justify-content-between align-items-center">
+                    <p>Filters</p>
+                  </div>
+                  <select cSelect formControlName="selectSystemType" (change)="onChange()" class="mb-3">
+                    <option value="">Arcade/Console</option>
+                    <option *ngFor="let category of gamesresult.filterOption.systemCategory" [value]="category">{{category}}</option>
+                  </select>
+                  <select cSelect formControlName="selectSystemName" (change)="onChange()" class="mb-3">
+                    <option value="">System Name</option>
+                    <option *ngFor="let system of systemlist" [value]="system">{{system}}</option>
+                  </select>
+                  <select cSelect formControlName="selectGameType" class="mb-3" (change)="onChange()">
+                    <option value="">Game Type</option>
+                    <option *ngFor="let gametype of gamesresult.filterOption.gameTypes" [value]="gametype">{{gametype}}</option>
+                  </select>
+                </c-card-body>
+              </c-card>
+            </div>
+          </div>
+          <div>
+            <button cButton class="me-1" color="primary" type="submit">
+              Submit
+            </button>
+            <button (click)="toggleCollapse()" cButton color="secondary" type="button">
+              Options
+            </button>
+            <button (click)="onReset()" cButton color="secondary" type="button">
+              Reset
+            </button>
+          </div>
+
+        </form>
+        <div *ngIf="gamesresult != null">
+          <p></p>
+          <!--<p> nb games {{gamesresult.games.length }} </p>-->
+          <c-row [gutter]="4" class="mb-3" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let game of gamesresult.games">
+              <c-card class="h-100">
+                <a routerLink="/games/id/{{game.gameDb._id}}">
+                  <img cCardImg="top" src="{{game.gameDb.media_screenshot}}">
+                  <c-badge color="{{ game.gameDb.rating > 17 ? 'success' : game.gameDb.rating > 14 ? 'primary' : game.gameDb.rating > 10 ? 'info' : game.gameDb.rating > 5 ? 'warning' : 'danger' }}" position="top-end" style="margin-top: 15px; margin-left: -20px;" shape="rounded-pill">{{game.gameDb.rating}}<br /></c-badge>
+                </a>
+                <c-card-body>
+                  <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 cCardTitle>{{game.gameDb.name}} </h5>
+                    <c-badge color="primary" class="top-0">{{game.gameDb.year}}</c-badge>
+                  </div>
+                  <p cCardText>
+                    {{game.gameDb.desc.substring(0,200) }}{{ game.gameDb.desc.length > 200 ? '...'  : '' }}<br />                    
+                    <small>{{game.gameDb.systemcategory}} / {{game.gameDb.systemname}}</small><br />
+                    <c-badge *ngFor="let cat of game.gameDb.gametype" class="m-2" color="info" shape="rounded-pill">{{cat}}</c-badge>
+                  </p>                
+                </c-card-body>
+                <c-card-footer class="align-content-between">
+                  <button *ngFor="let action of game.gameActions" class="m-2" (click)="execAction(action)" cButton color="secondary">
+                    <svg cIcon name="cilMediaPlay" size="2xl" title="Play"></svg>
+                    {{action.name.replace('.zip','')}}
+                  </button>
+                </c-card-footer>
+
+              </c-card>
+            </c-col>
+          </c-row>         
+        </div>
+      </c-card-body>
+
+    </c-card>
+  </c-col>
+</c-row>

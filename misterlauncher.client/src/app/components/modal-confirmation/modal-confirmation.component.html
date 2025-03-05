@@ -1,0 +1,22 @@
+<c-modal id="liveConfirmationModal" [visible]="visible" (visibleChange)="handleVisibilityChange($event)">
+    <c-modal-header>
+      <h5 cModalTitle>{{title}}</h5>
+      <button (click)="toggleVisibility()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body class="bg-light">
+      <c-alert *ngIf="message!=''" color="{{color}}">
+        {{message}}
+      </c-alert>
+      <c-container class="bg-light" >
+        <c-row fluid>
+          <c-col *ngFor="let option of options" class="text-center">
+            <button  cButton class="m-2" color="{{option.color!='' ? option.color : 'primary'}}" (click)="onclick(option.value)">
+              <svg *ngIf="option.icon!=''" cIcon name="{{option.icon}}" size="2xl" title="option"></svg>
+              {{option.label}}
+            </button>
+          </c-col>
+        </c-row>
+      </c-container>
+
+    </c-modal-body>   
+</c-modal>

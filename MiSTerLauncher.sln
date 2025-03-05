@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35208.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiSTerLauncher.Server", "MiSTerLauncher.Server\MiSTerLauncher.Server.csproj", "{E32C7606-B58B-41FA-BFEE-4B68B013507C}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "misterlauncher.client", "misterlauncher.client\misterlauncher.client.esproj", "{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "libMisterLauncher", "libMisterLauncher\libMisterLauncher.csproj", "{0AC331AB-B366-4B1D-A596-E578F7ABB3B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisterLauncher.Test", "MisterLauncher.Test\MisterLauncher.Test.csproj", "{3B36F17C-5DE5-410B-BF77-22E9A956AD2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{F11BE013-55B3-4DD9-84D4-4C62EAD0062F}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshot", "screenshot", "{DE4246DD-0DD3-4754-BE19-632B7654578A}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot1.png = ..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot1.png
+		..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot2.png = ..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot2.png
+		..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot4.png = ..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot4.png
+		..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot3.png = ..\..\Users\MathieuTABERLET\Downloads\misterlauncher-screenshot3.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E32C7606-B58B-41FA-BFEE-4B68B013507C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32C7606-B58B-41FA-BFEE-4B68B013507C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32C7606-B58B-41FA-BFEE-4B68B013507C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E32C7606-B58B-41FA-BFEE-4B68B013507C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC3BEDF-8A16-4D71-8160-51467AAF75AE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{0AC331AB-B366-4B1D-A596-E578F7ABB3B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC331AB-B366-4B1D-A596-E578F7ABB3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC331AB-B366-4B1D-A596-E578F7ABB3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC331AB-B366-4B1D-A596-E578F7ABB3B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B36F17C-5DE5-410B-BF77-22E9A956AD2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B36F17C-5DE5-410B-BF77-22E9A956AD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B36F17C-5DE5-410B-BF77-22E9A956AD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B36F17C-5DE5-410B-BF77-22E9A956AD2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE4246DD-0DD3-4754-BE19-632B7654578A} = {F11BE013-55B3-4DD9-84D4-4C62EAD0062F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06AB7DC4-7ABB-4C33-87D4-CC29737367C3}
+	EndGlobalSection
+EndGlobal

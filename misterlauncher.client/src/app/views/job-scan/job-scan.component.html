@@ -1,0 +1,126 @@
+  <c-tabs [activeItemKey]="activeTab" (activeItemKeyChange)="tabChange($event)">
+    
+    <c-tabs-list variant="tabs">
+      <button cTab itemKey="automatic">Automatic</button>
+      <button cTab itemKey="manual">Manual</button>
+    
+    </c-tabs-list>
+    <c-tabs-content>
+      <c-tab-panel class="p-3 bg-white" itemKey="automatic">
+
+        <c-row ngPreserveWhitespaces>
+          <form cForm [formGroup]="formJob" #formDirective="ngForm">
+            <c-col xs="12">
+              <c-card class="mb-4">
+                <c-card-header>
+                  <strong>Launch Automatic Scan</strong>
+                </c-card-header>
+                <c-card-body>
+                  <c-container class="m-0 p-0 w-100">
+                    <c-row class="m-0 p-0">
+                      <c-col class="m-0 p-0">
+                        <c-input-group class="mb-3">
+                          <span cInputGroupText>System</span>
+                          <select cSelect formControlName="selectConsole">
+                            <option value="All">All</option>
+                            <option *ngFor="let system of consoleslist" [value]="system.value">{{system.label}} ({{system.count}})</option>
+                          </select>
+                        </c-input-group>
+                      </c-col>
+                    </c-row>
+                    <c-row class="m-0 p-0">
+                      <c-col class="m-0 p-0">
+                        <c-input-group class="mb-3">
+                          <span cInputGroupText>Select state</span>
+                          @for (option of radioOptions; track option.value) {
+                          <input class="btn-check" [id]="option.value" type="checkbox" [value]="option.value" [attr.checked]="option.selected" />
+                          <label (click)="setCheckboxValue(option.value)" cButton color="secondary" cFormCheckLabel [for]="option.value" variant="outline">{{option.label}}</label>
+                          }
+                          <button (click)="launchautomaticmatchrom()" [disabled]="!canlaunchJob" cButton color="primary">
+                            <svg cIcon name="cilPaperPlane" size="2xl" title="job"></svg>
+                            Launch job
+                          </button>
+
+                        </c-input-group>
+                      </c-col>
+                    </c-row>
+                  </c-container>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </form>
+        </c-row>
+        <c-row ngPreserveWhitespaces>
+          <c-col xs="12">
+            <app-view-job jobtypefilter="MATCHINGROM" (changeJobRunning)="changeJobRunning($event)"></app-view-job>
+          </c-col>
+        </c-row>
+      </c-tab-panel>
+      <c-tab-panel class="p-3  bg-white border-1" itemKey="manual">
+        <form cForm [formGroup]="formJobUnmatchRom" #formDirective="ngForm">
+          <c-row ngPreserveWhitespaces>
+            <c-col xs="12">
+              <c-card class="mb-4">
+                <c-card-header>
+                  <strong>Search Unmatch Rom</strong>
+                </c-card-header>
+                <c-card-body>
+                  
+                          <c-input-group class="mb-4">
+                            <span cInputGroupText>System</span>
+                            <select cSelect formControlName="selectConsole">
+                              <option *ngFor="let system of consolesUnmatchRom" [value]="system.value">{{system.label}} ({{system.count}})</option>
+                            </select>
+                            <button (click)="searchunmatchroms()" cButton color="primary">
+                              Load
+                            </button>
+                            </c-input-group>
+                  
+
+                <table cTable *ngIf="romsUnMatch" striped>
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Extension</th>
+                      <th scope="col">Size</th>
+                      <th scope="col">Official</th>
+
+                      <th scope="col">Core</th>
+                      <th scope="col">Result</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let rom of romsUnMatch">
+
+                      <td>{{rom.name}}</td>
+                      <td>{{rom.extension}}</td>
+                      <td nowrap>{{rom.size | filesize}}</td>
+                      <td><svg cIcon name="cilBadge" size="2xl" title="Info" class="{{ rom.official ? 'text-warning' : 'text-secondary' }}"></svg></td>
+                      <td>{{rom.core}}</td>
+                      <td>
+                        <c-badge *ngIf="rom.scrapperResult == 0" color="info">New</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 202" color="success">Manual link</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 200" color="warning">Error</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 404" color="secondary">Not Found</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 429" color="danger">Exceed</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 409" color="light">Manual unlink</c-badge>
+                      </td>
+                      <td>                       
+                        <button cButton color="primary" routerLink="/jobscan/rom/{{rom._id}}" class="m-1" variant="outline">
+                          <svg cIcon name="cilPen" size="1xl" title="Info"></svg>
+                        </button>
+                      </td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+          </form>
+      </c-tab-panel>
+    </c-tabs-content>
+  </c-tabs>
+

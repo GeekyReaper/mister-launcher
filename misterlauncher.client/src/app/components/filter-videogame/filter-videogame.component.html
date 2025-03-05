@@ -1,0 +1,320 @@
+<c-row>
+  <c-col>
+    <form cForm [formGroup]="formSearchVideoGame" (ngSubmit)="onSubmitGame()" #formDirective="ngForm">
+      <c-input-group class="mb-3">
+        <span cInputGroupText>Game</span>
+        <input cFormControl formControlName="search" placeholder="Title" type="search" />
+        <button cButton color="secondary" type="submit" variant="outline">
+          <c-spinner aria-hidden="true" *ngIf="searching" size="sm" />
+          <svg cIcon name="cilSearch" *ngIf="!searching" size="1xl" class="m-0" color="primary" title="link"></svg>
+        </button>
+        </c-input-group>
+     </form>
+  </c-col>
+</c-row>
+<c-row class="mb-2" xs="auto" [gutter]="2">
+  <c-col *ngFor="let item of filterItems">
+    <c-badge color="{{item.color}}" class="m-0 pt-1 pb-1 pl-2 pr-2">
+      <!--<button cButton color="{{item.color}}" class="m-0 p-0"  (click)="EditFilter(item.category)">
+        <svg cIcon name="cilPen" size="1xl" class="m-0" color="primary" title="link"></svg>
+      </button>-->
+      <span style="padding-left: 3px; padding-right: 5px">{{item.label}}</span>
+      <c-badge color="light" class="mt-0 mb-0 ml-1 mr-1 pt-1 pb-1 pl-3 pr-3 text-black">
+        {{item.value.label}}
+      </c-badge>
+      <button cButton color="{{item.color}}" class="m-0 p-0" (click)="DeleteFilter(item.category)">
+        <svg cIcon name="cilDelete" size="1xl" class="m-0" color="primary" title="link"></svg>
+      </button>
+    </c-badge>
+  </c-col>
+  <c-col>
+    <button cButton color="primary" class="m-0 pt-1 pb-1 pl-2 pr-2" (click)="EditModalAdd()" variant="outline">
+      <svg cIcon name="cilFilter" size="1xl" class="m-0" title="link"></svg>      
+    </button>
+    </c-col>
+  <c-col>
+    <button cButton color="danger" class="m-0 pt-1 pb-1 pl-2 pr-2" (click)="ClearFilter()" variant="outline">
+      <svg cIcon name="cilFilterX" size="1xl" class="m-0"  title="link"></svg>      
+    </button>
+  </c-col>
+</c-row>
+<c-modal id="editFilterOption" [visible]="showEditModal" (visibleChange)="handleVisibilityChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle>{{editModalTitle}}</h5>
+    <button (click)="toggleVisibility()" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body class="bg-light">
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='add'">
+      <c-row>
+        <c-col class="text-center">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="EditModalMode('selectfilter')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Filter
+          </button>
+        </c-col>
+        <c-col class="text-center">
+          <button cButton color="success" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="EditModalMode('limit')">
+            <svg cIcon name="cilListNumbered" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Limit
+          </button>
+        </c-col>
+        <c-col class="text-center">
+          <button cButton color="warning" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="EditModalMode('sort')">
+            <svg cIcon name="cilClearAll" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Sort
+          </button>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='sort'">
+      <c-row fluid [gutter]="2" xs="auto" class="w-100">
+        <c-col>
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Field</span>
+            <select id="sortInputField" cSelect>
+              <option *ngFor="let field of avalaibleSortField" [value]="field.value">{{field.label}}</option>
+            </select>
+
+            <button cButton color="secondary" (click)="addSort($event)" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+
+          </c-input-group>
+        </c-col>
+        <c-col>
+          <c-button-group id="sortradiogroup" class="mb-2">
+            @for (field of avalaibleSortFieldWay; track field.value) {
+            <input class="btn-check" name="radioToggle" [id]="field.value" type="radio" [value]="field.value" [checked]="field.selected" />
+            <label (click)="changeSortWay(field.value)" color="secondary" cButton cFormCheckLabel [for]="field.value" variant="outline">{{field.label}}</label>
+            }
+          </c-button-group>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='limit'">
+      <c-row fluid [gutter]="2" xs="auto">
+        <c-col>
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Page size</span>
+            <select id="sortInputLimit" cSelect>
+              <option *ngFor="let field of avalaibleLimit" [value]="field.value">{{field.label}}</option>
+            </select>
+            <button cButton color="secondary" (click)="addLimit($event)" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" title="link"></svg>
+            </button>
+          </c-input-group>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='selectfilter'">
+      <c-row fluid [gutter]="2" xs="auto" class="text-center">
+        <c-col class="text-center" *ngIf="avalaibleCategory.length>0">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('category','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Category
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="avalaibleSystems.length>0">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('systems','multiselect')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            System
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="avalaibleConsoles.length>0">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('consoles','multiselect')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Console
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="avalaibleGameType.length>1">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('gametype', 'multiselect')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Game Type
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="avalaiblePlaylist.length>1">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('playlist','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Playlist
+          </button>
+        </c-col>
+        <c-col class="text-center">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('year','filteryear')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Year
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="hasCollectionFilter">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('collection','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Collection
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="hasEditorFilter">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('editor','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Editor
+          </button>
+        </c-col>
+        <c-col class="text-center" *ngIf="hasEditorFilter">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('developname','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Studio
+          </button>
+        </c-col>
+        <c-col class="text-center">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('played','filterplayed')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Launch
+          </button>
+        </c-col>
+        <c-col class="text-center">
+          <button cButton color="secondary" class="m-0 pt-1 pb-1 pl-2 pr-2 text-white" (click)="editfilter('rating','dropdownlist')">
+            <svg cIcon name="cilFilter" size="1xl" class="m-0" color="primary" title="link"></svg>
+            Rating
+          </button>
+        </c-col>
+      </c-row>
+    </c-container>
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='editFilterDropdownList'">
+      <c-row [gutter]="2" xs="auto" *ngIf="editListValue.label!=''">
+        <c-col class="mt-2">
+          <h5>
+            {{editListValue.label}}
+          </h5>
+        </c-col>
+      </c-row>
+      <c-alert color="light">
+        <c-row fluid [gutter]="2" xs="auto" class="p-0 m-0">
+          <c-col *ngFor="let field of editListValue.items">
+            <c-input-group>
+              <span cInputGroupText>
+                <c-form-check>
+                  <input cFormCheckInput [id]="field.value" type="radio" (click)="onRadioboxCheck(field.value)" [checked]="editListValue.selectedvalue==field.value" name="editlist">
+                  <label cFormCheckLabel [for]="field.value">{{field.label}}</label>
+                </c-form-check>
+              </span>
+            </c-input-group>
+
+          </c-col>
+          <c-col class="align-content-end">
+            <button cButton color="secondary" (click)="addfilter(editListValue.category,'filterInputFielOption')" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-col>
+        </c-row>
+      </c-alert>
+      <c-row [gutter]="2" xs="auto" class="m-2" *ngIf="editListValue.options.length>0">
+        <c-col >
+          <select id="filterInputFielOption" cSelect class="mb-2">
+            <option *ngFor="let field of editListValue.options" [value]="field.value">{{field.label}}</option>
+          </select>
+        </c-col>
+       
+      </c-row>
+     
+        
+    </c-container>
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='editFilterMultiSelect'">
+      <c-row [gutter]="2" xs="auto" *ngIf="multiEditListValue.label!=''">
+        <c-col class="mt-2">
+          <h5>
+            {{multiEditListValue.label}}
+          </h5>
+        </c-col>
+      </c-row>
+      <c-alert color="light">
+        <c-row fluid [gutter]="2" xs="auto" class="p-0 m-0">
+          <c-col *ngFor="let field of multiEditListValue.items">
+            <c-input-group>
+              <span cInputGroupText>
+                <c-form-check>
+                  <input cFormCheckInput type="checkbox" [id]="field.value" (click)="onCheckboxCheck(field.value)" [checked]="field.selected">
+                  <label cFormCheckLabel [for]="field.value">{{field.label}}</label>
+                </c-form-check>
+              </span>
+            </c-input-group>
+
+          </c-col>
+        </c-row>
+        </c-alert>
+
+        <c-row [gutter]="2" xs="auto" class="m-2">
+          <c-col *ngIf="multiEditListValue.options.length>0" class="align-content-start">
+            <select id="multifilterInputFielOption" cSelect class="mb-2">
+              <option *ngFor="let field of multiEditListValue.options" [value]="field.value" [selected]="field.selected">{{field.label}}</option>
+            </select>
+          </c-col>
+          <c-col class="align-content-end">
+            <button cButton color="primary" class="mb-2" (click)="addmultifilter(multiEditListValue.category,'multifilterInputFielOption')">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-col>
+        </c-row>
+
+    </c-container>
+
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='editFilterPlayed'">
+      <c-row fluid [gutter]="2">
+        <c-col class="mt-2">
+          <c-input-group class="mb-2">
+            <span cInputGroupText>Number</span>
+            <select id="rangeplayedInput" cSelect>
+              <option value="never">Never</option>
+              <option value="once">Once only</option>
+              <option value="lonce">at least once</option>
+              <option value="10time">More 10 times</option> 
+            </select>
+            <button cButton color="secondary" (click)="addHitRangePlayed('rangeplayedInput')" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-input-group>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-input-group class="mb-2">
+            <span cInputGroupText>Last Time</span>
+            <select id="periodplayedInput" cSelect>
+              <option value="last7d">-7d</option>
+              <option value="last30d">-30d</option>
+              <option value="month">Current Month</option>
+              <option value="year">Current Year</option>
+            </select>
+            <button cButton color="secondary" (click)="addPeriodPlayed('periodplayedInput')" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-input-group>
+        </c-col>
+      </c-row>
+    </c-container>
+
+
+    <c-container fluid class="bg-light" *ngIf="editModalMode=='editFilterYear'">
+      <c-row fluid [gutter]="2">
+        <c-col class="mt-2">
+          <c-input-group class="mb-2">
+            <span cInputGroupText>Year</span>
+            <input cFormControl type="number" id="yearinput" placeholder="19xx" value="{{SearchRequest?.year}}" />
+            <button cButton color="secondary" (click)="addYear('yearinput','yearmin', 'yearmax')" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-input-group>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col>
+          <c-input-group class="mb-2">
+            <span cInputGroupText>From</span>
+            <input cFormControl type="number" id="yearmin" placeholder="19xx" value="{{SearchRequest?.yearMin}}" />
+            <span cInputGroupText>To</span>
+            <input cFormControl type="number" id="yearmax" placeholder="20xx" value="{{SearchRequest?.yearMax}}" />
+            <button cButton color="secondary" (click)="addYear('yearinput','yearmin', 'yearmax')" variant="outline">
+              <svg cIcon name="cilNoteAdd" size="1xl" class="m-0" color="primary" title="link"></svg>
+            </button>
+          </c-input-group>
+        </c-col>
+      </c-row>
+    </c-container>
+  </c-modal-body>
+</c-modal>

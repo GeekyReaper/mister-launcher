@@ -1,0 +1,161 @@
+<c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleVisibilityChange($event)">
+  <form cForm [formGroup]="formEditSystem" (ngSubmit)="onSubmit()" #formDirective="ngForm">
+    <c-modal-header>
+      <h5 cModalTitle>{{systeminfo._id}}</h5>
+      <button (click)="toggleVisibility()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+      <c-container>
+        <c-row class="mt-3 mb-2 bg-light">
+          <c-col>
+            <h5 class="pt-2">Information</h5>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Name</span>
+              <input cFormControl
+                     formControlName="formName"
+                     placeholder="SystemName"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Core</span>
+              <input cFormControl
+                     formControlName="formCore"
+                     placeholder="MsiterFpga Core Name"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Company</span>
+              <input cFormControl
+                     formControlName="formCompany"
+                     placeholder="Company"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span cInputGroupText>From</span>
+              <input cFormControl
+                     formControlName="formStartyear"
+                     placeholder="19xx"
+                     type="number" />
+              <span cInputGroupText>To</span>
+              <input cFormControl
+                     formControlName="formEndyear"
+                     placeholder="19xx"
+                     type="number" />
+            </c-input-group>
+          </c-col>
+        </c-row>  
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Support</span>
+              <input cFormControl
+                     formControlName="formSupporttype"
+                     placeholder="Cartouche | Cd"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row class="mt-3 mb-2 bg-light">
+          <c-col>
+            <h5 class="pt-2">Roms scan settings</h5>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Path</span>
+              <span cInputGroupText>/Games/</span>
+              <input cFormControl cTooltip="Path used to scan rom" cTooltipPlacement="right"
+                     formControlName="formGamepath"
+                     placeholder="Extension"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Extensions</span>
+              <input cFormControl cTooltip="Separate extension by ','. This extensions are used for 2 purpose : - as rom extensions filter by the scan - if zip is included, the game launcher will use the first extension to complete rom's path. Example : rompath/rom.zip/rom.extensions[0]" cTooltipPlacement="right"
+                     formControlName="formExtensions"
+                     placeholder="Extension"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Exclude</span>
+              <input cFormControl cTooltip="Separate regex by ','. Roms filename must unmatch with these Regex to be registered" cTooltipPlacement="right"
+                     formControlName="formExcludeRomPatterns"
+                     placeholder="regex"
+                     type="text" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-input-group class="mb-2">
+              <span class="w-25" cInputGroupText>Unofficial</span>
+              <input cFormControl cTooltip="Separate regex by ','.Roms fullpath match these Regex, Roms will set an unoffical." cTooltipPlacement="right"
+                     formControlName="formUnofficialPathRomPatterns"
+                     placeholder="regex"
+                     type="search" />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <c-row class="mt-3 mb-2 bg-light">
+          <c-col>
+            <h5 class="pt-2">Remote features</h5>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-form-check [switch]="true" sizing="xl">
+              <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveStates" />
+              <label cFormCheckLabel>Allow SaveStates</label>
+            </c-form-check>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col>
+            <c-form-check [switch]="true" sizing="xl">
+              <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveMemory" />
+              <label cFormCheckLabel>Allow Save Memory</label>
+            </c-form-check>
+          </c-col>
+        </c-row>
+      </c-container>
+   
+
+
+    </c-modal-body>
+    <c-modal-footer>
+      <button (click)="toggleVisibility()" cButton color="secondary">
+        <svg cIcon name="cilActionUndo" size="1xl" class="m-0" color="primary" title="cancel"></svg>
+        Cancel
+      </button>
+      <button cButton class="me-1" color="primary" type="submit">
+        <svg cIcon name="cilSave" size="1xl" class="m-0" color="primary" title="save"></svg>
+        Save
+      </button>
+    </c-modal-footer>
+  </form>
+</c-modal>

@@ -1,0 +1,32 @@
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Search</strong>
+      </c-card-header>
+      <c-card-body>
+
+        <c-container fluid ngPreserveWhitespaces>
+
+          <app-filter-videogame [ResponseFilterOption]="videogamesresult?.filterOption" (OnReset)="ResetSearch($event)" (NewSearchRequest)="NewSearchRequest($event)" [searching]="searching"></app-filter-videogame>
+
+          <c-row class="mt-2 mb-2" *ngIf="videogamesresult != null">
+            <c-col>
+              <h5>{{videogamesresult.count}} videogame{{videogamesresult.count>0 ? "s": ""}} found</h5>
+            </c-col>
+          </c-row>
+          <app-pagination-videogame [CurrentPage]="videogamesresult?.page" [ResultCount]="videogamesresult?.count" [PageSize]="videogamesresult?.pagesize" (ChangePage)="OnPageChange($event)" />
+          <c-row *ngIf="videogamesresult != null" [gutter]="3" class="mb-2" [md]="3" [xs]="1" [lg]="4" [xl]="5">
+            <c-col *ngFor="let videogame of videogamesresult.videogames">
+              <app-itemlist-videogame [videogame]="videogame" [canLaunch]="canLaunch"></app-itemlist-videogame>
+            </c-col>
+          </c-row>
+
+          <app-pagination-videogame [CurrentPage]="videogamesresult?.page" [ResultCount]="videogamesresult?.count" [PageSize]="videogamesresult?.pagesize" (ChangePage)="OnPageChange($event)" />
+
+
+        </c-container>
+         
+
+      </c-card-body>
+
+    </c-card>
+

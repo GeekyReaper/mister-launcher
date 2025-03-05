@@ -1,0 +1,167 @@
+<!--<ng-container *ngIf="(managerJobScanRom$ | async) as jobromscan">-->
+  <c-card class="mb-4" *ngIf="currentJob!=undefined && currentJob.jobName!='none'">
+    <c-card-header>
+      <strong>{{currentJob.jobName}} <c-badge class="ms-2 float-end" color="{{currentJob.state| jobstateColor}}"> {{currentJob.state}}</c-badge></strong>
+    </c-card-header>
+    <c-card-body>
+      <table cTable calign="top" class="w-100" *ngIf="currentJob.jobType == jobtypefilter && currentJob.jobType=='MATCHINGROM'">
+        <tbody class="m-0 border-1">
+          <tr>
+            <th scope="row" class="w-25 bg-light">Launched date</th>
+            <td>
+              {{currentJob.start | date:'HH:mm:ss'}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Delay</th>
+            <td>
+              {{currentJob.delay | timelapse}}
+            </td>
+          </tr>
+          <tr *ngIf="currentJob.logs!= undefined && currentJob.logs.length >0">
+            <td colspan="2">
+              <c-alert color="light" class="m-1 p-1">
+                <small *ngFor="let log of currentJob.logs" class="fs-6 font-monospace {{log.result=='FAILED' ? 'text-danger' : (log.result=='SUCCEED' ? 'text-success' : 'text-black')}}">[{{log.start | date:'HH:mm'}}]&nbsp;<strong *ngIf="log.title!=''">{{log.title}}|&nbsp;</strong><span>{{log.body}}</span><br /></small>
+              </c-alert>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Roms found</th>
+            <td>
+              {{currentJob.result.income}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Progress</th>
+            <td>
+              <c-progress [value]="currentJob.result.progress">
+                {{currentJob.result.progress}}%
+              </c-progress>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Roms match</th>
+            <td>
+              {{currentJob.result.match}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-2 bg-light">Videogame create</th>
+            <td>
+              {{currentJob.result.videogameCreate}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Videogame update</th>
+            <td>
+              {{currentJob.result.videogameUpdate}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table cTable calign="top" class="w-100" *ngIf="currentJob.jobType == jobtypefilter && currentJob.jobType=='SCANROM'">
+        <tbody class="m-0 border-1">
+          <tr>
+            <th scope="row" class="w-25 bg-light">Launched date</th>
+            <td>
+              {{currentJob.start | date:'HH:mm:ss'}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Delay</th>
+            <td>
+              {{currentJob.delay | timelapse}}
+            </td>
+          </tr>
+          <tr *ngIf="currentJob.logs!= undefined && currentJob.logs.length >0">
+            <td colspan="2">
+              <c-alert color="light" class="m-1 p-1">
+                <small *ngFor="let log of currentJob.logs" class="fs-6 font-monospace {{log.result=='FAILED' ? 'text-danger' : (log.result=='SUCCEED' ? 'text-success' : 'text-black')}}">[{{log.start | date:'HH:mm'}}]&nbsp;<strong *ngIf="log.title!=''">{{log.title}}|&nbsp;</strong><span>{{log.body}}</span><br /></small>
+              </c-alert>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Roms found</th>
+            <td>
+              {{currentJob.result.income}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Progress</th>
+            <td>
+              <c-progress [value]="currentJob.result.progress">
+                {{currentJob.result.progress}}%
+              </c-progress>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Roms Insert</th>
+            <td>
+              {{currentJob.result.insert}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Roms update</th>
+            <td>
+              {{ currentJob.result.update }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table cTable calign="top" class="w-100" *ngIf="currentJob.jobType == jobtypefilter && currentJob.jobType=='SCANSYSTEM'">
+        <tbody class="m-0 border-1">
+          <tr>
+            <th scope="row" class="w-25 bg-light">Launched date</th>
+            <td>
+              {{currentJob.start | date:'HH:mm:ss'}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Delay</th>
+            <td>
+              {{currentJob.delay | timelapse}}
+            </td>
+          </tr>
+          <tr *ngIf="currentJob.logs!= undefined && currentJob.logs.length >0">
+            <td colspan="2">
+              <c-alert color="light" class="m-1 p-1">
+                <small *ngFor="let log of currentJob.logs" class="fs-6 font-monospace {{log.result=='FAILED' ? 'text-danger' : (log.result=='SUCCEED' ? 'text-success' : 'text-black')}}">[{{log.start | date:'HH:mm'}}]&nbsp;<strong *ngIf="log.title!=''">{{log.title}}|&nbsp;</strong><span>{{log.body}}</span><br /></small>
+              </c-alert>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">System found</th>
+            <td>
+              {{currentJob.result.income}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Progress</th>
+            <td>
+              <c-progress [value]="currentJob.result.progress">
+                {{currentJob.result.progress}}%
+              </c-progress>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">System Insert</th>
+            <td>
+              {{currentJob.result.insert}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">System  update</th>
+            <td>
+              {{ currentJob.result.update }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <c-alert color="info" *ngIf="currentJob.jobType != jobtypefilter &&  currentJob.jobName!='none' && currentJob.state != 'DONE' ">
+        <strong>Another job running</strong>
+      </c-alert>
+    </c-card-body>
+  </c-card>
+<!--</ng-container>-->

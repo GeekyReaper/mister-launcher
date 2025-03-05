@@ -1,0 +1,507 @@
+<form cForm [formGroup]="formSearchVideoGame" (ngSubmit)="SubmitSearch()" #formDirective="ngForm">
+
+  <c-row ngPreserveWhitespaces>
+    <c-col xs="12">
+      <c-card class="mb-4" *ngIf="romInfo">
+        <c-card-header>
+          <strong>{{romInfo.name}}</strong>
+        </c-card-header>
+        <c-card-body>
+          <table cTable calign="top" class="w-100">
+            <tbody class="m-0 border-1">
+              <tr>
+                <th scope="row" class="bg-light">Id</th>
+                <td>
+                  {{romInfo._id}}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="bg-light">Path</th>
+                <td>
+                  {{romInfo.fullpath}}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="bg-light">Size</th>
+                <td>
+                  {{romInfo.size | filesize}}
+                </td>
+              </tr>
+              <tr *ngIf="romInfo.core!=''">
+                <th scope="row" class="bg-light">Core</th>
+                <td>
+                  {{romInfo.core}}
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="bg-light">State</th>
+                <td>
+                  <c-badge *ngIf="romInfo.scrapperResult == 0" color="info">New</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 202" color="success">Link</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 200" color="success">Link</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 404" color="secondary">Not Found</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 429" color="danger">Exceed</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 409" color="light">Unlink</c-badge>
+                  <!--{{romInfo.scrapperResult}}-->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <c-accordion *ngIf="romInfo.systemCategory=='Arcade'" class="w-100 pl-0 pr-0 pt-2 pb-2">
+            <c-accordion-item #item0="cAccordionItem" [visible]="false">
+              <ng-template cTemplateId="accordionHeaderTemplate">
+                <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" class="p-2 bg-light"  cAccordionButton>
+                  <strong>MRA Info</strong>
+                </button>
+              </ng-template>
+              <ng-template cTemplateId="accordionBodyTemplate">
+                <div class="accordion-body">
+                  <table cTable calign="top" class="w-100">
+                    <tbody class="m-0 border-1">
+                      <tr>
+                        <th scope="row" class="bg-light">Name</th>
+                        <td>
+                          {{romInfo.mraInfo?.name}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.region !=''">
+                        <th scope="row" class="bg-light">Region</th>
+                        <td>
+                          {{romInfo.mraInfo?.region}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.version !=''">
+                        <th scope="row" class="bg-light">Version</th>
+                        <td>
+                          {{romInfo.mraInfo?.version}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.alternative !=''">
+                        <th scope="row" class="bg-light">Alternative</th>
+                        <td>
+                          {{romInfo.mraInfo?.alternative}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.platform !=''">
+                        <th scope="row" class="bg-light">Platform</th>
+                        <td>
+                          {{romInfo.mraInfo?.platform}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.series !=''">
+                        <th scope="row" class="bg-light">Series</th>
+                        <td>
+                          {{romInfo.mraInfo?.series}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.year != undefined">
+                        <th scope="row" class="bg-light">Year</th>
+                        <td>
+                          {{romInfo.mraInfo?.year}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.manufacturer !=''">
+                        <th scope="row" class="bg-light">Manufacturer</th>
+                        <td>
+                          {{romInfo.mraInfo?.manufacturer}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.category !=''">
+                        <th scope="row" class="bg-light">Category</th>
+                        <td>
+                          {{romInfo.mraInfo?.category}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.setname !=''">
+                        <th scope="row" class="bg-light">Setname</th>
+                        <td>
+                          {{romInfo.mraInfo?.setname}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.parent !=''">
+                        <th scope="row" class="bg-light">Parent</th>
+                        <td>
+                          {{romInfo.mraInfo?.parent}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.mameversion !=''">
+                        <th scope="row" class="bg-light">Mame version</th>
+                        <td>
+                          {{romInfo.mraInfo?.mameversion}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.rbf !=''">
+                        <th scope="row" class="bg-light">Rbf</th>
+                        <td>
+                          {{romInfo.mraInfo?.rbf}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.about !=''">
+                        <th scope="row" class="bg-light">About</th>
+                        <td>
+                          {{romInfo.mraInfo?.about}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.resolution !=''">
+                        <th scope="row" class="bg-light">Resolution</th>
+                        <td>
+                          {{romInfo.mraInfo?.resolution}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.rotation !=''">
+                        <th scope="row" class="bg-light">Rotation</th>
+                        <td>
+                          {{romInfo.mraInfo?.rotation}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.flip !=''">
+                        <th scope="row" class="bg-light">Flip</th>
+                        <td>
+                          {{romInfo.mraInfo?.flip}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.players !=''">
+                        <th scope="row" class="bg-light">Players</th>
+                        <td>
+                          {{romInfo.mraInfo?.players}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.joystick !=''">
+                        <th scope="row" class="bg-light">Joystick</th>
+                        <td>
+                          {{romInfo.mraInfo?.joystick}}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.date !=undefined">
+                        <th scope="row" class="bg-light">Date file</th>
+                        <td>
+                          {{romInfo.mraInfo?.date |  misterdatePipe }}
+                        </td>
+                      </tr>
+                      <tr *ngIf="romInfo.mraInfo?.md5 !=''">
+                        <th scope="row" class="bg-light">Md5</th>
+                        <td>
+                          {{romInfo.mraInfo?.md5}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th scope="row" class="bg-light">Roms hierarchy</th>
+                        <td>
+                          <c-badge *ngFor="let rom of romInfo.mraInfo?.romshierarchy" color="secondary" class="me-2">{{rom}}</c-badge>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-template>
+            </c-accordion-item>
+          </c-accordion>
+
+
+          <app-select-rom *ngIf="!romInfo.isMatch" [parentrom]="romInfo._id" [systemid]="romInfo.systemCategory=='Arcade' ? 'Arcade' : romInfo.systemid" (UpdateSelectedRom)="selectedromupdated($event)">
+          </app-select-rom>
+
+          <div class="float-end">
+
+
+            <button (click)="this.goBack()" cButton color="primary" class="m-2 float-end">
+              <svg cIcon name="cilChevronCircleLeftAlt" size="2xl" title="Back"></svg>
+              Back
+            </button>
+
+            <button (click)="this.showConfirmationDelete()" *ngIf="romInfo?.isMatch==false" variant="outline" cButton color="danger" class="m-2 float-end">
+              <svg cIcon name="cilTrash" size="2xl" title="Delete"></svg>
+              Delete
+            </button>
+          </div>
+          <app-modal-confirmation [options]="confirmationModalOptionsForDelete" [visible]="confirmationShow" title="Delete Rom" (onSelectedOption)="deleteRom($event)"></app-modal-confirmation>
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  <c-row ngPreserveWhitespaces *ngIf="romInfo?.isMatch==false">
+    <c-col xs="12">
+      <c-card class="mb-4" *ngIf="romInfo">
+        <c-card-header>
+          <strong>ScreenScrapper</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-container fluid>
+            <c-row>
+              <c-col>
+                <c-input-group class="mb-3">
+                  <span cInputGroupText>Search</span>
+                  <input cFormControl
+                         formControlName="search"
+                         placeholder="ex : Mario Bros "
+                         type="search" />
+                  <button cButton type="submit">
+                    <c-spinner aria-hidden="true" *ngIf="isSubmited" size="sm" />
+                    <svg cIcon name="cilSearch" *ngIf="!isSubmited" size="1xl" class="m-0" color="primary" title="link"></svg>                    
+                    
+                  </button>
+                  </c-input-group>
+              </c-col>
+              <!--<c-col xs="10" class="container-fluid">
+                <input cFormControl
+                       formControlName="search"
+                       placeholder="Game Title"
+                       type="search" />
+              </c-col>
+              <c-col xs="2" class="container-fluid">
+                <button cButton type="submit">
+                  <c-spinner aria-hidden="true" *ngIf="isSubmited" size="sm" />
+                  Search
+                </button>
+              </c-col>-->
+            </c-row>
+            <c-row *ngIf="videogames">
+              <c-col xs="12">
+                <strong>
+                  {{videogames.length}} Result{{videogames.length>1 ? 's' : ''}}
+                </strong>
+              </c-col>
+            </c-row>
+          </c-container>
+          <c-container *ngFor="let videoGame of videogames">
+            <c-row>
+              <c-col [sm]="6" class="align-self-center">
+                <c-carousel [interval]="0" [animate]="false" transition="crossfade" class="m-3 d-block w-100 bg-secondary-subtle">
+                  <c-carousel-indicators></c-carousel-indicators>
+                  <c-carousel-inner>
+                    <c-carousel-item *ngIf="videoGame.media_screenshot !=''">
+                      <img [src]="videoGame.media_screenshot"
+                           cImg align="center" rounded
+                           alt="Screenshot"
+                           loading="lazy"
+                           class="d-block w-100"
+                           fluid />
+
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_title !=''">
+                      <img [src]="videoGame.media_title"
+                           cImg align="center"
+                           alt="Title"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_fanart !=''">
+                      <img [src]="videoGame.media_fanart"
+                           alt="Fanart"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videoGame.media_video !=null">
+                      <!--style="display: block; max-height: 400px; width: auto; height: auto; max-width: 400px"-->
+                      <div class="video d-block w-100 img-fluid">
+                        <video controls #videoPlayer class="video d-block w-100 align-content-end img-fluid" [muted]="true" [autoplay]="false" [loop]="true">
+                          <source src="{{videoGame.media_video}}" type="video/mp4" />
+                          Browser not supported
+                        </video>
+                      </div>
+                    </c-carousel-item>
+                  </c-carousel-inner>
+                  <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>
+                  <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>
+                </c-carousel>
+              </c-col>
+              <c-col [sm]="6">
+                <table cTable calign="top" hover class="m-3 d-block w-100">
+                  <tbody>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Names</th>
+                      <td><div *ngFor="let name of videoGame.names"><span>{{name.value}}</span> <small>({{ name.regions?.join(',')}})</small></div></td>
+                    </tr>
+                    <tr *ngIf="videoGame.collectionId != null && videoGame.collectionId>0">
+                      <th cTableColor="light" class="w-25" scope="row">Collection</th>
+                      <td>{{videoGame.collection}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Released</th>
+                      <td>{{videoGame.gamedate |  misterdatePipe }}</td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Players</th>
+                      <td>{{videoGame.nbplayers }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">{{videoGame.systemcategory}}</th>
+                      <td>
+                        <button cButton color="secondary" class="m-0 p-1 text-center" routerLink="/systems/sys/{{videoGame.systemid}}">
+                          <svg cIcon name="cilLaptop" size="2xl" title="Favorite"></svg>
+                          {{videoGame.systemname}}
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Category</th>
+                      <td>
+                        <app-part-videogame-categories [categories]="videoGame.gametype" />
+                        <!--<c-badge *ngFor="let cat of videoGame.gametype" style="margin:4px" color="info" shape="rounded-pill">{{cat}}</c-badge>-->
+                      </td>
+                      
+
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Editor</th>
+                      <td>{{videoGame.editorname }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Develop</th>
+                      <td>{{videoGame.developname }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="2">
+                        <button cButton (click)="SelectVideoGame(videoGame.screenscraperId)">
+                          <c-spinner aria-hidden="true" *ngIf="spinnerIsSelected" size="sm" />
+                          <svg cIcon *ngIf="spinnerIsSelected==false" name="cilCheck" size="2xl" title="Check"></svg>
+                          Select
+                        </button>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </c-col>
+            </c-row>
+          </c-container>
+
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+  <c-row ngPreserveWhitespaces *ngIf="romInfo?.isMatch==true">
+    <c-col xs="12">
+      <c-card class="mb-4" *ngIf="romInfo">
+        <c-card-header>
+          <strong>VideoGame Match</strong>
+        </c-card-header>
+        <c-card-body>
+          <c-container *ngIf="videogamematch!=undefined" >
+            <c-row>
+              <c-col [sm]="6" class="align-self-center">
+                <c-carousel [interval]="0" [animate]="false" transition="crossfade" class="m-3 d-block w-100 bg-secondary-subtle">
+                  <c-carousel-indicators></c-carousel-indicators>
+                  <c-carousel-inner>
+                    <c-carousel-item *ngIf="videogamematch.media_screenshot !=''">
+                      <img [src]="'api/media/' + videogamematch.media_screenshot"
+                           cImg align="center" rounded
+                           alt="Screenshot"
+                           loading="lazy"
+                           class="d-block w-100"
+                           fluid />
+
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videogamematch.media_title !=''">
+                      <img [src]="'api/media/' +videogamematch.media_title"
+                           cImg align="center"
+                           alt="Title"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videogamematch.media_fanart !=''">
+                      <img [src]="'api/media/' + videogamematch.media_fanart"
+                           alt="Fanart"
+                           cImg align="center"
+                           class="d-block w-100"
+                           fluid rounded
+                           loading="lazy" />
+                      <!--style="display: block; max-width: 400px; max-height: 300px; width: auto; height: auto;"-->
+                    </c-carousel-item>
+                    <c-carousel-item *ngIf="videogamematch.media_video !=null">
+                      <!--style="display: block; max-height: 400px; width: auto; height: auto; max-width: 400px"-->
+                      <div class="video d-block w-100 img-fluid">
+                        <video controls #videoPlayer class="video d-block w-100 align-content-end img-fluid" [muted]="true" [autoplay]="false" [loop]="true">
+                          <source src="'api/media/{{videogamematch.media_video}}" type="video/mp4" />
+                          Browser not supported
+                        </video>
+                      </div>
+                    </c-carousel-item>
+                  </c-carousel-inner>
+                  <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>
+                  <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>
+                </c-carousel>
+              </c-col>
+              <c-col [sm]="6">
+                <table cTable calign="top" hover class="m-3 d-block w-100">
+                  <tbody>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Names</th>
+                      <td><div *ngFor="let name of videogamematch.names"><span>{{name.value}}</span> <small>({{ name.regions?.join(',')}})</small></div></td>
+                    </tr>
+                    <tr *ngIf="videogamematch.collectionId != null && videogamematch.collectionId>0">
+                      <th cTableColor="light" class="w-25" scope="row">Collection</th>
+                      <td>{{videogamematch.collection}}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25">Released</th>
+                      <td>{{videogamematch.gamedate |  misterdatePipe }}</td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Players</th>
+                      <td>{{videogamematch.nbplayers }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">{{videogamematch.systemcategory}}</th>
+                      <td>
+                        <button cButton color="secondary" class="m-0 p-1 text-center" routerLink="/systems/sys/{{videogamematch.systemid}}">
+                          <svg cIcon name="cilLaptop" size="2xl" title="Favorite"></svg>
+                          {{videogamematch.systemname}}
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Category</th>
+                      <td>
+                        <app-part-videogame-categories [categories]="videogamematch.gametype" />                        
+                      </td>
+
+
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" class="w-25" scope="row">Editor</th>
+                      <td>{{videogamematch.editorname }}</td>
+                    </tr>
+                    <tr>
+                      <th cTableColor="light" scope="row">Develop</th>
+                      <td>{{videogamematch.developname }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="2">
+                        <button cButton color="warning"  class="float-end" (click)="unlinkRom()" >
+                          <svg cIcon name="cilLinkBroken" size="2xl" title="LinkBroken"></svg>
+                          Unlink
+                        </button>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </c-col>
+            </c-row>
+          </c-container>
+        </c-card-body>
+        </c-card>
+     </c-col>
+    </c-row>
+</form>

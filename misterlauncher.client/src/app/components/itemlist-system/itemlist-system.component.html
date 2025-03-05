@@ -1,0 +1,36 @@
+<c-card class="h-100" *ngIf="system != null">
+  <c-card-header>
+    <a routerLink="/systems/{{system.category.toLowerCase()}}/{{system._id}}">
+      <img cCardImg="top" src="{{system.media_photo != '' ? (system.media_photo | mediaurl) : 'assets/images/empty.png'}}">
+    </a>
+  </c-card-header>
+  <c-card-body>
+    <c-row>
+      <h4 cCardTitle>{{system.name}} </h4>
+    </c-row>
+    <c-row>
+      <h6 *ngIf="system.startyear>1 && system.endyear>1 ">{{system.startyear }}-{{ system.endyear}}</h6>
+      <h6 *ngIf="system.startyear==1 && system.endyear>1 ">{{ system.endyear}}</h6>
+      <h6 *ngIf="system.startyear>1 && system.endyear==1 ">{{ system.startyear}}</h6>
+      <p cCardText>
+        <small> {{system.category}}</small>
+      </p>
+    </c-row>
+    <c-row class="bg-primary align-items-end">
+     
+        <c-footer class="bg-white align-self-end">
+          <div>
+            <svg cIcon name="cilGamepad" size="2xl" title="Later"></svg>
+            <span>Videogame</span>
+          </div>
+          <div class="ms-auto">
+            <c-badge color="primary" class="top-0">{{ system.statvideogame}}</c-badge>
+          </div>
+        </c-footer>
+     
+    </c-row>
+  </c-card-body>
+  <c-card-footer *ngIf="system.company!=''">
+    <c-badge color="secondary" class="top-0">{{system.company}}</c-badge>
+  </c-card-footer>
+</c-card>
