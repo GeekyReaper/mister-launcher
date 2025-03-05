@@ -47,10 +47,10 @@ services:
 
 ## Screenshots
 
-![screenshot](https://raw.githubusercontent.com/GeekyReaper/MiSTerLauncher/master/screenshot/misterlauncher-screenshot1.png)
+![screenshot](https://github.com/GeekyReaper/mister-launcher/blob/main/screenshots/misterlauncher-screenshot1.png)
 
-![screenshot](https://raw.githubusercontent.com/GeekyReaper/MiSTerLauncher/master/screenshot/misterlauncher-screenshot2.png)
+![screenshot](https://github.com/GeekyReaper/mister-launcher/blob/main/screenshots/misterlauncher-screenshot2.png)
 
-![screenshot](https://raw.githubusercontent.com/GeekyReaper/MiSTerLauncher/master/screenshot/misterlauncher-screenshot3.png)
+![screenshot](https://github.com/GeekyReaper/mister-launcher/blob/main/screenshots/misterlauncher-screenshot3.png)
 
-![screenshot](https://raw.githubusercontent.com/GeekyReaper/MiSTerLauncher/master/screenshot/misterlauncher-screenshot4.png)
+![screenshot](https://github.com/GeekyReaper/mister-launcher/blob/main/screenshots/misterlauncher-screenshot4.png)
