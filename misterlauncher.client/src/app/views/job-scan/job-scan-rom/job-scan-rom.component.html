@@ -106,7 +106,7 @@
               </c-card-body>
             </c-card>
 
-            <app-view-job jobtypefilter="SCANROM" (changeJobRunning)="changeJobRunning($event)"></app-view-job>
+            <app-view-job jobtypefilter="SCANROM" (changeJobRunning)="changeJobRunning($event)" (JobFinished)="jobFinished($event)"></app-view-job>
           </c-tab-panel>
           <c-tab-panel class="p-3 bg-white" itemKey="system">
             <h5>Systems found</h5>
@@ -176,7 +176,7 @@
                 </button>
               </c-col>
             </c-row>
-            <app-view-job jobtypefilter="SCANSYSTEM" (changeJobRunning)="changeJobRunning($event)"></app-view-job>
+            <app-view-job jobtypefilter="SCANSYSTEM" (changeJobRunning)="changeJobRunning($event)" (JobFinished)="jobFinished($event)"></app-view-job>
             
           </c-tab-panel>
         </c-tabs-content>

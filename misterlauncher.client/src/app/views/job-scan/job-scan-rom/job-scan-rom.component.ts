@@ -248,6 +248,47 @@ export class JobScanRomComponent implements OnInit, OnDestroy {
     });
     return stat;
   }
+
+  jobFinished(state: string) {
+    console.log(`[jobscan] jobFinished ${state}`)
+    // RELOAD
+
+    this.subListSystem = this.querygamesservice.SystemCountFilter("allrom").subscribe((systems: ItemCount[]) => {
+      this.systemlist = systems;
+
+    });
+    let systemconsolesearch: SystemSearchRequest =
+    {
+      category: 'Console',
+      AllowNoVideoGame: true,
+      sortFields: [{
+        field: 'name',
+        isAscending: true
+      }]
+
+    }
+    let systemarcadesearch: SystemSearchRequest =
+    {
+      category: 'Arcade',
+      AllowNoVideoGame: true,
+      sortFields: [{
+        field: 'name',
+        isAscending: true
+      }]
+
+    }
+
+    this.subListConsoleSystem = this.querygamesservice.getSystems(systemconsolesearch).subscribe((sysresult: SystemSearchResult) => {
+      this.consolesystemsfound = sysresult.systems;
+      this.consolestat = this.AggregateSystemStat(sysresult.systems);
+    });
+
+    this.subListArcadeSystem = this.querygamesservice.getSystems(systemarcadesearch).subscribe((sysresult: SystemSearchResult) => {
+      this.arcadesystemsfound = sysresult.systems;
+      this.arcadestat = this.AggregateSystemStat(sysresult.systems);
+    });
+    
+  }
 }
 
 export interface systemStat {

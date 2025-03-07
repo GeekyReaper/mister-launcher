@@ -260,4 +260,6 @@ export class JobScanComponent implements OnInit, OnDestroy  {
   }
 
   
+
+  
 }

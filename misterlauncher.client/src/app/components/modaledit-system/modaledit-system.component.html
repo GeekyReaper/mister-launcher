@@ -71,77 +71,79 @@
             </c-input-group>
           </c-col>
         </c-row>
-        <c-row class="mt-3 mb-2 bg-light">
-          <c-col>
-            <h5 class="pt-2">Roms scan settings</h5>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-input-group class="mb-2">
-              <span class="w-25" cInputGroupText>Path</span>
-              <span cInputGroupText>/Games/</span>
-              <input cFormControl cTooltip="Path used to scan rom" cTooltipPlacement="right"
-                     formControlName="formGamepath"
-                     placeholder="Extension"
-                     type="text" />
-            </c-input-group>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-input-group class="mb-2">
-              <span class="w-25" cInputGroupText>Extensions</span>
-              <input cFormControl cTooltip="Separate extension by ','. This extensions are used for 2 purpose : - as rom extensions filter by the scan - if zip is included, the game launcher will use the first extension to complete rom's path. Example : rompath/rom.zip/rom.extensions[0]" cTooltipPlacement="right"
-                     formControlName="formExtensions"
-                     placeholder="Extension"
-                     type="text" />
-            </c-input-group>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-input-group class="mb-2">
-              <span class="w-25" cInputGroupText>Exclude</span>
-              <input cFormControl cTooltip="Separate regex by ','. Roms filename must unmatch with these Regex to be registered" cTooltipPlacement="right"
-                     formControlName="formExcludeRomPatterns"
-                     placeholder="regex"
-                     type="text" />
-            </c-input-group>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-input-group class="mb-2">
-              <span class="w-25" cInputGroupText>Unofficial</span>
-              <input cFormControl cTooltip="Separate regex by ','.Roms fullpath match these Regex, Roms will set an unoffical." cTooltipPlacement="right"
-                     formControlName="formUnofficialPathRomPatterns"
-                     placeholder="regex"
-                     type="search" />
-            </c-input-group>
-          </c-col>
-        </c-row>
-        <c-row class="mt-3 mb-2 bg-light">
-          <c-col>
-            <h5 class="pt-2">Remote features</h5>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-form-check [switch]="true" sizing="xl">
-              <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveStates" />
-              <label cFormCheckLabel>Allow SaveStates</label>
-            </c-form-check>
-          </c-col>
-        </c-row>
-        <c-row>
-          <c-col>
-            <c-form-check [switch]="true" sizing="xl">
-              <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveMemory" />
-              <label cFormCheckLabel>Allow Save Memory</label>
-            </c-form-check>
-          </c-col>
-        </c-row>
+        <div *ngIf="systeminfo.category!='Arcade'">
+          <c-row class="mt-3 mb-2 bg-light">
+            <c-col>
+              <h5 class="pt-2">Roms scan settings</h5>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-input-group class="mb-2">
+                <span class="w-25" cInputGroupText>Path</span>
+                <span cInputGroupText>/Games/</span>
+                <input cFormControl cTooltip="Path used to scan rom" cTooltipPlacement="right"
+                       formControlName="formGamepath"
+                       placeholder="path"
+                       type="text" />
+              </c-input-group>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-input-group class="mb-2">
+                <span class="w-25" cInputGroupText>Extensions</span>
+                <input cFormControl cTooltip="Separate extension by ','. This extensions are used for 2 purpose : - as rom extensions filter by the scan - if zip is included, the game launcher will use the first extension to complete rom's path. Example : rompath/rom.zip/rom.extensions[0]" cTooltipPlacement="right"
+                       formControlName="formExtensions"
+                       placeholder="Extension"
+                       type="text" />
+              </c-input-group>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-input-group class="mb-2">
+                <span class="w-25" cInputGroupText>Exclude</span>
+                <input cFormControl cTooltip="Separate regex by ','. Roms filename must unmatch with these Regex to be registered" cTooltipPlacement="right"
+                       formControlName="formExcludeRomPatterns"
+                       placeholder="regex"
+                       type="text" />
+              </c-input-group>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-input-group class="mb-2">
+                <span class="w-25" cInputGroupText>Unofficial</span>
+                <input cFormControl cTooltip="Separate regex by ','.Roms fullpath match these Regex, Roms will set an unoffical." cTooltipPlacement="right"
+                       formControlName="formUnofficialPathRomPatterns"
+                       placeholder="regex"
+                       type="search" />
+              </c-input-group>
+            </c-col>
+          </c-row>
+          <c-row class="mt-3 mb-2 bg-light">
+            <c-col>
+              <h5 class="pt-2">Remote features</h5>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-form-check [switch]="true" sizing="xl">
+                <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveStates" />
+                <label cFormCheckLabel>Allow SaveStates</label>
+              </c-form-check>
+            </c-col>
+          </c-row>
+          <c-row>
+            <c-col>
+              <c-form-check [switch]="true" sizing="xl">
+                <input cFormCheckInput type="checkbox" formControlName="formAllowsSaveMemory" />
+                <label cFormCheckLabel>Allow Save Memory</label>
+              </c-form-check>
+            </c-col>
+          </c-row>
+        </div>
       </c-container>
    
 

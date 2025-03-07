@@ -88,6 +88,7 @@ export class ViewJobComponent implements OnInit, OnDestroy {
 
   @Input() jobtypefilter!: string;
   @Output() changeJobRunning = new EventEmitter<Boolean>();
+  @Output() JobFinished = new EventEmitter<string>();
 
   constructor(
     private misterSignalr: MisterSignalrService,
@@ -102,6 +103,12 @@ export class ViewJobComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
       this.subCurrentJob = this.managerJobScanRom$.subscribe((job: JobRomscan) => {
+        
+
+        if (this.currentJob != undefined && this.currentJob.state == "RUNNING" && job.state != this.currentJob.state) {
+          console.log('emit finished');
+          this.JobFinished.emit(job.state);
+        }
         this.currentJob = job
         this.jobRunning = job.state == "RUNNING";
         this.changeJobRunning.emit(this.jobRunning);
@@ -127,8 +134,15 @@ export class ViewJobComponent implements OnInit, OnDestroy {
         console.log(`[view-job] Timer tick ${val} `);
         this.subTimerJobrequest = this.querygamesservice.GetCurrentJob().subscribe(
           (job: JobRomscan) => {
-          this.currentJob = job;
-          console.log('[view - job] Timer receive job');
+
+            if (this.currentJob != undefined && this.currentJob.state == "RUNNING" && job.state != this.currentJob.state) {
+              console.log('emit finished');
+              this.JobFinished.emit(job.state);
+            }
+
+            this.currentJob = job;
+            console.log('[view - job] Timer receive job');
+
             this.jobRunning = job.state == "RUNNING";
             this.changeJobRunning.emit(this.jobRunning);
           if (this.jobRunning) {
@@ -139,11 +153,17 @@ export class ViewJobComponent implements OnInit, OnDestroy {
           }
           },
           error => {
-            console.log('[view-job] Timer Http ' + error)
+            //console.log('[view-job] Timer Http ' + error)
             this.closeTimer();
             if (this.currentJob) {
+              if (this.currentJob.state == "RUNNING") {
+                console.log('emit finished');
+                this.JobFinished.emit("DONE");
+              }
               this.currentJob.state = "DONE";
             }
+
+            
             //if (this.currentJob?.state == "RUNNING") {
             //  this.currentJob = undefined;
             //}           

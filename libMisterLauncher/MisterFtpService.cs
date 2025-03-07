@@ -267,6 +267,8 @@ namespace libMisterLauncher.Service
                         };
                         rom.SetFileName(i.FullName);
                         rom.SetMra(mrainfo);
+                        bool isunoffical = mrainfo.bootleg || mrainfo.homebrew || !CheckPaterns(new List<string> { "(hacks|homebrew|demo|_alternatives|unlicensed)" }, i.FullName);
+                        rom.official = !isunoffical;
                         rom.SetId();
                         return rom;
                     })
