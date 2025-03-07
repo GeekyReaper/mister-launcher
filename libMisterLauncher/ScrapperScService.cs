@@ -489,8 +489,9 @@ namespace libMisterLauncher.Service
 
         public async Task<JsonRequestResult> GetVideoGameFromRom(string romname, long size, int scSystem_id=0)
         {
-           
-            var p = string.Format("romnom={0}&romtaille={1}", System.Web.HttpUtility.UrlEncode(romname), size);
+
+            var p = string.Format("romnom={0}", System.Web.HttpUtility.UrlEncode(romname));
+                if (size>0) p+= string.Format("&romtaille ={0}",size);
             if (scSystem_id != 0)
             {
                 p += string.Format("&systemeid={0}", scSystem_id);

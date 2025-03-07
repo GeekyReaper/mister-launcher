@@ -934,10 +934,10 @@ namespace libMisterLauncher.Manager
 
         internal bool LinkRomToArcadeVideogame(Rom rom, GbdRomUpdateResult? romupdateresult = null, Action<JobLog>? log = null)
         {
-            if (rom.mraInfo == null || rom.mraInfo.romshierarchy.Count == 0)
+            if (rom.mraInfo == null) // || rom.mraInfo.romshierarchy.Count == 0)
             {
                 if (log != null)
-                    log(new JobLog("SC", "No roms hierarchy in MRA file", LogResult.FAILED));
+                    log(new JobLog("SC", "No MRA info", LogResult.FAILED));
                 return false;
             }
 
@@ -945,15 +945,27 @@ namespace libMisterLauncher.Manager
 
             JsonRequestResult response = null;
             int i = rom.mraInfo.romshierarchy.Count-1;
-            while ((response==null || !response.IsValid()) && i>=0)
+            while ((response==null || !response.IsValid()) && i>=-2)
             {
-                response = scrapperService.GetVideoGameFromRom(rom.mraInfo.romshierarchy[i], rom.size, 75).Result;  // 75 : Parent screen scrapper system id for Arcade
+                var name = "";
+                if (i == -2)
+                    name = rom.mraInfo.parent.Contains(".") ? rom.mraInfo.parent : rom.mraInfo.parent + ".zip";
+                if (i == -1)
+                    name = rom.mraInfo.parent.Contains(".") ? rom.mraInfo.rbf : rom.mraInfo.rbf + ".zip"; 
+                if (i >= 0)
+                    name = rom.mraInfo.romshierarchy[i];
+
+
+                response = scrapperService.GetVideoGameFromRom(name, i>=0 ? rom.size : 0, 75).Result;  // 75 : Parent screen scrapper system id for Arcade
                 rom.scrapperResult = response.HttpCode;
                 rom.responsetime = response.responsetime;
                 rom.parsingexception = response.parsingException;
 
+               
+
                 if (log != null)
                     log(new JobLog("SC", string.Format("Request takes {0}s and return {1}", response.responsetime, response.HttpCode), LogResult.INFO));
+                
 
                 // check system
                 if (response.IsValid())
@@ -988,10 +1000,18 @@ namespace libMisterLauncher.Manager
             }   
             
             if (response == null || !response.IsValid())
-            { // No Arcade SystemFound
-                rom.scrapperResult = 405;
+            { // No Arcade Game found
+                rom.scrapperResult = response == null ? 405 : response.HttpCode;
+                if (log != null)
+                {
+                    if (response == null)
+                        log(new JobLog("SC", string.Format("Error no Arcade System found"), LogResult.FAILED));
+                    else
+                        log(new JobLog("SC", string.Format("Game not Found", response.responsetime, response.HttpCode), LogResult.WARNING));
+                }
+                
                 var update = gamedbService.UpdateMatchRom(rom).Result;
-                return false;
+                    return false;
             }
 
             // Update ROM systemid

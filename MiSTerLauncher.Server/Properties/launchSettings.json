@@ -37,8 +37,8 @@
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080",
-        "GDB_MONGO_CNX_home": "mongodb://mathieu:nKU9Rh32eWwN@192.168.1.157:27017",
-        "GDB_MONGO_CNX": "mongodb://mathieu:nKU9Rh32eWwN@172.29.16.1:27017"
+        "GDB_MONGO_CNX": "mongodb://mathieu:nKU9Rh32eWwN@192.168.1.157:27017",
+        "GDB_MONGO_CNX_local": "mongodb://mathieu:nKU9Rh32eWwN@172.29.16.1:27017"
       },
       "publishAllPorts": true,
       "useSSL": true,
