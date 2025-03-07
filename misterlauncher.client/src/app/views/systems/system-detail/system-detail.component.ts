@@ -150,8 +150,7 @@ export class SystemDetailComponent implements OnInit, OnDestroy {
           systems: [this.id],
           pagesize: this.nbgames,
           limit: this.nbgames,
-          gameTypeExcluded: ["Sport / Golf", "Sport / Baseball", "Sport / Football Américain", "Sport / Hockey"],
-          minRating: 15,
+          gameTypeExcluded: ["Sport / Golf", "Sport / Baseball", "Sport / Football Américain", "Sport / Hockey"],          
           sortFields: [{
             field: "rating",
             isascending: false
