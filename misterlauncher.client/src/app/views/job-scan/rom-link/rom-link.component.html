@@ -40,6 +40,7 @@
                   <c-badge *ngIf="romInfo.scrapperResult == 202" color="success">Link</c-badge>
                   <c-badge *ngIf="romInfo.scrapperResult == 200" color="success">Link</c-badge>
                   <c-badge *ngIf="romInfo.scrapperResult == 404" color="secondary">Not Found</c-badge>
+                  <c-badge *ngIf="romInfo.scrapperResult == 405" color="danger">Error</c-badge>
                   <c-badge *ngIf="romInfo.scrapperResult == 429" color="danger">Exceed</c-badge>
                   <c-badge *ngIf="romInfo.scrapperResult == 409" color="light">Unlink</c-badge>
                   <!--{{romInfo.scrapperResult}}-->

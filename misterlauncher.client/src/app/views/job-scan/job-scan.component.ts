@@ -91,7 +91,8 @@ export class JobScanComponent implements OnInit, OnDestroy  {
     { value: '0', label: 'New', selected:true },
     { value: '404', label: 'Not found' },
     { value: '429', label: 'Exceed' },
-    { value: '409', label: 'Unlink'}
+    { value: '409', label: 'Unlink' },
+    { value: '405', label: 'Error' }
   ];
 
   selectedstatefilter: string[] = ["0"]

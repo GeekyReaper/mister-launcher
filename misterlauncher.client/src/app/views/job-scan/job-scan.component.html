@@ -101,8 +101,9 @@
                       <td>
                         <c-badge *ngIf="rom.scrapperResult == 0" color="info">New</c-badge>
                         <c-badge *ngIf="rom.scrapperResult == 202" color="success">Manual link</c-badge>
-                        <c-badge *ngIf="rom.scrapperResult == 200" color="warning">Error</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 200" color="success">Link</c-badge>
                         <c-badge *ngIf="rom.scrapperResult == 404" color="secondary">Not Found</c-badge>
+                        <c-badge *ngIf="rom.scrapperResult == 405" color="danger">Error</c-badge>
                         <c-badge *ngIf="rom.scrapperResult == 429" color="danger">Exceed</c-badge>
                         <c-badge *ngIf="rom.scrapperResult == 409" color="light">Manual unlink</c-badge>
                       </td>
