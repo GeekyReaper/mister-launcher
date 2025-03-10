@@ -14,8 +14,16 @@ export const routes: Routes = [
       title: 'Settings'
     },
     children: [
+      //{
+      //  path: 'settings',
+      //  component: MisterSettingsComponent,
+      //  pathMatch: 'full',
+      //  data: {
+      //    title: 'Settings'
+      //  }
+      //},
       {
-        path: 'settings',
+        path: ':tab',
         component: MisterSettingsComponent,
         pathMatch: 'full',
         data: {

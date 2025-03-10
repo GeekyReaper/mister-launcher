@@ -24,7 +24,7 @@ import { MisterstateColorPipe } from './pipe/misterstate-color.pipe';
 import { JobstateColorPipe } from './pipe/jobstate-color.pipe';
 import { MediaurlPipe } from './pipe/mediaurl.pipe';
 import { ApierrorComponent } from './views/pages/apierror/apierror.component';
-import { GuestAccessComponent } from './views/guest-access/GuestAccessComponent';
+import { GuestAccessComponent } from './views/guest-access/guest-access.component';
 import { MisterScriptComponent } from './views/mister-script/mister-script.component';
 
 @NgModule({

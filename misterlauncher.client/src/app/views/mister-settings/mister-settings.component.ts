@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, NgStyle, Location } from '@angular/common';
 import { cilGamepad, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilLaptop, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -43,6 +43,7 @@ import {
   CollapseDirective,
   FormSelectDirective,
   AlertComponent,
+  InputGroupComponent, InputGroupTextDirective
 } from '@coreui/angular';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
 import { ModuleSetting } from '../../services/models/module-setting'
@@ -68,7 +69,8 @@ import { AuthService } from '../../services/auth.service';
     BadgeComponent, CollapseDirective, FormSelectDirective, RouterLink, TableModule, IconDirective, TableDirective,
     ToastComponent, ToasterComponent, ToastHeaderComponent, ToastBodyComponent, ProgressComponent,
     BadgeModule, AlertComponent, SpinnerModule, SpinnerComponent,
-    MisterstateColorPipe],
+    MisterstateColorPipe,
+    InputGroupComponent, InputGroupTextDirective],
   providers: [IconSetService]
 })
 export class MisterSettingsComponent implements OnInit, OnDestroy {
@@ -111,17 +113,35 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
   public tooltipmsg: string = "";
   public tooltipmodulestate: string = "UNKNOW";
 
+  activeTab: string = "remote";
+
 
   public managercache$: Observable<ManagerCache> = this.misterSignalr.managerCacheRefresh$;
 
 
-  constructor(private misterSignalr: MisterSignalrService, private querygamesservice: QuerygamesService, public iconSet: IconSetService, private formBuilder: FormBuilder, private auth : AuthService) {
+  constructor(private route: ActivatedRoute,
+    private misterSignalr: MisterSignalrService,
+    private querygamesservice: QuerygamesService,
+    public iconSet: IconSetService,
+    private formBuilder: FormBuilder,
+    private auth: AuthService,
+    private location: Location) {
     
     iconSet.icons = {
       cilGamepad, cilLaptop, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed
     };
   }
   ngOnInit(): void {
+
+    this.route.params.subscribe(
+      params => {
+        const tab = params['tab'] != undefined && params['tab'] != "settings" ? params['tab'] : "remote" ;
+        this.activeTab = tab;        
+      });
+    
+
+    this.location.replaceState(`/mistersettings/${this.activeTab}`);
+
 
     this.subscriptionCache = this.managercache$.subscribe((w: ManagerCache) => {
 
@@ -290,8 +310,12 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     this.tooltipmodulename = healthcheck.name;
     this.tooltipmodulestate = healthcheck.misterState;
     this.tooltipmsg = healthcheck.message ? healthcheck.message : "Success";
-  
+  }
 
+  tabChange(event: any): void {
+
+    this.activeTab = event as string;
+    this.location.replaceState(`/mistersettings/${this.activeTab}`);
 
   }
 }

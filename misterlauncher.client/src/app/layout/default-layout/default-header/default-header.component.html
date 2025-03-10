@@ -77,7 +77,7 @@
       </li>
 
       <li *ngFor="let module of mcache?.health?.moduleHealthchecks" style="width: 250px">
-        <a cDropdownItem routerLink="">
+        <a cDropdownItem routerLink="{{getSettingsurl(module.name)}}">
           <svg *ngIf="module.name=='MisterRemote'" cIcon name="cilCast" class="me-2"></svg>
           <svg *ngIf="module.name=='MongoDb'" cIcon name="cilBook" class="me-2"></svg>
           <svg *ngIf="module.name=='MisterFtp'" cIcon name="cilFile" class="me-2"></svg>

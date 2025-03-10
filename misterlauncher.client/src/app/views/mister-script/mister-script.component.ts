@@ -111,8 +111,14 @@ export class MisterScriptComponent implements OnInit, OnDestroy {
       this.subGetScript?.unsubscribe();
     });
 
-    // Check every 5s
-    this.subTimerGetScript = interval(500).subscribe(() => {
+    this.launchautomaticrefresh();
+
+  }
+
+  launchautomaticrefresh(): void {
+    this.subTimerGetScript?.unsubscribe();
+
+    this.subTimerGetScript = interval(5000).subscribe(() => {
       if (!this.scriptinfo.canLaunch) {
         this.subGetScript = this.querygamesservice.GetScripts().subscribe((r: ScriptsResult) => {
           this.scriptinfo = r;
@@ -120,7 +126,6 @@ export class MisterScriptComponent implements OnInit, OnDestroy {
         });
       }
     })
-
   }
 
 
@@ -128,7 +133,10 @@ export class MisterScriptComponent implements OnInit, OnDestroy {
     if (this.scriptinfo.canLaunch) {
       this.subExecuteScript = this.querygamesservice.ExecuteScript(name, false).subscribe((b:Boolean) => {
         if (b) {
-          this.scriptinfo.canLaunch = false;         
+          this.scriptinfo.canLaunch = false;
+          // reset timer          
+          this.launchautomaticrefresh()          
+          
         }
       });
     }

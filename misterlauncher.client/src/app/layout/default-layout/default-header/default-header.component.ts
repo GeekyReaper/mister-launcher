@@ -117,7 +117,24 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit, O
       });
 
       
+  }
+
+  getSettingsurl(modulename: string) : string {
+    switch (modulename) {
+      case "MisterRemote":
+        return "/mistersettings/remote";
+      case "MisterFtp":
+        return "/mistersettings/ftp";
+      case "MisterMedia":
+        return "/mistersettings/media";
+      case "ScreenScrapper":
+        return "/mistersettings/screenscrapper";
+      case "MisterAuth":
+        return "/mistersettings/auth";
+
     }
+    return "/mistersettings/settings";
+  }
 
   
 
