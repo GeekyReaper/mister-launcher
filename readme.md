@@ -14,7 +14,7 @@ This project aims to facilitate the use of [MisterFPGA](https://mister-devel.git
 - MongoDB 4.0 or higher (compatibility with 4.0 allows hosting the MongoDB database on a NAS)
 
 ## Docker Hosting
-**DockerHub** => [https://hub.docker.com/repository/docker/geekyreaper/misterlauncherserver/](https://hub.docker.com/repository/docker/geekyreaper/misterlauncherserver/)
+**DockerHub** => [https://hub.docker.com/r/geekyreaper/misterlauncherserver/](https://hub.docker.com/r/geekyreaper/misterlauncherserver/)
 
 Example of Docker Compose:
 
@@ -31,12 +31,14 @@ services:
       - PGID=100
       - TZ=Europe/Paris
       - ASPNETCORE_HTTP_PORTS=8080
-      - GDB_MONGO_CNX=mongodb://...
+      - GDB_MONGO_CNX=mongodb://servicename
     volumes:
       - /...:/data:rw
     restart: unless-stopped
 ```
-**Important**: Create a volume to persist the media retrieved from the ScreenScrapper site.
+**Important**: 
+- The image does not contain the and it should be defined as a second service
+- Create a volume to persist the media retrieved from the ScreenScrapper site.
 
 ## Initialization
 
