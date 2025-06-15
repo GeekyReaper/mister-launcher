@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
 ```
 **Important**: 
-- The image does not contain the and it should be defined as a second service
+- The image does not contain mongodb, it should be defined as a second sesrvice.
 - Create a volume to persist the media retrieved from the ScreenScrapper site.
 
 ## Initialization
