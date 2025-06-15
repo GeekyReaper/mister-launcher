@@ -42,10 +42,10 @@ services:
 
 ## Initialization
 
-- STEP 1: Configure the modules; they must all be operational.
-- STEP 2: Scan the Systems (Console and Arcade).
-- STEP 3: Scan the ROMs for each System. Traverse the directory tree of the GAMES directory present on the SD card or connected USB drives.
-- STEP 4: Associate the ROMs with VideoGames from the ScreenScrapper database. This step retrieves the information and media.
+- STEP 1: Go to "Settings" and setup all modules. Don't forget to turn on your mister. They must all be operational.
+- STEP 2: Go to "Scan," select tab "Systems" and launch "Scan System".
+- STEP 3: Go to "Scan," select tab "Rom", pick a system or "All system", then launch "Scan Rom". The first full scan will be very long. The automatic process will check all Games repositories on the SD card and on connected USB drives.
+- STEP 4: Go to "Matching", select tab "Automatic", pick a system or "All system". The first full scan will be very long.
 
 ## Screenshots
 
