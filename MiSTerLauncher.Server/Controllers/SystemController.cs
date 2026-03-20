@@ -1,6 +1,7 @@
 ﻿using apiGameDb.Models;
 using libMisterLauncher.Entity;
 using libMisterLauncher.Manager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiSTerLauncher.Server.HostedService;
 
@@ -18,7 +19,7 @@ namespace MiSTerLauncher.Server.Controllers
             _misterManager = hostedService.manager;
         }
 
-        [HttpPost("search")]       
+        [HttpPost("search")]
         public async Task<ActionResult<SystemSearchResult>> Search(GameSystemSearch search)
         {
             var result = await _misterManager.GetSystemResult(search);
@@ -37,6 +38,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("updatesettings")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<SystemDb>> UpdateSettings(SystemDb system)
         {
             var result = await _misterManager.UpdateSettingsSystem(system);
@@ -55,6 +57,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpGet("scan")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> Scan()
         {
             var result = _misterManager.AutomaticScanSystems();

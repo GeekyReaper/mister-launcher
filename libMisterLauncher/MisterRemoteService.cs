@@ -1,6 +1,5 @@
-﻿using libMisterLauncher.Entity;
+using libMisterLauncher.Entity;
 using libMisterLauncher.Manager;
-using MongoDB.Driver.Core.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,15 +11,11 @@ using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using ZstdSharp.Unsafe;
-using static System.Net.WebRequestMethods;
-using ThirdParty.Json.LitJson;
 using System.Text.Json;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Text.Json.Nodes;
 using System.Net.WebSockets;
-using System.Web;
 using System.Text.RegularExpressions;
 
 [assembly: InternalsVisibleTo("MisterLauncher.Test")]
@@ -28,7 +23,7 @@ namespace libMisterLauncher.Service
 {
 
     public delegate void GamePlaying (RemoteServiceCurrentGame currentGame);
-    
+
     public class RemoteServiceSettings : IMisterSettings
     {
         const string _moduleName = "MisterRemote";
@@ -36,12 +31,12 @@ namespace libMisterLauncher.Service
         public string ModuleName { get { return _moduleName; } }
         public string host { get; set; } = "";
 
-       
-       
+
+
         public bool isValid()
         {
             return !string.IsNullOrEmpty(host);
-        }       
+        }
 
         public List<ModuleSetting> GetModuleSettings()
         {
@@ -71,7 +66,8 @@ namespace libMisterLauncher.Service
     }
 
     internal class MisterRemoteService : BaseModule<RemoteServiceSettings>
-    {      
+    {
+        private HttpClient _httpClient = new HttpClient();
 
         public event GamePlaying? OnGamePlaying;
 
@@ -96,9 +92,29 @@ namespace libMisterLauncher.Service
         }
         public MisterRemoteService(RemoteServiceSettings settings) : base(settings)
         {
+            RebuildHttpClient();
         }
 
-        
+        public override void LoadSettings(IMisterSettings settings)
+        {
+            base.LoadSettings(settings);
+            RebuildHttpClient();
+        }
+
+        private void RebuildHttpClient()
+        {
+            if (!_settings.isValid())
+                return;
+            _httpClient.Dispose();
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(_settings.host),
+                Timeout = TimeSpan.FromSeconds(5)
+            };
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "MisterLauncher");
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
 
 
         public GameAction GetGameLaunchCommand(Game g, SystemDb? system)
@@ -121,12 +137,12 @@ namespace libMisterLauncher.Service
         }
 
         public override bool CheckConnection()
-        {           
+        {
             var systems = GetRequest("api/systems").Result;
             var result = systems != null && systems.IsValid();
             if (result && !websocketIsOperational)
-            { // Open and listen WebSocket                
-                    clientWebSocketTask = ConnectAndListenToRemoteWebSocket(new Uri(string.Format("{0}/api/ws", _settings.host.Replace("http://", "ws://"))));                
+            { // Open and listen WebSocket
+                    clientWebSocketTask = ConnectAndListenToRemoteWebSocket(new Uri(string.Format("{0}/api/ws", _settings.host.Replace("http://", "ws://"))));
             }
             if (!result)
             {
@@ -137,7 +153,7 @@ namespace libMisterLauncher.Service
             }
 
             return result;
-           
+
         }
 
         #region WebSocket REMOTE
@@ -150,7 +166,7 @@ namespace libMisterLauncher.Service
             clientWebSocket = new ClientWebSocket();
             await clientWebSocket.ConnectAsync(serverUri, CancellationToken.None);
 
-            Console.WriteLine("Connected to the server. Start sending messages...");            
+            Console.WriteLine("Connected to the server. Start sending messages...");
 
             while (clientWebSocket.State == WebSocketState.Open)
             {
@@ -174,7 +190,7 @@ namespace libMisterLauncher.Service
                                 _lastCurrentGame = currentgame;
                                 _lastPlayingGameSend = DateTime.Now;
                             }
-                           
+
                         }
                     }
                 }
@@ -186,14 +202,14 @@ namespace libMisterLauncher.Service
             {
                 if (!websocketIsOperational)
                     return;
-                
+
                 foreach (var msg in cmds)
                 {
                         ArraySegment<byte> sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(msg));
                         clientWebSocket.SendAsync(sendBuffer, WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
-                        Thread.Sleep(delay);                        
+                        Thread.Sleep(delay);
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -214,7 +230,7 @@ namespace libMisterLauncher.Service
                     if (OnGamePlaying != null)
                     {
                         var currentgame = extractCurrentgameInfo(receivedMessage);
-                        if (currentgame != null) 
+                        if (currentgame != null)
                             OnGamePlaying(currentgame);
                     }
                 }
@@ -225,7 +241,7 @@ namespace libMisterLauncher.Service
         {
             // Filter message
             if (!message.StartsWith("gameRunning") && !message.StartsWith("coreRunning"))
-            {                
+            {
                 return null;
             }
             var match = Regex.Match(message, @"gameRunning:(?<systemname>.+)\/(?<gamename>.*)\.(?<extension>\w+)");
@@ -245,7 +261,7 @@ namespace libMisterLauncher.Service
             {
                 return new RemoteServiceCurrentGame()
                 {
-                    core = match.Groups["corename"].Value                   
+                    core = match.Groups["corename"].Value
                 };
             }
 
@@ -258,30 +274,21 @@ namespace libMisterLauncher.Service
         internal async Task<JsonRequestResult> GetRequest(string action, string parameters = "")
         {
             var result = new JsonRequestResult();
-            using (var client = new HttpClient())
+            try
             {
-                try
-                {
-                    client.BaseAddress = new Uri(_settings.host);
-                    client.DefaultRequestHeaders.Add("User-Agent", "MisterLauncher");
-                    client.Timeout = new TimeSpan(0, 0, 5);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    Stopwatch watch = new Stopwatch();
-                    watch.Start();
-                    var response = await client.GetAsync(action + (string.IsNullOrEmpty(parameters) ? "" : "?" + parameters));
-                    watch.Stop();
-                    result.responsetime = (int)watch.Elapsed.TotalMilliseconds;
-                    result.HttpCode = (int)response.StatusCode;
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                        return result;
-                    var jsonData = await response.Content.ReadAsStringAsync();
-                   
-                        result.json = JsonNode.Parse(jsonData);
-                }
-                catch (Exception ex)
-                {
-                    result.parsingException = ex.Message;
-                }
+                var stopwatch = Stopwatch.StartNew();
+                var response = await _httpClient.GetAsync(action + (string.IsNullOrEmpty(parameters) ? "" : "?" + parameters));
+                stopwatch.Stop();
+                result.responsetime = (int)stopwatch.Elapsed.TotalMilliseconds;
+                result.HttpCode = (int)response.StatusCode;
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                    return result;
+                var jsonData = await response.Content.ReadAsStringAsync();
+                result.json = JsonNode.Parse(jsonData);
+            }
+            catch (Exception ex)
+            {
+                result.parsingException = ex.Message;
             }
 
             return result;
@@ -290,15 +297,11 @@ namespace libMisterLauncher.Service
         public async Task<bool> LaunchGame(string path, SystemDb? systemdb = null)
         {
             if (_health.MisterState != MisterStateEnum.OK) return false;
-           
 
             if ((systemdb != null) && (path.EndsWith(".zip") && !string.IsNullOrEmpty(systemdb.extensions)))
             { // Complete ZIP
-                path =  path + "/" + path.Split("/").Last().Replace(".zip", ".") + systemdb.extensions.Split(',').First();
-            
+                path = path + "/" + path.Split("/").Last().Replace(".zip", ".") + systemdb.extensions.Split(',').First();
             }
-            var httpclient = new HttpClient();
-            httpclient.BaseAddress = new Uri(_settings.host);
 
             var request = new HttpRequestMessage(new HttpMethod("POST"), "api/games/launch");
             request.Headers.TryAddWithoutValidation("content-type", "application/json");
@@ -306,26 +309,22 @@ namespace libMisterLauncher.Service
                                     Encoding.UTF8,
                                     "application/json");
 
-            var response = await httpclient.SendAsync(request);
-            var result = response.StatusCode == HttpStatusCode.OK;
-            return (response.StatusCode == HttpStatusCode.OK);
+            var response = await _httpClient.SendAsync(request);
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
 
 
-        public async Task<bool> KeyboardCommand(List<string>cmds, bool raw, int delay)
+        public async Task<bool> KeyboardCommand(List<string> cmds, bool raw, int delay)
         {
             if (_health.MisterState != MisterStateEnum.OK) return false;
             bool result = true;
-            for (int i=0; i<cmds.Count; i++)
+            for (int i = 0; i < cmds.Count; i++)
             {
-                var httpclient = new HttpClient();
-                httpclient.BaseAddress = new Uri(_settings.host);
-
                 var request = new HttpRequestMessage(new HttpMethod("POST"), string.Format("{0}/{1}", raw ? "api/controls/keyboard-raw" : "api/controls/keyboard", cmds[i]));
                 request.Headers.TryAddWithoutValidation("content-type", "application/json");
-                var response = await httpclient.SendAsync(request);
-                result = result &&  response.StatusCode == HttpStatusCode.OK;
+                var response = await _httpClient.SendAsync(request);
+                result = result && response.StatusCode == HttpStatusCode.OK;
                 if (cmds.Count > 0 && i < cmds.Count - 1)
                 {
                     Thread.Sleep(delay);
@@ -336,7 +335,7 @@ namespace libMisterLauncher.Service
 
         public async Task<RemoteServiceCurrentGame?> CurrentGame()
         {
-            return await GetJsonDeserialize<RemoteServiceCurrentGame>("api/games/playing");            
+            return await GetJsonDeserialize<RemoteServiceCurrentGame>("api/games/playing");
         }
 
         public async Task<List<RemoteServiceMenuItem>> GetArcadeMrafile()
@@ -354,63 +353,49 @@ namespace libMisterLauncher.Service
         {
             if (_health.MisterState != MisterStateEnum.OK) return false;
 
-
-            var httpclient = new HttpClient();
-            httpclient.BaseAddress = new Uri(_settings.host);
-
             var request = new HttpRequestMessage(new HttpMethod("POST"), "api/scripts/launch/" + filename);
-            request.Headers.TryAddWithoutValidation("content-type", "application/json");            
+            request.Headers.TryAddWithoutValidation("content-type", "application/json");
 
-            var response = await httpclient.SendAsync(request);
-            var result = response.StatusCode == HttpStatusCode.OK;
-            return (response.StatusCode == HttpStatusCode.OK);
+            var response = await _httpClient.SendAsync(request);
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         public async Task<List<RemoteServiceSystem>> GetSystems()
         {
-            return await GetJsonDeserialize<List<RemoteServiceSystem>>("api/systems");           
+            return await GetJsonDeserialize<List<RemoteServiceSystem>>("api/systems");
         }
 
         internal async Task<T> GetJsonDeserialize<T>(string getparameters) where T : new()
         {
             var item = new T();
             if (_health.MisterState != MisterStateEnum.OK) return item;
-            using (var client = new HttpClient())
+            var response = await _httpClient.GetAsync(getparameters);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                client.BaseAddress = new Uri(_settings.host);
-                client.DefaultRequestHeaders.Add("User-Agent", "MisterLauncher");
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = await client.GetAsync(getparameters);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var jsonData = await response.Content.ReadAsStringAsync();
-                    item = JsonSerializer.Deserialize<T>(jsonData);
-                }
+                var jsonData = await response.Content.ReadAsStringAsync();
+                item = JsonSerializer.Deserialize<T>(jsonData);
             }
             return item;
         }
+
         internal async Task<T> PostJsonDeserialize<T>(string action, StringContent content) where T : new()
         {
             var result = new T();
             if (_health.MisterState != MisterStateEnum.OK) return result;
-            using (var client = new HttpClient())
+            var request = new HttpRequestMessage(new HttpMethod("POST"), action);
+            request.Headers.TryAddWithoutValidation("content-type", "application/json");
+            request.Content = content;
+            var response = await _httpClient.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                var request = new HttpRequestMessage(new HttpMethod("POST"), string.Format("{0}/{1}", _settings.host, action));
-                request.Headers.TryAddWithoutValidation("content-type", "application/json");
-                request.Content = content;
-                var response = await client.SendAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var jsonData = await response.Content.ReadAsStringAsync();//  .ReadAsAsync<RemoteServiceCurrentGame>().Result;
-                    result = JsonSerializer.Deserialize<T>(jsonData);
-                }
+                var jsonData = await response.Content.ReadAsStringAsync();
+                result = JsonSerializer.Deserialize<T>(jsonData);
             }
             return result == null ? new T() : result;
         }
 
         internal async Task<List<RemoteServiceMenuItem>> GetMenuItem(string path)
         {
-            //var result = new List<RemoteServiceMenuItem>();
             var itemlist = await PostJsonDeserialize<RemoteServiceMenuListItem>("api/menu/view", new StringContent("{\"path\" : \"" + path + "\"}",
                                         Encoding.UTF8,
                                         "application/json"));
@@ -430,33 +415,6 @@ namespace libMisterLauncher.Service
         internal void websocket (List<string> cmds, int delay=100)
         {
             SendCommandsToremoteWebSocket(cmds, delay);
-            return;
-            try
-            {
-                using (var ws = new ClientWebSocket())
-                {
-                    ws.ConnectAsync(new Uri("ws://192.168.1.100:8182/api/ws"), CancellationToken.None).Wait();
-
-                    // var msgs = new List<string> { "kbdRawDown:56", "kbdRawDown:59", "kbdRawUp:59", "kbdRawUp:56" };
-                    foreach (var msg in cmds)
-                    {
-                        ArraySegment<byte> sendBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(msg));
-                        ws.SendAsync(sendBuffer, WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
-                        Thread.Sleep(delay);
-                    }
-
-
-
-                    Console.Write("Closing ...");
-                    ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None).Wait();
-                    Console.WriteLine("OK");
-
-
-                }
-            }
-            catch (Exception)
-            {
-            }
         }
 
         #region Screenshots
@@ -468,16 +426,11 @@ namespace libMisterLauncher.Service
         public async Task<bool> TakeScreenshot()
         {
             if (_health.MisterState != MisterStateEnum.OK) return false;
-            bool result = true;
-           
-            var httpclient = new HttpClient();
-            httpclient.BaseAddress = new Uri(_settings.host);
 
             var request = new HttpRequestMessage(new HttpMethod("POST"), "api/screenshots");
             request.Headers.TryAddWithoutValidation("content-type", "application/json");
-            var response = await httpclient.SendAsync(request);
-            result = result && response.StatusCode == HttpStatusCode.OK;
-            return result;
+            var response = await _httpClient.SendAsync(request);
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         public string ScreenshootUrl(RemoteScreenshotsInfo sc)
@@ -488,18 +441,10 @@ namespace libMisterLauncher.Service
         public async Task<bool> DeleteScreenshot (RemoteScreenshotsInfo sc)
         {
             if (_health.MisterState != MisterStateEnum.OK) return false;
-            bool result = true;
-
-            var httpclient = new HttpClient();
-            //httpclient.BaseAddress = new Uri(_settings.host);
-            var response = await httpclient.DeleteAsync(ScreenshootUrl(sc));
-
-            //var request = new HttpRequestMessage(new HttpMethod("DELETE"), string.Format("/api/screenshots/{1}/{2}", sc.core, sc.filename));
-            //var response = await httpclient.SendAsync(request);
-            result = result && response.StatusCode == HttpStatusCode.OK;
-            return result;
+            var response = await _httpClient.DeleteAsync(string.Format("api/screenshots/{0}/{1}", sc.core, sc.filename));
+            return response.StatusCode == HttpStatusCode.OK;
         }
-    
+
         #endregion
 
     }

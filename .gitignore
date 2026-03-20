@@ -361,6 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# VSCode launch settings (peuvent contenir des credentials)
+.vscode/
+
+# Données locales persistantes (médias, clé JWT, etc.)
+data/
 /MisterLauncher.Test/MisterLauncher.Test.csproj
 /MisterLauncher.Test/Settings.cs
 /MisterLauncher.Test/UnitTestAuthService.cs

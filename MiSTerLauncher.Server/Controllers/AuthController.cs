@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,8 +9,6 @@ using apiGameDb.Models;
 using libMisterLauncher.Manager;
 using MiSTerLauncher.Server.HostedService;
 using libMisterLauncher.Entity;
-using MongoDB.Driver.Linq;
-using System.Diagnostics.Eventing.Reader;
 
 namespace MiSTerLauncher.Server.Controllers
 {
@@ -32,10 +28,9 @@ namespace MiSTerLauncher.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginModel loginmodel)
+        public ActionResult Login([FromBody] LoginModel loginmodel)
         {
             ActionResult response = Unauthorized();
-              
 
             if (_misterManager.AuthorisationIsrequired() && _misterManager.CheckAdminPassword(loginmodel.password))
             {
@@ -51,10 +46,9 @@ namespace MiSTerLauncher.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("loginwithoutauthentication")]
-        public async Task<ActionResult> LoginWithoutAuthentication()
+        public ActionResult LoginWithoutAuthentication()
         {
             ActionResult response = Unauthorized();
-
 
             if (!_misterManager.AuthorisationIsrequired())
             {
@@ -70,40 +64,32 @@ namespace MiSTerLauncher.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("requestguestaccess")]
-        public async Task<ActionResult<GuestAccess>> RequestGuestAccess(GuestAccessParams parameters)
+        public ActionResult<GuestAccess> RequestGuestAccess(GuestAccessParams parameters)
         {
             if (!_misterManager.AuthorisationIsrequired())
-            {
                 return BadRequest();
-            }
 
             var request = _misterManager.GenerateGuessAccess(parameters.signature);
-            if (request== null)
-            {
+            if (request == null)
                 return NotFound();
-            }
 
-            return Ok(request);            
+            return Ok(request);
         }
 
         [AllowAnonymous]
         [HttpPost("guestaccessstate")]
-        public async Task<ActionResult<GuestAccessState>> GuestAccessState(GuestAccessCodeParams parameters)
+        public ActionResult<GuestAccessState> GuestAccessState(GuestAccessCodeParams parameters)
         {
             if (!_misterManager.AuthorisationIsrequired())
-            {
                 return BadRequest();
-            }
 
-            return Ok(_misterManager.GuestAccessState(parameters.code));           
+            return Ok(_misterManager.GuestAccessState(parameters.code));
         }
 
         [AllowAnonymous]
         [HttpPost("guestaccessconsumed")]
-        public async Task<ActionResult> GuestAccessConsume(GuestAccessConsumeParams parameters)
+        public ActionResult GuestAccessConsume(GuestAccessConsumeParams parameters)
         {
-            
-
             if (_misterManager.AuthorisationIsrequired() && _misterManager.ConsumedGuestAccess(parameters.code, parameters.key))
             {
                 var claims = new[] {
@@ -116,16 +102,16 @@ namespace MiSTerLauncher.Server.Controllers
             return Unauthorized();
         }
 
-        [Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         [HttpGet("guestaccesscurrent")]
-        public async Task<ActionResult<List<GuestAccess>>> GuestAccessCurrent()
+        public ActionResult<List<GuestAccess>> GuestAccessCurrent()
         {
             return Ok(_misterManager.GetCurrentGuestAccess());
         }
 
         [Authorize(Roles = "admin")]
         [HttpPost("guestaccessaction")]
-        public async Task<ActionResult<bool>> GuestAccessAction(GuestAccessActionParams parameters)
+        public ActionResult<bool> GuestAccessAction(GuestAccessActionParams parameters)
         {
             return Ok(_misterManager.ApprouvedGuestAccess(parameters.approuved, parameters.code));
         }

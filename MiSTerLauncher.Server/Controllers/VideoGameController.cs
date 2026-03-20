@@ -66,18 +66,21 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("unlinkrom")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<VideoGameDb>> UnlinkRom(RomActionPost parameters)
         {
             var result = await _misterManager.RomActionRomForVideogame(parameters.videogameid, parameters.romid, libMisterLauncher.Service.RomAction.UNLINK);
             return result != null ? Ok(result) : NotFound();
         }
         [HttpPost("linkrom")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<VideoGameDb>> LinkRom(RomActionPost parameters)
         {
             var result = await _misterManager.RomActionRomForVideogame(parameters.videogameid, parameters.romid, libMisterLauncher.Service.RomAction.LINK);
             return result != null ? Ok(result) : NotFound();
         }
         [HttpPost("setprimaryrom")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<VideoGameDb>> SetPrimaryRom(RomActionPost parameters)
         {
             var result = await _misterManager.RomActionRomForVideogame(parameters.videogameid, parameters.romid, libMisterLauncher.Service.RomAction.SETPRIMARY);
@@ -85,6 +88,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("delete")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> Delete(BodyIdPost parameters)
         {
             var result = await _misterManager.DeleteVideoGame(parameters.Id);
@@ -92,6 +96,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("updatesettings")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<SystemDb>> UpdateSettings(VideoGameDb videogame)
         {
             var result = await _misterManager.UpdateSettingsVideogame(videogame);
@@ -101,6 +106,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("searchvideogamefromscrapper")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<List<VideoGameDb>>> SearchVideoGameFromScrapper(VideoGameSearchFromScrapperPost parameters)
         {
             var result = await _misterManager.SearchScrapperVideoGameFromSearchName(parameters.searchName, parameters.systemid);
@@ -108,6 +114,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("searchvideogamefromromid")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<VideoGameDb>> SearchVideoGameFromRomId(BodyIdPost parameters)
         {
             var result = await _misterManager.SearhVideogameByRomid(parameters.Id);

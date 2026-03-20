@@ -1,6 +1,7 @@
 ﻿using apiGameDb.Models;
 using libMisterLauncher.Entity;
 using libMisterLauncher.Manager;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MiSTerLauncher.Server.HostedService;
@@ -9,6 +10,7 @@ namespace MiSTerLauncher.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "admin")]
     public class RomController : ControllerBase
     {
         private MisterManager _misterManager;

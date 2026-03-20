@@ -3,6 +3,7 @@ using libMisterLauncher.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -257,8 +258,18 @@ namespace libMisterLauncher
 
         }
 
+        public static string HashPassword(string password)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            return Convert.ToHexString(bytes).ToLower();
+        }
+
         public bool CheckAdminPassword (string password)
         {
+            // Comparaison avec le hash (nouveau format)
+            if (_settings.adminpassword == HashPassword(password))
+                return true;
+            // Rétrocompatibilité plain text — à retirer après migration
             return _settings.adminpassword == password;
         }
 

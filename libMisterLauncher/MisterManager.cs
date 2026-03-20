@@ -2193,6 +2193,14 @@ namespace libMisterLauncher.Manager
             if (settings == null || settings.Count == 0)
             { return false; }
 
+            // Hasher le mot de passe admin avant de le stocker
+            if (settings[0].moduleName == "MisterAuth")
+            {
+                var passwordSetting = settings.FirstOrDefault(s => s.name == "adminpassword");
+                if (passwordSetting != null && !string.IsNullOrEmpty(passwordSetting.value))
+                    passwordSetting.value = MisterAuthService.HashPassword(passwordSetting.value);
+            }
+
             var result = await gamedbService.SetModuleSettings(settings);
             if (result)
             { // Reload module

@@ -137,92 +137,101 @@ namespace libMisterLauncher.Service
             var result = new List<string>();
             var initialmediapath = "/media/";
             var rompath = "games";
-
             bool localConnection = conn == null;
+            FtpClient? localConn = null;
 
             if (localConnection)
             {
-                conn = new FtpClient(_settings.host, _settings.user, _settings.password);
-                conn.Connect();
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
             }
-           
-                
-            foreach (var sourcepath in conn.GetListing(initialmediapath))
+
+            try
             {
-                if (sourcepath.Type == FtpObjectType.Directory)
+                foreach (var sourcepath in conn.GetListing(initialmediapath))
                 {
-                    if (Regex.IsMatch(sourcepath.Name, "^fat") || Regex.IsMatch(sourcepath.Name, @"^usb\d+"))
-                    { // Check if sourcepath contains rompath
-                        foreach (var subitem in conn.GetListing(initialmediapath + sourcepath.Name))
-                        {
-                            if (subitem.Type == FtpObjectType.Directory && subitem.Name == rompath)
+                    if (sourcepath.Type == FtpObjectType.Directory)
+                    {
+                        if (Regex.IsMatch(sourcepath.Name, "^fat") || Regex.IsMatch(sourcepath.Name, @"^usb\d+"))
+                        { // Check if sourcepath contains rompath
+                            foreach (var subitem in conn.GetListing(initialmediapath + sourcepath.Name))
                             {
-                                result.Add(initialmediapath + sourcepath.Name + "/" + rompath + "/");
+                                if (subitem.Type == FtpObjectType.Directory && subitem.Name == rompath)
+                                {
+                                    result.Add(initialmediapath + sourcepath.Name + "/" + rompath + "/");
+                                }
                             }
                         }
                     }
-                }   
-        }
-                
-            if (localConnection)
-            {
-                conn.Disconnect();
-                conn.Dispose();
+                }
             }
-            
+            finally
+            {
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
+            }
+
             return result;
         }
 
         public List<Rom> GetConsoleRoms (SystemDb system, List<string>? availableRomPath = null, FtpClient? conn = null)
         {
             bool localConnection = conn == null;
-            
+            FtpClient? localConn = null;
 
             if (localConnection)
             {
-                conn = new FtpClient(_settings.host, _settings.user, _settings.password);
-                conn.Connect();
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
             }
 
-            if (availableRomPath == null)
-                availableRomPath = GetAvailableRomPath(conn);
-            var result = new List<Rom>();
+            try
+            {
+                if (availableRomPath == null)
+                    availableRomPath = GetAvailableRomPath(conn);
 
-            if (availableRomPath.Count == 0)
+                var result = new List<Rom>();
+
+                if (availableRomPath.Count == 0)
+                    return result;
+
+                foreach (var rompath in availableRomPath)
+                {
+                    result.AddRange(
+                        conn.GetListing(rompath + system.gamepath, FtpListOption.Recursive)
+                        .Where(i => i.Type == FtpObjectType.File && ValidRomExtension(i.Name, system.GetAllowExtensions()) && CheckPaterns(system.GetExcludeRomPaterns(), i.Name))
+                        .Select(i => MapToConsoleRom(i, system)));
+                }
+
                 return result;
-
-            
-            foreach (var rompath in availableRomPath)
-            {
-                result.AddRange(
-                    conn.GetListing(rompath + system.gamepath, FtpListOption.Recursive)
-                    .Where(i => i.Type == FtpObjectType.File && ValidRomExtension(i.Name, system.GetAllowExtensions()) && CheckPaterns(system.GetExcludeRomPaterns(), i.Name))
-                    .Select(i => MapToConsoleRom(i, system)));
             }
-            
-            if (localConnection)
+            finally
             {
-                conn.Disconnect();
-                conn.Dispose();
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
             }
-
-            return result;
         }
 
         public bool DeleteFile (string filepath)
         {
-            var ftp = CreateConnection();
+            using var ftp = CreateConnection();
             try
             {
                 ftp.DeleteFile(filepath);
+                return true;
             }
             catch (Exception)
             {
                 return false;
             }
-
-            return true;
-            
         }
 
         internal bool CheckPaterns (List<string> paterns, string input)
@@ -242,22 +251,24 @@ namespace libMisterLauncher.Service
         public List<Rom> GetArcadeRoms(FtpClient? conn = null)
         {
             bool localConnection = conn == null;
-
+            FtpClient? localConn = null;
 
             if (localConnection)
             {
-                conn = new FtpClient(_settings.host, _settings.user, _settings.password);
-                conn.Connect();
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
             }
 
-            var result = new List<Rom>();           
-          
+            try
+            {
+                var result = new List<Rom>();
 
-              result.AddRange(
+                result.AddRange(
                     conn.GetListing("/media/fat/_Arcade/", FtpListOption.Recursive)
                     .Where(i => i.Type == FtpObjectType.File && i.Name.EndsWith(".mra"))
-            .Select(i =>
-            {
+                    .Select(i =>
+                    {
                         var mrainfo = GetArcadeMraInfo(i.FullName, conn);
                         var rom = new Rom()
                         {
@@ -271,71 +282,78 @@ namespace libMisterLauncher.Service
                         rom.official = !isunoffical;
                         rom.SetId();
                         return rom;
-                    })
-                    );
+                    }));
 
-          
-
-            if (localConnection)
-            {
-                conn.Disconnect();
-                conn.Dispose();
+                return result;
             }
-
-            return result;
+            finally
+            {
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
+            }
         }
 
         public MraInfo GetArcadeMraInfo (string mrafullpath, FtpClient? conn = null)
         {
             bool localConnection = conn == null;
-            var result = new MraInfo();
+            FtpClient? localConn = null;
 
             if (localConnection)
             {
-                conn = new FtpClient(_settings.host, _settings.user, _settings.password);
-                conn.Connect();
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
             }
 
-
-            if (conn.DownloadBytes(out byte[] bytes, mrafullpath))
+            try
             {
-                string mracontents = Encoding.UTF8.GetString(bytes);
-               result = ExtractMraInfo(mracontents);
+                var result = new MraInfo();
+                if (conn.DownloadBytes(out byte[] bytes, mrafullpath))
+                {
+                    string mracontents = Encoding.UTF8.GetString(bytes);
+                    result = ExtractMraInfo(mracontents);
+                }
+                return result;
             }
-
-            if (localConnection)
+            finally
             {
-                conn.Disconnect();
-                conn.Dispose();
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
             }
-
-            return result;
         }
 
         public byte[] GetFile(string path, FtpClient? conn = null)
         {
             bool localConnection = conn == null;
-            byte[] result = new byte[] { };
+            FtpClient? localConn = null;
 
             if (localConnection)
             {
-                conn = new FtpClient(_settings.host, _settings.user, _settings.password);
-                conn.Connect();
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
             }
 
-
-            if (conn.DownloadBytes(out byte[] bytes, path))
+            try
             {
-                result = bytes;
+                if (conn.DownloadBytes(out byte[] bytes, path))
+                    return bytes;
+                return Array.Empty<byte>();
             }
-
-            if (localConnection)
+            finally
             {
-                conn.Disconnect();
-                conn.Dispose();
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
             }
-
-            return result;
         }
 
         internal bool ValidRomExtension (string romname, List<string> allowExtensions)

@@ -68,7 +68,8 @@ namespace MiSTerLauncher.Server.Controllers
             return Ok(result);
         }
 
-        [HttpPost("getmodulesettings")]        
+        [HttpPost("getmodulesettings")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<List<ModuleSetting>>> GetModuleSettings(BodyGetModuleSettings parameters)
         {
             if (string.IsNullOrEmpty(parameters.modulename))
@@ -81,6 +82,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("setmodulesettings")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> SetModuleSettings(BodySetModuleSettings parameters)
         {
             if (parameters.settings.Count==0)
@@ -93,6 +95,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("checkmodulesettings")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<MisterModuleHealthCheck>> CheckModuleSettings(BodySetModuleSettings parameters)
         {
             if (parameters.settings.Count == 0)
@@ -106,6 +109,7 @@ namespace MiSTerLauncher.Server.Controllers
 
        
         [HttpPost("automaticmatchrom")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> AutomaticMatchRomJob(BodyAutomaticMatchRom parameters)
         {
             var result = _misterManager.AutomaticLinkRomToVideoGame(parameters.systemid, parameters.filterresultcode);
@@ -137,6 +141,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
         [HttpPost("executescript")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> ExcecuteScript(BodyExcecuteScript parameters)
         {
             var result = await _misterManager.ExecuteScript(parameters.name, parameters.force);

@@ -7,9 +7,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Security.Cryptography;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Clé JWT : chargée depuis data/jwt-key.json, générée automatiquement au premier lancement
+const string jwtKeyFile = "data/jwt-key.json";
+builder.Configuration.AddJsonFile(jwtKeyFile, optional: true, reloadOnChange: false);
+if (string.IsNullOrEmpty(builder.Configuration["Jwt:Key"]))
+{
+    var newKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+    Directory.CreateDirectory("data");
+    File.WriteAllText(jwtKeyFile, System.Text.Json.JsonSerializer.Serialize(new { Jwt = new { Key = newKey } }));
+    builder.Configuration["Jwt:Key"] = newKey;
+}
 
 // Add services to the container.
 

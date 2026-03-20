@@ -151,6 +151,7 @@ namespace libMisterLauncher.Service
                 return _health;
             }
             _health.MisterState = MisterStateEnum.OK;
+            _health.Message = "";
 
             return _health;
         }
