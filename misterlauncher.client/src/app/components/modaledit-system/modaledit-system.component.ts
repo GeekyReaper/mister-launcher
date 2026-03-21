@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilSave, cilActionUndo } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, FormGroupDirective } from '@angular/forms';
 
@@ -71,7 +70,7 @@ import { SystemInfo } from '../../services/models/system-info';
     InputGroupComponent, InputGroupTextDirective,
     ButtonGroupComponent, ButtonModule,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class ModaleditSystemComponent implements OnInit, OnDestroy {
 
@@ -90,7 +89,6 @@ export class ModaleditSystemComponent implements OnInit, OnDestroy {
 
   constructor(private querygamesservice: QuerygamesService, private formBuilder: FormBuilder,
     public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilSave, cilActionUndo };
   }
 
 

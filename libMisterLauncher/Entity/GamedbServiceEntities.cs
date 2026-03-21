@@ -32,6 +32,9 @@ namespace libMisterLauncher.Entity
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public JobState state { get; set; } = JobState.RUNNING;
 
+        public int foldersRemaining { get; set; } = 0;
+        public int foldersScanned { get; set; } = 0;
+
         public GbdRomUpdateResult result { get; set; } = new GbdRomUpdateResult();
 
         public void UpdateDelay()
@@ -96,6 +99,7 @@ namespace libMisterLauncher.Entity
         public int Progress { get { return _iteration == 0 || _income == 0 ? 0 : (int)(_iteration * 100 / _income); } }
 
         public void Initialize (int income) { _income =  income; _insert = 0; _match = 0; _iteration = 0; }
+        public void AddIncome(int count) { _income += count; }
         public void IncInsert ()
         {
             _insert++;

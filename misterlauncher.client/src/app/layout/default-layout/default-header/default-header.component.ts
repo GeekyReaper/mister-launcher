@@ -28,13 +28,6 @@ import {
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective, IconModule, IconSetService } from '@coreui/icons-angular';
-import {
-  brandSet, cilMenu, cilGamepad,
-  cilFeaturedPlaylist, cilLaptop, cilSun, cilMoon, cilContrast,
-  cilShieldAlt, cilVideogame, cilCast, cilSave,
-  cilSync, cilBell, cilList,
-  cilFile, cilBook, cilMagnifyingGlass, cilImage, cilMobile, cilAccountLogout, cilLockLocked
-} from '@coreui/icons';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { delay, filter, map, tap } from 'rxjs/operators';
@@ -49,7 +42,6 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './default-header.component.html',
   standalone: true,
   imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, ThemeDirective, DropdownComponent, DropdownToggleDirective, TextColorDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective, ProgressBarDirective, ProgressComponent, NgStyle, CommonModule],
-  providers: [IconSetService]
 })
 export class DefaultHeaderComponent extends HeaderComponent implements OnInit, OnDestroy  {
 
@@ -82,11 +74,6 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit, O
   constructor(private mistersignalr: MisterSignalrService, public iconSet: IconSetService, private auth : AuthService, private router : Router) { //private querygamesservice: QuerygamesService,
     super();
 
-    iconSet.icons = {
-      cilGamepad, cilFeaturedPlaylist, cilMenu, cilShieldAlt,
-      cilVideogame, cilLaptop, cilSun, cilMoon, cilContrast, cilCast, cilSave, cilSync, cilBell, cilList,
-      cilFile, cilBook, cilMagnifyingGlass, cilImage, cilMobile, cilAccountLogout, cilLockLocked, ...brandSet
-    };
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
 

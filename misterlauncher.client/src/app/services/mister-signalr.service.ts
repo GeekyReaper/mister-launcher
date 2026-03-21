@@ -53,8 +53,9 @@ export class MisterSignalrService {
       videogameCreate : 0,
       videogameUpdate: 0,
       progress: 0
-    }
-    
+    },
+    foldersRemaining: 0,
+    foldersScanned: 0
   });
   managerCacheRefresh$: Observable<ManagerCache> = this.managerCacheRefreshSubject.asObservable();
   managerJobRomScan$: Observable<JobRomscan> = this.managerJoRomScanSubject.asObservable();

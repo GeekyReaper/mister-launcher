@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, signal, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
 import { Observable, Subscription, timer } from 'rxjs'
 import { CommonModule, NgStyle, Location, DatePipe, AsyncPipe } from '@angular/common';
-import { cilPen, cilDelete, cilNoteAdd, cilClearAll, cilListNumbered, cilFilter, cilSearch, cilFilterX } from '@coreui/icons';
 import { IconSetService, IconDirective } from '@coreui/icons-angular';
 import { formatDate } from '@angular/common';
 
@@ -88,7 +87,6 @@ import { ItemCount } from '../../services/models/item-count';
     InputGroupComponent, InputGroupTextDirective,
     ButtonGroupComponent, ButtonModule
   ],
-  providers: [IconSetService]
 })
 export class FilterVideogameComponent implements OnInit, OnDestroy, OnChanges {
 
@@ -199,9 +197,6 @@ export class FilterVideogameComponent implements OnInit, OnDestroy, OnChanges {
     private _elementRef: ElementRef,
     private formBuilder: FormBuilder
     ) {
-    iconSet.icons = {
-      cilPen, cilDelete, cilNoteAdd, cilClearAll, cilListNumbered, cilFilter, cilSearch, cilFilterX
-    };
   }
     ngOnChanges(changes: SimpleChanges): void {
       this.SearchRequest = this.querygamesservice.getCurrentVideoGameSearchRequest();

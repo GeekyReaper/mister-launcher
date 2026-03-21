@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilSettings, cilSearch, cilPen } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { NgStyle } from '@angular/common';
@@ -68,7 +67,6 @@ import { ModuleHealthcheck } from '../../../services/models/module-healthcheck';
     ThemeDirective, CarouselComponent, CarouselInnerComponent, CarouselItemComponent, CarouselControlComponent, RouterLink, CarouselIndicatorsComponent, ImgModule, IconDirective,
     Tabs2Module, ItemlistVideogameComponent, ModaleditSystemComponent, MediaurlPipe,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent],
-  providers: [IconSetService]
 })
 export class SystemDetailComponent implements OnInit, OnDestroy {
   id: string = '';
@@ -97,7 +95,6 @@ export class SystemDetailComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private router: Router, private querygamesservice: QuerygamesService, private location: Location,
     private misterSignalr: MisterSignalrService,
     public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilSettings, cilSearch, cilPen };
   }
 
   ngOnDestroy(): void {

@@ -220,6 +220,54 @@ namespace libMisterLauncher.Service
             }
         }
 
+        public (List<Rom> files, List<string> subdirs) ScanConsoleDirectory(string path, SystemDb system, FtpClient conn)
+        {
+            var files = new List<Rom>();
+            var subdirs = new List<string>();
+            var items = conn.GetListing(path);
+            foreach (var item in items)
+            {
+                if (item.Type == FtpObjectType.File
+                    && ValidRomExtension(item.Name, system.GetAllowExtensions())
+                    && CheckPaterns(system.GetExcludeRomPaterns(), item.Name))
+                {
+                    files.Add(MapToConsoleRom(item, system));
+                }
+                else if (item.Type == FtpObjectType.Directory && CheckPaterns(system.GetExcludeRomPaterns(), item.Name))
+                {
+                    subdirs.Add(item.FullName);
+                }
+            }
+            return (files, subdirs);
+        }
+
+        public (List<FtpListItem> mraFiles, List<string> subdirs) ScanArcadeDirectory(string path, FtpClient conn, List<string>? excludePatterns = null)
+        {
+            var items = conn.GetListing(path);
+            var mraFiles = items.Where(i => i.Type == FtpObjectType.File && i.Name.EndsWith(".mra")).ToList();
+            var subdirs = items
+                .Where(i => i.Type == FtpObjectType.Directory && (excludePatterns == null || CheckPaterns(excludePatterns, i.Name)))
+                .Select(i => i.FullName).ToList();
+            return (mraFiles, subdirs);
+        }
+
+        public Rom BuildArcadeRom(FtpListItem file, FtpClient conn)
+        {
+            var mrainfo = GetArcadeMraInfo(file.FullName, conn);
+            var rom = new Rom()
+            {
+                size = file.Size,
+                lastscandate = DateTime.Now,
+                systemCategory = "Arcade"
+            };
+            rom.SetFileName(file.FullName);
+            rom.SetMra(mrainfo);
+            bool isunoffical = mrainfo.bootleg || mrainfo.homebrew || !CheckPaterns(new List<string> { "(hacks|homebrew|demo|_alternatives|unlicensed)" }, file.FullName);
+            rom.official = !isunoffical;
+            rom.SetId();
+            return rom;
+        }
+
         public bool DeleteFile (string filepath)
         {
             using var ftp = CreateConnection();

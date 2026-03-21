@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
 import { SystemInfo } from '../../services/models/system-info';
 import { CommonModule } from '@angular/common';
-import { cilGamepad } from '@coreui/icons';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { MediaurlPipe } from '../../pipe/mediaurl.pipe';
 import {
@@ -43,11 +42,9 @@ import {
   standalone: true,
   imports: [RowComponent, CommonModule, ContainerComponent, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, CardTitleDirective, CardTextDirective, ButtonDirective, CardSubtitleDirective, CardLinkDirective, ListGroupDirective, ListGroupItemDirective, CardFooterComponent, NavComponent, NavItemComponent, NavLinkDirective, BorderDirective, CardGroupComponent, GutterDirective, CardImgDirective,
     FormDirective, FormLabelDirective, ImgModule, FormControlDirective, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, IconDirective, MediaurlPipe],
-  providers: [IconSetService]
 })
 export class ItemlistSystemComponent {
   constructor(public iconSet: IconSetService) {
-    iconSet.icons = { cilGamepad };
   }
 
   @Input() system!: SystemInfo;

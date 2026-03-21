@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { Observable, Subscription, timer } from 'rxjs'
 import { CommonModule, NgStyle, Location, DatePipe, AsyncPipe } from '@angular/common';
-import { cilInfo, cilBadge } from '@coreui/icons';
 import { IconSetService } from '@coreui/icons-angular';
 
 import { MisterSignalrService } from '../../services/mister-signalr.service';
@@ -70,7 +69,6 @@ import {
     AlertComponent,
     AsyncPipe
   ],
-  providers: [IconSetService]
 })
 export class ViewJobComponent implements OnInit, OnDestroy {
 
@@ -95,9 +93,6 @@ export class ViewJobComponent implements OnInit, OnDestroy {
     private querygamesservice: QuerygamesService,
     public iconSet: IconSetService,
     private location: Location) {
-    iconSet.icons = {
-      cilInfo, cilBadge
-    };
   }
 
 

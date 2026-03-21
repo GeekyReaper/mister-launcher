@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { cilMediaPlay } from '@coreui/icons';
 import {  RouterLink } from '@angular/router';
 import {
   ButtonDirective, ButtonCloseDirective, GridModule, BadgeComponent, BadgeModule, AlertComponent, SpinnerComponent,
@@ -23,7 +22,6 @@ import { RomDb } from '../../services/models/rom-db';
     IconDirective, IconModule,
     ButtonDirective, ButtonCloseDirective,
     ToastComponent, ToasterComponent, ToastHeaderComponent, ToastBodyComponent, ProgressComponent],
-  providers: [IconSetService]
 })
 export class PartVideogameLaunchbuttonComponent implements OnDestroy {
   @Input() videogame!: VideogameDb;
@@ -42,7 +40,6 @@ export class PartVideogameLaunchbuttonComponent implements OnDestroy {
   launching: Boolean = false;
 
   constructor(private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-    iconSet.icons = { cilMediaPlay };
   }
 
   ngOnDestroy(): void {

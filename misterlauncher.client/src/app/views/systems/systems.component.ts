@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
 import { CommonModule, NgStyle, Location } from '@angular/common';
-import {  cilGamepad } from '@coreui/icons';
+
 import { FooterModule } from '@coreui/angular';
 import { QuerygamesService } from '../../services/querygames.service';
 import { SystemSearchRequest } from '../../services/models/system-search-request';
@@ -51,7 +51,7 @@ import { ItemlistSystemComponent } from '../../components/itemlist-system/itemli
     ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective,
     BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, IconDirective, ItemlistSystemComponent,
     Tabs2Module],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class SystemsComponent implements OnInit, OnDestroy {
   public systemsresult: SystemSearchResult | undefined;
@@ -82,8 +82,6 @@ export class SystemsComponent implements OnInit, OnDestroy {
   constructor(private querygamesservice: QuerygamesService, private route: ActivatedRoute,
     private formBuilder: FormBuilder, public iconSet: IconSetService,
     private location: Location) {
-    iconSet.icons = { cilGamepad };
-
   }
 
   ngOnInit(): void {

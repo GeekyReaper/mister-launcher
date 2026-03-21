@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, flagSet, freeSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilLaptop, cilBug } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { QuerygamesService } from '../../../services/querygames.service';
 import { NgStyle } from '@angular/common';
@@ -57,7 +56,7 @@ import { GameSearch } from '../../../services/models/game-search';
     FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, ContainerComponent, ProgressComponent, ProgressBarComponent, TableModule, UtilitiesModule, GridModule,
     ThemeDirective, CarouselComponent, CarouselInnerComponent, CarouselItemComponent, CarouselControlComponent, RouterLink, CarouselIndicatorsComponent, ImgModule, IconDirective,
     Tabs2Module],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class GameDetailComponent implements OnInit, OnDestroy {
   id: string = '';
@@ -84,7 +83,6 @@ export class GameDetailComponent implements OnInit, OnDestroy {
  
   constructor(private route: ActivatedRoute, private router: Router, private querygamesservice: QuerygamesService, private location: Location,
     public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilLaptop, cilBug,...brandSet }; 
   }
 
     ngOnDestroy(): void {

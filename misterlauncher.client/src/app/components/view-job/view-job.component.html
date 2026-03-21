@@ -95,6 +95,13 @@
             </td>
           </tr>
           <tr>
+            <th scope="row" class="w-25 bg-light">Folders scanned</th>
+            <td>
+              {{currentJob.foldersScanned}} &nbsp;
+              <span *ngIf="currentJob.foldersRemaining > 0" class="badge bg-info">{{currentJob.foldersRemaining}} remaining</span>
+            </td>
+          </tr>
+          <tr>
             <th scope="row" class="w-25 bg-light">Roms Insert</th>
             <td>
               {{currentJob.result.insert}}

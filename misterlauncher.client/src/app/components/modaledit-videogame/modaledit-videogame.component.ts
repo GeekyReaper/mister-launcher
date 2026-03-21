@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, viewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { cilSave, cilActionUndo, cilDelete, cilTrash, cilVideogame } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, FormGroupDirective } from '@angular/forms';
 
@@ -74,7 +73,7 @@ import { ModalConfirmationComponent, ConfirmationOption } from '../modal-confirm
     IconDirective,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent,
     ModalConfirmationComponent],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class ModaleditVideogameComponent implements OnInit, OnDestroy {
 
@@ -96,7 +95,6 @@ export class ModaleditVideogameComponent implements OnInit, OnDestroy {
 
   constructor(private querygamesservice: QuerygamesService, private formBuilder: FormBuilder,
     public iconSet: IconSetService, private location: Location,) {
-    iconSet.icons = { cilSave, cilActionUndo, cilDelete, cilTrash, cilVideogame };
   }
 
 

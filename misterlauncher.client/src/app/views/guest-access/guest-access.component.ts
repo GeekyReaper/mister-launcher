@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription, interval } from 'rxjs'
 import { CommonModule, NgStyle } from '@angular/common';
-import { cilGamepad, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilLaptop, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed } from '@coreui/icons';
+
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import {
@@ -111,8 +111,6 @@ import { TimeofdayPipe } from '../../pipe/timeofday.pipe';
     FormSelectDirective,
     IconModule, IconDirective,
     TimeofdayPipe],
-  providers: [IconSetService]
-
 })
 export class GuestAccessComponent implements OnInit, OnDestroy {
 
@@ -122,9 +120,6 @@ export class GuestAccessComponent implements OnInit, OnDestroy {
   currentGuestAccess : GuestAccess[] = []
 
   constructor(public iconSet: IconSetService, private auth : AuthService) {
-    iconSet.icons = {
-      cilGamepad, cilLaptop, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed
-    };
   }
   ngOnInit(): void {
     this.loadrequest();

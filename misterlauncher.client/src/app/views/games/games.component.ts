@@ -3,7 +3,7 @@ import { Observable, Subscription } from 'rxjs'
 import { CommonModule } from '@angular/common';
 import { FooterModule } from '@coreui/angular';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, flagSet, freeSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay } from '@coreui/icons';
+
 import { QuerygamesService } from '../../services/querygames.service';
 import { GameSearch } from '../../services/models/game-search';
 import { GameSearchResult } from '../../services/models/game-search-result';
@@ -49,7 +49,7 @@ import { StateService } from '../../services/state.service';
     ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, IconDirective],
   templateUrl: './games.component.html',
   styleUrl: './games.component.scss',
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class GamesComponent implements OnInit, OnDestroy {
   public test!: number;
@@ -63,7 +63,6 @@ export class GamesComponent implements OnInit, OnDestroy {
 
 
   constructor(private querygamesservice: QuerygamesService, private formBuilder: FormBuilder, private stateService: StateService, public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, ...brandSet };
 }
 
   ngOnInit(): void {

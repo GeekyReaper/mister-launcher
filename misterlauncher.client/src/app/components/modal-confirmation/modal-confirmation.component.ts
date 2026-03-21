@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { cilThumbUp, cilThumbDown } from '@coreui/icons';
 import { NgStyle } from '@angular/common';
 import {
   BorderDirective,
@@ -55,7 +54,6 @@ import { Subscription } from 'rxjs';
     Tabs2Module,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent,
     AlertComponent],
-    providers :[ IconSetService]
 })
 export class ModalConfirmationComponent {
 
@@ -70,7 +68,6 @@ export class ModalConfirmationComponent {
 
   constructor(
     public iconSet: IconSetService) {
-    iconSet.icons = { cilThumbUp, cilThumbDown };
   }
 
   toggleVisibility() {

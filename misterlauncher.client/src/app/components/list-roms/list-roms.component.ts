@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
 import { RomDb } from '../../services/models/rom-db';
 import { CommonModule } from '@angular/common';
-import { cilGamepad, cilMediaPlay, cilApplications , cilInfo } from '@coreui/icons';
 import { ActivatedRoute, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import {
   BorderDirective,
@@ -54,11 +53,10 @@ interface Dictionary<T> {
     FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, IconDirective,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent,
     PartVideogameLaunchbuttonComponent],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class ListRomsComponent implements OnInit {
   constructor(private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-    iconSet.icons = { cilGamepad, cilMediaPlay, cilApplications, cilInfo };
   }
   ngOnInit(): void {
     this.roms.forEach((r: RomDb) => { this.modalvisible[r.romid] = false; })

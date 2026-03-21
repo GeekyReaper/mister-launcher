@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
 import { CommonModule, NgStyle, Location, DecimalPipe } from '@angular/common';
-import { cilInfo, cilBadge, cilPaperPlane } from '@coreui/icons';
 import { FooterModule } from '@coreui/angular';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
@@ -72,7 +71,6 @@ import { System } from 'typescript';
     ViewJobComponent,
     InputGroupComponent, InputGroupTextDirective, 
     TimelapsePipe, FilesizePipe, DecimalPipe],
-  providers: [IconSetService]
 })
 
 export class JobScanRomComponent implements OnInit, OnDestroy {
@@ -110,9 +108,6 @@ export class JobScanRomComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private location: Location) {
 
-    iconSet.icons = {
-      cilInfo, cilBadge, cilPaperPlane
-    };
   }
 
   ngOnInit(): void {

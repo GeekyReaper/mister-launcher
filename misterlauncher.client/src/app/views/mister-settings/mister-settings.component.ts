@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
 import { CommonModule, NgStyle, Location } from '@angular/common';
-import { cilGamepad, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilLaptop, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed } from '@coreui/icons';
+
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, FormGroupDirective, FormControl } from '@angular/forms';
@@ -71,7 +71,6 @@ import { AuthService } from '../../services/auth.service';
     BadgeModule, AlertComponent, SpinnerModule, SpinnerComponent,
     MisterstateColorPipe,
     InputGroupComponent, InputGroupTextDirective],
-  providers: [IconSetService]
 })
 export class MisterSettingsComponent implements OnInit, OnDestroy {
 
@@ -126,10 +125,6 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private auth: AuthService,
     private location: Location) {
-    
-    iconSet.icons = {
-      cilGamepad, cilLaptop, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed
-    };
   }
   ngOnInit(): void {
 

@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, signal } from '@angular/core';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
 import { VideogameDb } from '../../services/models/videogame-db';
 import { CommonModule } from '@angular/common';
-import { cilGamepad, cilMediaPlay, cilApplications, cilRouter} from '@coreui/icons';
 import { ActivatedRoute, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import {
   BorderDirective,
@@ -57,11 +56,10 @@ import { MediaurlPipe  } from '../../pipe/mediaurl.pipe'
     ToasterComponent,
     ToastHeaderComponent,
     PartVideogameCategoriesComponent, PartVideogameLaunchbuttonComponent, MediaurlPipe],
-  providers: [QuerygamesService, IconSetService]
+  providers: [QuerygamesService]
 })
 export class ItemlistVideogameComponent {
   constructor(private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-    iconSet.icons = { cilGamepad, cilMediaPlay, cilApplications  };
   }    
 
   @Input() videogame!: VideogameDb;

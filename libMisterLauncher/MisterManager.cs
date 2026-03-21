@@ -1305,7 +1305,7 @@ namespace libMisterLauncher.Manager
 
             if (systemid == "Arcade" || systemid == "All")
             {
-                systems.Add(new SystemDb() { _id = "Arcade", name = "Arcade" });
+                systems.Add(_cache.GetSystem("Arcade") ?? new SystemDb() { _id = "Arcade", name = "Arcade", excluderompaterns = "_Organized" });
             }
             if (systemid == "All")
             {
@@ -1489,7 +1489,7 @@ namespace libMisterLauncher.Manager
 
             if (systemid == "Arcade" || systemid == "All")
             {
-                systems.Add(new SystemDb() { _id = "Arcade", name = "Arcade" });
+                systems.Add(_cache.GetSystem("Arcade") ?? new SystemDb() { _id = "Arcade", name = "Arcade", excluderompaterns = "_Organized" });
             }
             if (systemid == "All")
             {
@@ -1525,49 +1525,88 @@ namespace libMisterLauncher.Manager
                 {
                     using (var ftp = misterftpService.CreateConnection())
                     {
-                        job.AddLog("FTP", string.Format("Retrive rom from path {0}...", system.gamepath), LogResult.INFO);
-                        job.UpdateDelay();
+                        var foldersQueue = new Queue<string>();
+                        foldersQueue.Enqueue("/media/fat/_Arcade/");
+                        job.foldersRemaining = foldersQueue.Count;
+                        job.AddLog("FTP", "Starting Arcade scan...", LogResult.INFO);
                         if (OnJobRomUpdate != null)
                             OnJobRomUpdate(job);
 
-                        var roms = misterftpService.GetArcadeRoms(ftp);
-                        job.AddLog("FTP", string.Format("Found {0} rom{1}", roms.Count, roms.Count >1 ? "s" : ""), LogResult.INFO);
-
-                        job.result.Initialize(roms.Count);
-                        foreach (var r in roms)
+                        while (foldersQueue.Count > 0)
                         {
-                            job.AddLog("MongoDb", string.Format("Update rom {0} in database", r._id), LogResult.INFO);
-
-                            job.result += await gamedbService.UpdateRom(r);
-                            job.result.Newiteration();
+                            var currentFolder = foldersQueue.Dequeue();
+                            job.AddLog("FTP", string.Format("Scanning {0}... ({1} folders remaining)", currentFolder, foldersQueue.Count), LogResult.INFO);
                             job.UpdateDelay();
                             if (OnJobRomUpdate != null)
                                 OnJobRomUpdate(job);
 
+                            var (mraFiles, subdirs) = misterftpService.ScanArcadeDirectory(currentFolder, ftp, system.GetExcludeRomPaterns());
+                            foreach (var dir in subdirs)
+                                foldersQueue.Enqueue(dir);
+
+                            job.foldersRemaining = foldersQueue.Count;
+                            job.result.AddIncome(mraFiles.Count);
+                            job.AddLog("FTP", string.Format("Found {0} .mra file(s). {1} folders remaining.", mraFiles.Count, foldersQueue.Count), LogResult.INFO);
+                            if (OnJobRomUpdate != null)
+                                OnJobRomUpdate(job);
+
+                            foreach (var file in mraFiles)
+                            {
+                                var rom = misterftpService.BuildArcadeRom(file, ftp);
+                                job.result += await gamedbService.UpdateRom(rom);
+                                job.result.Newiteration();
+                                job.UpdateDelay();
+                                if (OnJobRomUpdate != null)
+                                    OnJobRomUpdate(job);
+                            }
+                            job.foldersScanned++;
                         }
                     }
                 }
                 else
                 {
-                    job.AddLog("FTP", string.Format("Retrive rom from path {0}...", system.gamepath), LogResult.INFO);
-                    job.UpdateDelay();
-                    if (OnJobRomUpdate != null)
-                        OnJobRomUpdate(job);
-
-                    var roms = ExtractConsoleRom(system);
-                    job.AddLog("FTP", string.Format("Found {0} rom{1}", roms.Count, roms.Count > 1 ? "s" : ""), LogResult.INFO);
-
-                    job.result.Initialize(roms.Count);
-                    foreach (var r in roms)
+                    using (var ftp = misterftpService.CreateConnection())
                     {
-                        job.AddLog("MongoDb", string.Format("Update rom {0} in database", r._id), LogResult.INFO);
-                        job.result += await gamedbService.UpdateRom(r);
-                        job.result.Newiteration();
-                        job.UpdateDelay();
+                        var availablepath = misterftpService.GetAvailableRomPath(ftp);
+                        var foldersQueue = new Queue<string>();
+                        foreach (var rompath in availablepath)
+                            foldersQueue.Enqueue(rompath + system.gamepath);
+
+                        job.foldersRemaining = foldersQueue.Count;
+                        job.AddLog("FTP", string.Format("Starting scan for {0}. {1} root path(s) found.", system.name, foldersQueue.Count), LogResult.INFO);
                         if (OnJobRomUpdate != null)
                             OnJobRomUpdate(job);
+
+                        while (foldersQueue.Count > 0)
+                        {
+                            var currentFolder = foldersQueue.Dequeue();
+                            job.AddLog("FTP", string.Format("Scanning {0}... ({1} folders remaining)", currentFolder, foldersQueue.Count), LogResult.INFO);
+                            job.UpdateDelay();
+                            if (OnJobRomUpdate != null)
+                                OnJobRomUpdate(job);
+
+                            var (files, subdirs) = misterftpService.ScanConsoleDirectory(currentFolder, system, ftp);
+                            foreach (var dir in subdirs)
+                                foldersQueue.Enqueue(dir);
+
+                            job.foldersRemaining = foldersQueue.Count;
+                            job.result.AddIncome(files.Count);
+                            job.AddLog("FTP", string.Format("Found {0} rom(s). {1} folders remaining.", files.Count, foldersQueue.Count), LogResult.INFO);
+                            if (OnJobRomUpdate != null)
+                                OnJobRomUpdate(job);
+
+                            foreach (var rom in files)
+                            {
+                                job.result += await gamedbService.UpdateRom(rom);
+                                job.result.Newiteration();
+                                job.UpdateDelay();
+                                if (OnJobRomUpdate != null)
+                                    OnJobRomUpdate(job);
+                            }
+                            job.foldersScanned++;
+                        }
                     }
-                }                
+                }
             }
 
             

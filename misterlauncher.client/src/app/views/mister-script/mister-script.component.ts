@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription, interval } from 'rxjs'
 import { CommonModule, NgStyle } from '@angular/common';
-import { cilMediaPlay } from '@coreui/icons';
 import { FooterModule } from '@coreui/angular';
 //import { QuerygamesService } from '../../services/querygames.service';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -64,7 +63,6 @@ import { ScriptsResult } from '../../services/models/scripts-result';
     BadgeModule,
     AlertComponent, AlertModule,
     SpinnerComponent, SpinnerModule],
-  providers: [IconSetService]
 })
 export class MisterScriptComponent implements OnInit, OnDestroy {
 
@@ -83,10 +81,6 @@ export class MisterScriptComponent implements OnInit, OnDestroy {
 
 
   constructor(private misterSignalr: MisterSignalrService, private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-
-    iconSet.icons = {
-      cilMediaPlay
-    };
   }
     ngOnDestroy(): void {
       this.subManagerCache?.unsubscribe();

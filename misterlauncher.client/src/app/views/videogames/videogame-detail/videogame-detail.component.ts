@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common'
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, flagSet, freeSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilLink, cilLaptop, cilBug, cilSettings, cilPen } from '@coreui/icons';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MisterDatePipe } from "../../../pipe/misterdate.pipe";
 import { NgStyle } from '@angular/common';
@@ -87,7 +86,6 @@ import { ManagerCache } from '../../../services/models/manager-cache';
     TemplateIdDirective,
     MisterDatePipe, MediaurlPipe,
     ListRomsComponent, PartVideogameCategoriesComponent, PartVideogameLaunchbuttonComponent, ModaleditVideogameComponent],
-  providers: [IconSetService]
 })
 
 export class VideogameDetailComponent implements OnInit, OnDestroy {
@@ -125,7 +123,6 @@ export class VideogameDetailComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private router: Router, private querygamesservice: QuerygamesService, private location: Location,
     private misterSignalr: MisterSignalrService,
     public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilLaptop, cilBug, cilSettings, cilLink, cilPen, ...brandSet };
   }
 
   ngOnDestroy(): void {

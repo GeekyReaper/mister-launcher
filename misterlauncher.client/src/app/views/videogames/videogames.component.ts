@@ -3,7 +3,6 @@ import { Observable, Subscription } from 'rxjs'
 import { CommonModule } from '@angular/common';
 import { FooterModule } from '@coreui/angular';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { brandSet, flagSet, freeSet, cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilDelete, cilPen, cilNoteAdd } from '@coreui/icons';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, FormGroupDirective } from '@angular/forms';
 import { NgStyle } from '@angular/common';
@@ -54,7 +53,6 @@ import { ModuleHealthcheck } from '../../services/models/module-healthcheck';
   imports: [ContainerComponent, RowComponent, CommonModule, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, CardTitleDirective, CardTextDirective, ButtonDirective, CardSubtitleDirective, CardLinkDirective, ListGroupDirective, ListGroupItemDirective, CardFooterComponent, NavComponent, NavItemComponent, NavLinkDirective, BorderDirective, CardGroupComponent, GutterDirective, CardImgDirective,
     FilterVideogameComponent, PaginationVideogameComponent,
     ItemlistVideogameComponent, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, IconDirective],
-  providers: [IconSetService],
   templateUrl: './videogames.component.html',
   styleUrl: './videogames.component.scss',
 
@@ -72,7 +70,6 @@ export class VideogamesComponent implements OnInit, OnDestroy {
     private querygamesservice: QuerygamesService,
     private misterSignalr: MisterSignalrService,
     public iconSet: IconSetService) {
-    iconSet.icons = { cilCloudDownload, cilChevronCircleLeftAlt, cilHeart, cilLibraryAdd, cilMediaPlay, cilDelete, cilPen, cilNoteAdd, ...brandSet };
   }
 
   ngOnInit(): void {

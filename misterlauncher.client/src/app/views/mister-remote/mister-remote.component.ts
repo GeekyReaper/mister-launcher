@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
 import { CommonModule, NgStyle } from '@angular/common';
-import { cilGamepad, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilLaptop, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed   } from '@coreui/icons';
+
 import { FooterModule } from '@coreui/angular';
 //import { QuerygamesService } from '../../services/querygames.service';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -66,7 +66,6 @@ import { MediaurlPipe } from '../../pipe/mediaurl.pipe'
     BadgeModule,
     SpinnerComponent, SpinnerModule,
     TemplateIdDirective, Tabs2Module, MediaurlPipe ],
-  providers: [IconSetService]
 })
 export class MisterRemoteComponent implements OnInit, OnDestroy {
 
@@ -83,10 +82,6 @@ export class MisterRemoteComponent implements OnInit, OnDestroy {
   savestateAction: string = "";
 
   constructor(private misterSignalr: MisterSignalrService, private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-    
-    iconSet.icons = {
-      cilGamepad, cilLaptop, cilPowerStandby, cilSettings, cilSync, cilVolumeHigh, cilVolumeLow, cilVolumeOff, cilImage, cilSave, cilShareBoxed
-    };
   }
 
   ngOnInit(): void {    

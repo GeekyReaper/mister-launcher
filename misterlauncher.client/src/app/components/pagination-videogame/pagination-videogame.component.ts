@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { cilChevronDoubleLeft, cilChevronDoubleRight } from '@coreui/icons';
 import { IconSetService, IconDirective } from '@coreui/icons-angular';
 
 import { CommonModule} from '@angular/common';
@@ -32,7 +31,6 @@ import {
     AlertComponent,
     ButtonGroupComponent, ButtonModule  
   ],
-  providers : [IconSetService]
 })
 
 
@@ -41,9 +39,6 @@ export class PaginationVideogameComponent implements OnInit, OnChanges {
 
   constructor(
     public iconSet: IconSetService) {
-    iconSet.icons = {
-      cilChevronDoubleLeft, cilChevronDoubleRight
-    };
   } 
  
   @Input() CurrentPage?: number;

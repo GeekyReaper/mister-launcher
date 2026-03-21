@@ -1,7 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconModule, IconDirective, IconSetService } from '@coreui/icons-angular';
-import { cilBadge } from '@coreui/icons';
 import { RouterLink } from '@angular/router';
 import {
   AccordionButtonDirective, AccordionComponent, AccordionItemComponent, TemplateIdDirective,
@@ -32,7 +31,6 @@ import { FilesizePipe } from "../../pipe/filesize.pipe";
     TableDirective, TableModule,
     FormControlDirective, FormCheckComponent, FormCheckInputDirective,
     FilesizePipe],
-  providers: [IconSetService]
 })
 export class SelectRomComponent implements OnInit, OnDestroy {
 
@@ -47,7 +45,6 @@ export class SelectRomComponent implements OnInit, OnDestroy {
   @Output() UpdateSelectedRom = new EventEmitter<string[]>();
 
   constructor(private querygamesservice: QuerygamesService, public iconSet: IconSetService) {
-    iconSet.icons = { cilBadge };
   }
   ngOnInit(): void {
     console.log(`[select-rom] (oninit) systemid : ${this.systemid}, parentrom= ${this.parentrom}`);

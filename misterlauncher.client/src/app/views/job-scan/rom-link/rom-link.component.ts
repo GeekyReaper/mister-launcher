@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs'
 import { CommonModule, NgStyle, Location } from '@angular/common';
-import { cilInfo, cilLaptop, cilCheck, cilChevronCircleLeftAlt, cilLinkBroken, cilLink, cilSearch, cilTrash } from '@coreui/icons';
 import { FooterModule } from '@coreui/angular';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective, IconSetService } from '@coreui/icons-angular';
@@ -81,8 +80,6 @@ import { MisterDatePipe } from "../../../pipe/misterdate.pipe";
     SelectRomComponent,
     InputGroupComponent, InputGroupTextDirective
   ],
-  providers: [IconSetService]
-  
 })
 export class RomLinkComponent implements OnInit, OnDestroy {
 
@@ -109,7 +106,6 @@ export class RomLinkComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private querygamesservice: QuerygamesService, private formBuilder: FormBuilder,
     public iconSet: IconSetService,
     private location: Location) {
-    iconSet.icons = { cilInfo, cilLaptop, cilCheck, cilChevronCircleLeftAlt, cilLinkBroken, cilLink, cilSearch, cilTrash };
   }
     ngOnInit(): void {
 

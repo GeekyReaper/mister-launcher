@@ -9,4 +9,6 @@ export interface JobRomscan {
   delay: number;
   state: string;
   result: RomUpdateResult;
+  foldersRemaining: number;
+  foldersScanned: number;
 }
