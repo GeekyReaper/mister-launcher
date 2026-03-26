@@ -108,6 +108,22 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
        
+        [HttpGet("haswitch")]
+        public async Task<ActionResult> GetHaSwitch()
+        {
+            var result = await _misterManager.GetHaSwitchState();
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPost("haswitch")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<bool>> SetHaSwitch([FromBody] bool turnOn)
+        {
+            var result = await _misterManager.SetHaSwitch(turnOn);
+            return Ok(result);
+        }
+
         [HttpPost("automaticmatchrom")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<bool>> AutomaticMatchRomJob(BodyAutomaticMatchRom parameters)

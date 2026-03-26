@@ -53,6 +53,7 @@ All external integrations are **modules** implementing `IMisterModule` / `IMiste
 | `MisterMediaService` | Downloads and stores game media (fanart, screenshots, videos) |
 | `ScrapperScService` | Calls ScreenScraper.fr API to match ROMs to game metadata |
 | `MisterAuthService` | Manages admin/guest access with JWT tokens |
+| `HomeAssistantService` | Calls Home Assistant REST API to read/control a switch entity (MiSTer power) |
 
 **Module settings are stored in MongoDB** (not in appsettings.json). Only the MongoDB connection itself is configured via env var.
 
@@ -94,3 +95,10 @@ JWT Bearer auth is required on all controllers (`MapControllers().RequireAuthori
 - **SystemDb** — a gaming platform (Console or Arcade), matched between MiSTer cores and ScreenScraper systems
 - **MediaDb** — media reference (stored path + source URL), downloaded on demand
 - **MisterManagerCache** — in-memory snapshot broadcast to all clients via SignalR
+- **HaSwitchState** — DTO returned by `GET /api/core/haswitch` with `state` ("on"/"off") and `lastChanged` date
+
+### Notes techniques importantes
+
+- **CoreUI `IconSetService`** : singleton initialisé dans `AppComponent`. Ne pas ajouter `providers: [IconSetService]` dans les composants enfants — cela crée une instance isolée sans icônes.
+- **`http.get<string>()`** : préférer retourner un objet JSON `{ state }` plutôt qu'une chaîne brute pour éviter les erreurs de parsing Angular HttpClient.
+- **`CheckConnection()` dans les modules** : utilise `.Result` (synchrone). Fonctionne en ASP.NET Core (pas de SynchronizationContext), mais attention dans d'autres contextes async.

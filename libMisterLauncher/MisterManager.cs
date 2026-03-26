@@ -104,6 +104,18 @@ namespace libMisterLauncher.Manager
             }
         }
 
+        internal HomeAssistantService homeAssistantService
+        {
+            get
+            {
+                var t = getModule<HomeAssistantService>();
+                if (t == null)
+                    LoadModules();
+
+                return getModule<HomeAssistantService>();
+            }
+        }
+
         internal MisterManagerCache _cache = new MisterManagerCache();
 
         internal JobMister? _currentJob = null;
@@ -150,6 +162,7 @@ namespace libMisterLauncher.Manager
                 loadModule<MisterRemoteService, RemoteServiceSettings>();
                 loadModule<ScrapperScService, ScrapperScServiceSettings>();
                 loadModule<MisterAuthService, AuthServiceSettings>();
+                loadModule<HomeAssistantService, HomeAssistantServiceSettings>();
             
             }
             RefreshCache();
@@ -2262,6 +2275,9 @@ namespace libMisterLauncher.Manager
                     case "MisterAuth":
                         loadModule<MisterAuthService, AuthServiceSettings>();
                         break;
+                    case "HomeAssistant":
+                        loadModule<HomeAssistantService, HomeAssistantServiceSettings>();
+                        break;
                 }
                 RefreshCache();
                 if (OnCacheUpdated != null)
@@ -2306,6 +2322,11 @@ namespace libMisterLauncher.Manager
                     os.LoadModuleSettings(settings);
                     var osmod = new MisterAuthService(os);
                     return osmod.CheckHealth();
+                case "HomeAssistant":
+                    var has = new HomeAssistantServiceSettings();
+                    has.LoadModuleSettings(settings);
+                    var hamod = new HomeAssistantService(has);
+                    return hamod.CheckHealth();
             }
             return null;
         }
@@ -2325,6 +2346,20 @@ namespace libMisterLauncher.Manager
         public JobMister? CurrentJob ()
         {
             return _currentJob;
+        }
+
+        public async Task<HaSwitchState?> GetHaSwitchState()
+        {
+            var ha = homeAssistantService;
+            if (ha == null || !ha._settings.isValid()) return null;
+            return await ha.GetSwitchState();
+        }
+
+        public async Task<bool> SetHaSwitch(bool turnOn)
+        {
+            var ha = homeAssistantService;
+            if (ha == null || !ha._settings.isValid()) return false;
+            return turnOn ? await ha.TurnOn() : await ha.TurnOff();
         }
 
         public async Task<RemoteServiceScriptResult> GetScripts()

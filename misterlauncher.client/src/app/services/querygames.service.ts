@@ -1,6 +1,6 @@
 import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GameSearchResult } from './models/game-search-result';
 import { GameSearch } from './models/game-search';
 import { GameAction } from './models/game-action';
@@ -26,6 +26,7 @@ import { JobRomscan } from './models/job-romscan';
 import { VideogameSearchFilter } from './models/videogame-search-filter';
 import { SystemDb } from './models/system-db';
 import { ScriptsResult } from './models/scripts-result';
+import { HaSwitchState } from './models/ha-switch-state';
 
 
 @Injectable(
@@ -343,6 +344,16 @@ export class QuerygamesService implements OnInit, OnDestroy {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     return this.http.post<ModuleHealthcheck>(`api/core/checkmodulesettings`, payload, { headers: headers });
+  }
+
+  GetHaSwitchState(): Observable<HaSwitchState> {
+    return this.http.get<HaSwitchState>(`api/core/haswitch`);
+  }
+
+  SetHaSwitch(turnOn: boolean): Observable<boolean> {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<boolean>(`api/core/haswitch`, turnOn, { headers });
   }
 
   DeleteVideogame(id: string): Observable<Boolean> {

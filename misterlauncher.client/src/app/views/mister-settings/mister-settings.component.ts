@@ -100,6 +100,11 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
   formScreenScrapperModule!: FormGroup;
   screenscrappercurrenthealthcheck!: ModuleHealthcheck;
 
+  subHaModuleSettings!: Subscription
+  public HaModuleSettings!: ModuleSetting[];
+  formHaModule!: FormGroup;
+  hacurrenthealthcheck!: ModuleHealthcheck;
+
   subscriptionCache!: Subscription;
 
   currentAction: string = "";
@@ -157,6 +162,9 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
         if (h.name == "MisterAuth") {
           this.authcurrenthealthcheck = h;
         }
+        if (h.name == "HomeAssistant") {
+          this.hacurrenthealthcheck = h;
+        }
 
       });
     });
@@ -174,6 +182,9 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
       formDefault: [""]
     });
     this.formAuthModule = this.formBuilder.group({
+      formDefault: [""]
+    });
+    this.formHaModule = this.formBuilder.group({
       formDefault: [""]
     });
 
@@ -199,6 +210,10 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
       this.AuthModuleSettings = items;
       this.formAuthModule = this.setForm(this.AuthModuleSettings);
     });
+    this.subHaModuleSettings = this.querygamesservice.GetModuleSettings("HomeAssistant").subscribe((items: ModuleSetting[]) => {
+      this.HaModuleSettings = items;
+      this.formHaModule = this.setForm(this.HaModuleSettings);
+    });
   }
   ngOnDestroy(): void {
     this.subFtpModuleSettings?.unsubscribe();
@@ -206,6 +221,7 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     this.subMediaModuleSettings?.unsubscribe();
     this.subRemoteModuleSettings?.unsubscribe();
     this.subScreenScrapperModuleSettings?.unsubscribe();
+    this.subHaModuleSettings?.unsubscribe();
     this.subscriptionCache?.unsubscribe();
   }
 
@@ -301,7 +317,7 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
 
   setToaster(healthcheck: ModuleHealthcheck) : void {
     this.visible.update((value: Boolean) => !value);
-    this.tooltipcolor = healthcheck.misterState == 'OK' ? 'success' : healthcheck.misterState == 'WARNING' ? 'warning' : 'danger';
+    this.tooltipcolor = healthcheck.misterState == 'OK' ? 'success' : healthcheck.misterState == 'WARNING' ? 'warning' : healthcheck.misterState == 'DISABLE' || healthcheck.misterState == 'NOINI' ? 'secondary' : 'danger';
     this.tooltipmodulename = healthcheck.name;
     this.tooltipmodulestate = healthcheck.misterState;
     this.tooltipmsg = healthcheck.message ? healthcheck.message : "Success";

@@ -26,6 +26,7 @@
               <button cTab itemKey="screenscrapper">ScreenScrapper <c-badge class="ms-2 float-end" color="{{screenscrappercurrenthealthcheck.misterState| misterstateColor}}"> {{screenscrappercurrenthealthcheck.misterState}}</c-badge></button>
               <button cTab itemKey="auth">Auth <c-badge class="ms-2 float-end" color="{{authcurrenthealthcheck.misterState| misterstateColor}}"> {{authcurrenthealthcheck.misterState}}</c-badge></button>
               <button cTab itemKey="media">Media <c-badge class="ms-2 float-end" color="{{mediacurrenthealthcheck.misterState| misterstateColor}}"> {{mediacurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="homeassistant">Home Assistant <c-badge class="ms-2 float-end" color="{{hacurrenthealthcheck.misterState| misterstateColor}}"> {{hacurrenthealthcheck.misterState}}</c-badge></button>
             </c-tabs-list>
             <c-tabs-content>
               <c-tab-panel class="p-3" itemKey="remote">
@@ -302,6 +303,47 @@
                  
                 </form>
 
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="homeassistant">
+                <form cForm [formGroup]="formHaModule" (ngSubmit)="submitForm(formHaModule,HaModuleSettings)" #formDirective="ngForm">
+                  <c-container>
+                    <c-row>
+                      <c-col>
+                        <c-alert color="light">
+                          <p><strong>Home Assistant Module</strong> allows MiSTerLauncher to control the MiSTer FPGA power via a Home Assistant switch entity.</p>
+                          <p>Generate a long-lived access token in your Home Assistant profile page (<em>Profile → Long-Lived Access Tokens</em>).</p>
+                          <p>If no settings are configured, this module is disabled and has no effect.</p>
+                        </c-alert>
+                      </c-col>
+                    </c-row>
+                    <c-row *ngFor="let setting of HaModuleSettings">
+                      <c-col>
+                        <c-input-group class="mb-0">
+                          <span cInputGroupText class="fw-bold">{{setting.name}}</span>
+                          <input cFormControl
+                                 formControlName="{{setting.name}}"
+                                 placeholder=""
+                                 type="{{setting.valueType}}" />
+                        </c-input-group>
+                        <span cInputGroupText class="text-wrap w-100 mb-3" *ngIf="setting.description !=''">
+                          {{setting.description}}
+                        </span>
+                      </c-col>
+                    </c-row>
+                    <c-row>
+                      <c-col>
+                        <button cButton class="me-1" color="secondary" (click)="checkForm(formHaModule,HaModuleSettings)" variant="outline">
+                          <c-spinner aria-hidden="true" *ngIf="CheckSpinner(HaModuleSettings,'check')" size="sm" />
+                          Check
+                        </button>
+                        <button cButton class="me-1" color="primary" type="submit">
+                          <c-spinner aria-hidden="true" *ngIf="CheckSpinner(HaModuleSettings,'save')" size="sm" />
+                          Save
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </c-container>
+                </form>
               </c-tab-panel>
             </c-tabs-content>
           </c-tabs>

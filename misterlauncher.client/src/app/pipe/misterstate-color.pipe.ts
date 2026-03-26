@@ -12,6 +12,9 @@ export class MisterstateColorPipe implements PipeTransform {
         return "success";
       case 'WARNING':
         return "warning";
+      case 'DISABLE':
+      case 'NOINI':
+        return "secondary";
       default:
         return "danger";
     }

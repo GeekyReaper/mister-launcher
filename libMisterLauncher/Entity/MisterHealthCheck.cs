@@ -17,7 +17,9 @@ namespace libMisterLauncher.Entity
         //[EnumMember(Value = "ERROR")]
         ERROR,
         //[EnumMember(Value = "NOINI")]
-        NOINI }
+        NOINI,
+        //[EnumMember(Value = "DISABLE")]
+        DISABLE }
     public class MisterHealthCheck
     {
         public List<MisterModuleHealthCheck> ModuleHealthchecks { get; } = new List<MisterModuleHealthCheck>();

@@ -36,7 +36,7 @@ import {
   NavLinkDirective,
   RowComponent,
   TextColorDirective,
-  FormDirective, FormLabelDirective, FormControlDirective,
+  FormDirective, FormLabelDirective, FormControlDirective, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective,
   BadgeComponent,
   CollapseDirective,
   FormSelectDirective,
@@ -52,6 +52,7 @@ import { PlayingVideogame } from '../../services/models/playing-videogame';
 import { QuerygamesService } from '../../services/querygames.service';
 import { MisterSignalrService } from '../../services/mister-signalr.service';
 import { CoreSavestate } from '../../services/models/core-savestate';
+import { HaSwitchState } from '../../services/models/ha-switch-state';
 import { MediaurlPipe } from '../../pipe/mediaurl.pipe'
 
 @Component({
@@ -63,6 +64,7 @@ import { MediaurlPipe } from '../../pipe/mediaurl.pipe'
     ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective,
     ImgDirective,
     BadgeComponent, CollapseDirective, FormSelectDirective, FooterModule, RouterLink, TableModule, IconDirective, TableDirective,
+    FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective,
     BadgeModule,
     SpinnerComponent, SpinnerModule,
     TemplateIdDirective, Tabs2Module, MediaurlPipe ],
@@ -71,10 +73,14 @@ export class MisterRemoteComponent implements OnInit, OnDestroy {
 
   public managercache$: Observable<ManagerCache> = this.misterSignalr.managerCacheRefresh$;
   public modulehealth?: ModuleHealthcheck;
+  public haModuleHealth?: ModuleHealthcheck;
+  public haSwitchState?: HaSwitchState;
+  public haToggleLoading: boolean = false;
   public playingvideogame?: PlayingVideogame;
   subscription?: Subscription;
   subscription2?: Subscription;
   subSaveState?: Subscription;
+  subHaSwitch?: Subscription;
   public savestates?: CoreSavestate[];
   public ratingBadgeColor: string = "";
   public allowMemorySave: Boolean = false;
@@ -93,6 +99,13 @@ export class MisterRemoteComponent implements OnInit, OnDestroy {
 
         if (h.name == "MisterRemote") {
           this.modulehealth = h;
+        }
+        if (h.name == "HomeAssistant") {
+          this.haModuleHealth = h;
+          if (h.misterState === 'OK' && this.haSwitchState === undefined) {
+            console.log("--- Module is OK check refreshSwitchstate");
+            this.refreshHaSwitchState();            
+          }
         }
       });
 
@@ -117,7 +130,7 @@ export class MisterRemoteComponent implements OnInit, OnDestroy {
       }
     });
 
-    
+    this.refreshHaSwitchState();
   }
 
   saveStateIsLoading(source : string, savestate: CoreSavestate): Boolean {
@@ -155,10 +168,39 @@ export class MisterRemoteComponent implements OnInit, OnDestroy {
   }
 
 
+  refreshHaSwitchState(): void {
+    this.subHaSwitch = this.querygamesservice.GetHaSwitchState().subscribe({
+      next: (result: HaSwitchState) => { this.haSwitchState = result; },
+      error: () => { this.haSwitchState = undefined; }
+    });
+  }
+
+  formatElapsed(date?: Date): string {
+    if (!date) return '';
+    const diffMin = Math.floor((Date.now() - new Date(date).getTime()) / 60000);
+    if (diffMin < 60) return `${diffMin} min`;
+    const diffH = Math.floor(diffMin / 60);
+    if (diffH < 24) return `${diffH} h`;
+    return `${Math.floor(diffH / 24)} j`;
+  }
+
+  toggleHaSwitch(): void {
+    const turnOn = this.haSwitchState?.state !== 'on';
+    this.haToggleLoading = true;
+    this.querygamesservice.SetHaSwitch(turnOn).subscribe({
+      next: () => {
+        if (this.haSwitchState) this.haSwitchState = { ...this.haSwitchState, state: turnOn ? 'on' : 'off', lastChanged: new Date() };
+        this.haToggleLoading = false;
+      },
+      error: () => { this.haToggleLoading = false; }
+    });
+  }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     this.subscription2?.unsubscribe();
     this.subSaveState?.unsubscribe();
+    this.subHaSwitch?.unsubscribe();
   }
 
 

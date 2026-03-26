@@ -3,29 +3,46 @@
   <c-row ngPreserveWhitespaces>
     <c-col xs="12">
 
-      <c-card class="mb-4" *ngIf="modulehealth == null">
-        <c-card-header>
-          <strong>MiSTer Remote</strong>
-        </c-card-header>
-        <c-card-body>
-          Erreur API
-        </c-card-body>
-      </c-card>
-
+     
+      
       <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState!='OK'">
-        <c-card-header>
+        <c-card-header class="d-flex align-items-center justify-content-between">
           <strong>MiSTer Remote</strong>
+          <div class="d-flex align-items-center gap-2" *ngIf="haModuleHealth?.misterState === 'OK'">
+            <small>
+              Power
+              <span *ngIf="haSwitchState?.lastChanged && haSwitchState?.state === 'on'">({{ formatElapsed(haSwitchState?.lastChanged) }})</span>
+              <c-spinner aria-hidden="true" *ngIf="haToggleLoading" size="sm"></c-spinner>
+            </small>
+            <c-form-check [switch]="true">
+              <input cFormCheckInput type="checkbox"
+                     [checked]="haSwitchState?.state === 'on'"
+                     [disabled]="haToggleLoading"
+                     (click)="toggleHaSwitch()" />
+            </c-form-check>
+          </div>
         </c-card-header>
-
         <c-card-body>
-          {{modulehealth.message}}
-          Please turn on your MiSTer
+          {{modulehealth.message}} Please turn on your MiSTer
         </c-card-body>
       </c-card>
 
       <c-card class="mb-4" *ngIf="modulehealth != null && modulehealth.misterState=='OK'">
-        <c-card-header>
+        <c-card-header class="d-flex align-items-center justify-content-between">
           <strong>MiSTer Remote</strong>
+         <div class="d-flex align-items-center gap-2" *ngIf="haModuleHealth?.misterState === 'OK'">
+            <small>
+              Power
+              <span *ngIf="haSwitchState?.lastChanged && haSwitchState?.state === 'on'">({{ formatElapsed(haSwitchState?.lastChanged) }})</span>
+              <c-spinner aria-hidden="true" *ngIf="haToggleLoading" size="sm"></c-spinner>
+            </small>
+            <c-form-check [switch]="true">
+              <input cFormCheckInput type="checkbox"
+                     [checked]="haSwitchState?.state === 'on'"
+                     [disabled]="haToggleLoading"
+                     (click)="toggleHaSwitch()" />
+            </c-form-check>
+          </div>
         </c-card-header>
         <c-card-body>
           <c-tabs [activeItemKey]="'global'">
@@ -37,6 +54,20 @@
               <c-tab-panel class="p-3" itemKey="global">
                 <table cTable calign="top" hover class="w-100">
                   <tbody class="m-0 border-1">
+                   <!-- <tr *ngIf="haModuleHealth?.misterState === 'OK'">
+                      <td class="d-flex align-items-center gap-2 m-2">
+                        <c-form-check [switch]="true">
+                          <input cFormCheckInput type="checkbox"
+                                 [checked]="haSwitchState?.state === 'on'"
+                                 [disabled]="haToggleLoading"
+                                 (click)="toggleHaSwitch()" />
+                          <label cFormCheckLabel>
+                            MiSTer Power
+                            <c-spinner aria-hidden="true" *ngIf="haToggleLoading" size="sm"></c-spinner>
+                          </label>
+                        </c-form-check>
+                      </td>
+                    </tr> -->
                     <tr>
                       <td>
                         <button (click)="sendRemoteCmd('reset')" cButton color="primary" class="m-2">
@@ -61,6 +92,8 @@
                         </button>
                       </td>
                     </tr>
+                    
+                  
                     <tr>
                       <td class="d-flex">
                         <button (click)="sendRemoteCmd('volume_mute')" cButton color="secondary" class="m-2">
