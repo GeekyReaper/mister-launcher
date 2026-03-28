@@ -84,6 +84,7 @@
           <svg *ngIf="module.name=='MisterMedia'" cIcon name="cilImage" class="me-2"></svg>
           <svg *ngIf="module.name=='ScreenScrapper'" cIcon name="cilMagnifyingGlass" class="me-2"></svg>
           <svg *ngIf="module.name=='MisterAuth'" cIcon name="cilShieldAlt" class="me-2"></svg>
+          <svg *ngIf="module.name=='HomeAssistant'" cIcon name="cilHouse" class="me-2"></svg>
           <small>{{module.name }}</small>
           <c-badge class="ms-2 float-end" color="{{module.misterState == 'OK' ? 'success' : module.misterState == 'WARNING' ? 'warning' : 'danger'}}"> {{module.misterState}}</c-badge>
         </a>
