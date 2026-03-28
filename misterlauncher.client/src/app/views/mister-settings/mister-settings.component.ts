@@ -189,7 +189,8 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     });
 
     this.subFtpModuleSettings = this.querygamesservice.GetModuleSettings("MisterFtp").subscribe((items: ModuleSetting[]) => {
-      this.FtpModuleSettings = items;   
+      this.FtpModuleSettings = items;
+      console.log(items);   
       this.formFtpModule = this.setForm(this.FtpModuleSettings);
     });
     this.subMediaModuleSettings = this.querygamesservice.GetModuleSettings("MisterMedia").subscribe((items: ModuleSetting[]) =>
@@ -204,6 +205,7 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     });
     this.subScreenScrapperModuleSettings = this.querygamesservice.GetModuleSettings("ScreenScrapper").subscribe((items: ModuleSetting[]) => {
       this.ScreenScrapperModuleSettings = items;
+      console.log(items); 
       this.formScreenScrapperModule = this.setForm(this.ScreenScrapperModuleSettings);
     });
     this.subAuthModuleSettings = this.querygamesservice.GetModuleSettings("MisterAuth").subscribe((items: ModuleSetting[]) => {

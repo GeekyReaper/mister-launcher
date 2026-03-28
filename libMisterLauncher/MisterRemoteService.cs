@@ -31,6 +31,8 @@ namespace libMisterLauncher.Service
         public string ModuleName { get { return _moduleName; } }
         public string host { get; set; } = "";
 
+        public TimeSpan RefreshConnection { get; set; } = new TimeSpan(0, 0, 0);
+
 
 
         public bool isValid()

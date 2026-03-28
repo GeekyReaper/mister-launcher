@@ -28,7 +28,7 @@ namespace libMisterLauncher.Service
         public string ModuleName { get { return _moduleName; } }
 
         public string path { get; set; } = "../data";
-       
+        public TimeSpan RefreshConnection { get =>new TimeSpan(0); set => throw new NotImplementedException(); }
 
         public bool isValid()
         {

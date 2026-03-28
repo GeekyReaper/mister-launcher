@@ -32,6 +32,8 @@ namespace libMisterLauncher.Service
     public class GameDbSettings : IMisterSettings
     {
         const string _moduleName = "MongoDb";
+
+        public TimeSpan RefreshConnection { get =>new TimeSpan(0); set => throw new NotImplementedException(); }
         public string ModuleName { get { return _moduleName; } }
         public string connectionstring { get; set; } = "";
         public string dbname { get; set; } = "retrogaming";

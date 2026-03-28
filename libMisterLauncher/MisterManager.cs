@@ -2213,29 +2213,60 @@ namespace libMisterLauncher.Manager
         public async Task<List<ModuleSetting>?> GetModuleSettings (string modulename)
         {
             var settings = await gamedbService.GetModuleSettings(modulename);
-            if (settings == null || settings.Count==0)
-            {
-                switch (modulename)
-                {
-                    case "MisterFtp":
-                        var fs = new FtpServiceSettings();
-                        settings = fs.GetModuleSettings();
-                        break;
-                    case "MisterMedia":
-                        var ms = new MediaServiceSettings();
-                        settings = ms.GetModuleSettings();
-                        break;
-                    case "MisterRemote":
-                        var rs = new RemoteServiceSettings();
-                        settings = rs.GetModuleSettings();
-                        break;
-                    case "ScreenScrapper":
-                        var ss = new ScrapperScServiceSettings();
-                        settings = ss.GetModuleSettings();
-                        break;
+            // check Missing settings for backward compatibility
 
+            List<ModuleSetting> initialSettings = null;
+            //if (settings == null || settings.Count==0)
+            //{
+            switch (modulename)
+            {
+                case "MisterFtp":
+                    var fs = new FtpServiceSettings();
+                    initialSettings = fs.GetModuleSettings();
+                    break;
+                case "MisterMedia":
+                    var ms = new MediaServiceSettings();
+                    initialSettings = ms.GetModuleSettings();
+                    break;
+                case "MisterRemote":
+                    var rs = new RemoteServiceSettings();
+                    initialSettings = rs.GetModuleSettings();
+                    break;
+                case "ScreenScrapper":
+                    var ss = new ScrapperScServiceSettings();
+                    initialSettings = ss.GetModuleSettings();
+                    break;
+                case "MisterAuth":
+                    var sa = new AuthServiceSettings();
+                    initialSettings = sa.GetModuleSettings();
+                    break;
+                    case "HomeAssistant":
+                    initialSettings = new HomeAssistantServiceSettings().GetModuleSettings();
+                    break;
+
+            }
+
+            if (initialSettings != null && initialSettings.Count > 0)
+            {
+            
+                foreach (var s in initialSettings)
+                {
+                    if (!settings.Any(st => st.name == s.name))
+                    {
+                        settings.Add(s);
+                    }
+                    else
+                    {  // update value type if exist but different (for example if a setting was change from string to int, we need to update the value type in the db to avoid issue on the front)
+                        var exist = settings.First(st => st.name == s.name);
+                        if (exist.valueType != s.valueType)
+                        {
+                            exist.valueType = s.valueType;
+                        }
+                    }
                 }
             }
+
+
             return settings;
 
         }

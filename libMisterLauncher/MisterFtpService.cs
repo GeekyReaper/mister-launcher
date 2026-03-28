@@ -21,9 +21,12 @@ namespace libMisterLauncher.Service
     {
         const string _moduleName = "MisterFtp";
         public string ModuleName { get { return _moduleName; } }
+        public TimeSpan RefreshConnection { get;set;} = new TimeSpan(0);
         public string host { get; set; } = "";
         public string user { get; set; } = "root";
         public string password { get; set; } = "1";
+
+        
 
 
 

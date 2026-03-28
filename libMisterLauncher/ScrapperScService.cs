@@ -24,11 +24,15 @@ namespace libMisterLauncher.Service
     public class ScrapperScServiceSettings : IMisterSettings
     {
         const string _moduleName = "ScreenScrapper";
+
+
         public string ModuleName { get { return _moduleName; } }
         public string host { get; set; } = "https://api.screenscraper.fr/api2/";
         public string username { get; set; } = "";
         public string password { get; set; } = "";
         public string softname { get; set; } = "MiSTerLauncher";
+
+        public TimeSpan RefreshConnection { get; set; } = new TimeSpan(0,0,600);
 
         public List<string> _preferedRegion = new List<string> { "fr", "eu", "ss", "wor", "us", "jp" };
         public List<string> _preferedLanguage = new List<string> { "fr", "en", "ja" };
@@ -68,6 +72,15 @@ namespace libMisterLauncher.Service
                         break;
                     case "systemidallowsavememory":
                         systemidAllowSaveMemory = moduleSetting.value.Split(',').ToList();
+                        break;
+                    case "refreshConnection" :
+                        var i = 0;
+                        if (int.TryParse(moduleSetting.value, out i))
+                        {
+                            RefreshConnection = new TimeSpan(0,0, i);
+                        }
+                        else
+                            RefreshConnection = new TimeSpan(0, 0, 600);
                         break;
                 }
 
@@ -150,6 +163,15 @@ namespace libMisterLauncher.Service
                     description = "Enter value separated by ',' with no space. List of system name which allow memorysave¨. Please check you activate 'autosaving'. It is used during system extract.",
                     valueType = "text",
                     update = DateTime.Now
+                },
+                new ModuleSetting()
+                {
+                    moduleName = _moduleName,
+                    name = "refreshConnection",
+                    value = ((int)RefreshConnection.TotalSeconds).ToString(),
+                    description = "Time in second, between two check connection",
+                    valueType = "number",
+                    update = DateTime.Now
                 }
             };
             foreach (var item in result)
@@ -175,7 +197,7 @@ namespace libMisterLauncher.Service
         }
 
         public override bool CheckConnection()
-        {
+        {            
             var hoststate = GetRequest("ssinfraInfos.php").Result;
             return hoststate != null && hoststate.IsValid();         
         }

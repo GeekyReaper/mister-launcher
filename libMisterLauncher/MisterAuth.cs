@@ -25,6 +25,8 @@ namespace libMisterLauncher
         public int NumberOfDigit { get; set; } = 4;
 
         public int ConsumeMaxRetry { get; set; } = 5;
+        public TimeSpan RefreshConnection { get; set; } = new TimeSpan(0, 0, 0);
+
         //public int guesttokenexpire { get; set; } = 120;
 
 
@@ -75,15 +77,6 @@ namespace libMisterLauncher
                     description = "Time in hours during which the guest request is stored once it has reached a final status.",
                     update = DateTime.Now
                 },
-                //new ModuleSetting()
-                //{
-                //    moduleName = _moduleName,
-                //    name = "guesttokenexpire",
-                //    value = guesttokenexpire.ToString(),
-                //    valueType = "number",
-                //    description = "in minutes",
-                //    update = DateTime.Now
-                //},
                 new ModuleSetting()
                 {
                     moduleName = _moduleName,

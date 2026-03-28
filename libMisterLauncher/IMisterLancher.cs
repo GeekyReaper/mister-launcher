@@ -85,7 +85,9 @@ namespace libMisterLauncher.Service
     
     public interface IMisterSettings
     {
-        public string ModuleName { get; }
+        public string ModuleName { get; }  
+        public TimeSpan RefreshConnection { get; set; }      
+        
         public bool isValid();
         public List<ModuleSetting> GetModuleSettings();
         public static List<ModuleSetting> GetDefaultModuleSettings() { return new List<ModuleSetting>(); }       
@@ -106,6 +108,10 @@ namespace libMisterLauncher.Service
         internal string _moduleName = "";
         internal MisterModuleHealthCheck _health;
 
+        
+        internal DateTime lastConnectionSuccess = DateTime.MinValue;
+        internal TimeSpan refreshConnectionSuccess = new TimeSpan(0,0,0);
+
         public MisterModuleHealthCheck Health { get { return _health; } }
 
         internal bool isOk { get { return _health.MisterState == MisterStateEnum.OK; } }
@@ -118,17 +124,23 @@ namespace libMisterLauncher.Service
         public BaseModule(T? settings)
         {
             if (settings != null)
-                _settings = settings;
-            _moduleName = settings.ModuleName;
-            _health = new MisterModuleHealthCheck(_moduleName);
+            {    _settings = settings;
+                _moduleName = settings.ModuleName;
+                refreshConnectionSuccess = settings.RefreshConnection;
+                _health = new MisterModuleHealthCheck(_moduleName);
+            }
         }
 
         public virtual void LoadSettings(IMisterSettings settings)
         {
             if (settings != null)
+            {
+                
                 _settings = (T)settings;
-            _moduleName = _settings.ModuleName;
-            _health = new MisterModuleHealthCheck(_moduleName);
+                _moduleName = _settings.ModuleName;
+                refreshConnectionSuccess = settings.RefreshConnection;
+                _health = new MisterModuleHealthCheck(_moduleName);
+            }
         }
 
         public List<ModuleSetting> GetModuleSettings ()
@@ -144,12 +156,23 @@ namespace libMisterLauncher.Service
                 _health.Message = "Invalid settings";
                 return _health;
             }
+
+            if ((lastConnectionSuccess>DateTime.MinValue) && (refreshConnectionSuccess.TotalSeconds > 0) && ((DateTime.UtcNow - lastConnectionSuccess) > refreshConnectionSuccess))
+            {
+                _health.MisterState = MisterStateEnum.OK;
+                _health.Message = "cache";
+                return _health;
+            }
+
+
             if (!CheckConnection())
             {
                 _health.MisterState = MisterStateEnum.ERROR;
                 _health.Message = "Connection error";
                 return _health;
             }
+
+            lastConnectionSuccess = DateTime.UtcNow;
             _health.MisterState = MisterStateEnum.OK;
             _health.Message = "";
 

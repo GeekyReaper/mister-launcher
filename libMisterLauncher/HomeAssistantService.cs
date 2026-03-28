@@ -20,6 +20,8 @@ namespace libMisterLauncher.Service
         const string _moduleName = "HomeAssistant";
         public string ModuleName { get { return _moduleName; } }
 
+         public TimeSpan RefreshConnection { get; set; } = new TimeSpan(0);
+
         public string url { get; set; } = "";
         public string token { get; set; } = "";
         public string switchEntity { get; set; } = "";
@@ -61,6 +63,15 @@ namespace libMisterLauncher.Service
                     valueType = "text",
                     description = "Entity ID of the switch controlling MiSTer power (e.g. switch.mister_power)",
                     update = DateTime.Now
+                },
+                new ModuleSetting()
+                {
+                    moduleName = _moduleName,
+                    name = "refreshConnection",
+                    value = "300",
+                    description = "Time in second, between two check connection",
+                    valueType = "number",
+                    update = DateTime.Now
                 }
             };
             foreach (var item in result)
@@ -82,6 +93,10 @@ namespace libMisterLauncher.Service
                         break;
                     case "switchEntity":
                         switchEntity = moduleSetting.value;
+                        break;
+                    case "refreshConnection":
+                        if (int.TryParse(moduleSetting.value, out int refreshInterval))
+                            RefreshConnection = TimeSpan.FromSeconds(refreshInterval);
                         break;
                 }
             }
