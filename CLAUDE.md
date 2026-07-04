@@ -4,16 +4,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MiSTerLauncher is a web application to search and launch games on a [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) device. It integrates with ScreenScraper.fr for game metadata, MongoDB for storage, MiSTer Remote API for game launching, and FTP for SD card access.
+MiSTerLauncher is a web application to search and launch games on a [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) device. It integrates with ScreenScraper.fr for game metadata, MongoDB for storage, MiSTer Remote API for game launching, FTP for SD card access, and Home Assistant for MiSTer power control.
 
-## Solution Structure
+## Architecture — 3 projets
 
 ```
 MiSTerLauncher.sln
-├── MiSTerLauncher.Server/   # ASP.NET Core 8.0 Web API + SPA host
-├── libMisterLauncher/       # Class library: all business logic and modules
-└── misterlauncher.client/   # Angular 18 frontend (CoreUI)
+├── libMisterLauncher/       # CORE métier : modules (Mongo, FTP, MiSTer Remote, ScreenScraper, Auth, Home Assistant), MisterManager
+├── MiSTerLauncher.Server/   # ASP.NET Core 8.0 — API REST + Hub SignalR + Auth JWT + host SPA
+└── misterlauncher.client/   # Angular 18 (CoreUI) — frontend
 ```
+
+**Dépendances entre projets :**
+- `MiSTerLauncher.Server` → `libMisterLauncher`
+- `misterlauncher.client` consomme l'API et le hub SignalR de `MiSTerLauncher.Server` (via proxy en dev)
+- `libMisterLauncher` n'a aucune dépendance vers les deux autres projets
+
+Chaque projet a son propre `CLAUDE.md` avec le détail (`libMisterLauncher/CLAUDE.md`, `MiSTerLauncher.Server/CLAUDE.md`, `misterlauncher.client/CLAUDE.md`) — ce fichier racine ne couvre que la vue d'ensemble.
+
+## Stack technique
+
+| Couche | Choix |
+|---|---|
+| Backend | ASP.NET Core 8.0, C# (libMisterLauncher en `net6.0`, Server en `net8.0` — TFM mixte) |
+| Frontend | Angular 18, CoreUI 5 (Free) |
+| Temps réel | SignalR (`/hub/misterhub`) |
+| Auth | JWT (clé auto-générée dans `MiSTerLauncher.Server/data/jwt-key.json`) |
+| Base de données | MongoDB (`MongoDB.Driver`, schemaless — pas de migrations) |
+| Métadonnées jeux | ScreenScraper.fr API |
+| Lancement de jeux | MiSTer Remote API (HTTP + WebSocket) |
+| Accès SD card | FTP (FluentFTP) |
+| Domotique | Home Assistant REST API (switch power MiSTer) |
 
 ## Build & Run Commands
 
@@ -34,11 +55,14 @@ ng test          # run Karma/Jasmine unit tests
 
 **Full-stack dev**: Running `dotnet run --project MiSTerLauncher.Server` launches the SPA proxy automatically (via `SpaProxyLaunchCommand=npm start`), serving Angular at `https://localhost:4200` and the API on the .NET port.
 
-**Required environment variable:**
-- `GDB_MONGO_CNX` — MongoDB connection string (e.g. `mongodb://localhost`)
-- `GDB_MONGO_DBNAME` — optional, database name override
+## Variables d'environnement
 
-## Architecture
+| Variable | Requis | Description |
+|---|---|---|
+| `GDB_MONGO_CNX` | Oui | Chaîne de connexion MongoDB (ex. `mongodb://localhost`) |
+| `GDB_MONGO_DBNAME` | Non | Nom de la base, surcharge le défaut |
+
+## Architecture — vue d'ensemble
 
 ### Backend Module System (`libMisterLauncher/`)
 
@@ -57,14 +81,7 @@ All external integrations are **modules** implementing `IMisterModule` / `IMiste
 
 **Module settings are stored in MongoDB** (not in appsettings.json). Only the MongoDB connection itself is configured via env var.
 
-### Central Orchestrator: `MisterManager` (`libMisterLauncher/MisterManager.cs`)
-
-`MisterManager` owns all module instances in a type-keyed dictionary. It provides the full business logic surface:
-- `Initialize(GameDbSettings)` → connects to MongoDB, then loads all other module settings from DB via `LoadModules()`
-- `ScanRom()` / `AutomaticScanRom()` — FTP-based ROM discovery jobs
-- `LinkRomToVideoGame()` / `AutomaticLinkRomToVideoGame()` — ScreenScraper matching jobs
-- `LaunchVideoGame()` — sends launch command via MiSTer Remote
-- Job progress is reported via `OnJobRomUpdate` event; cache updates via `OnCacheUpdated` event
+Détail complet (orchestrateur `MisterManager`, système de jobs, entités) : voir [libMisterLauncher/CLAUDE.md](libMisterLauncher/CLAUDE.md).
 
 ### Background Service & SignalR (`MiSTerLauncher.Server/`)
 
@@ -77,12 +94,16 @@ All external integrations are **modules** implementing `IMisterModule` / `IMiste
 - `RefreshCache(MisterManagerCache)` — updated game stats, health, playing game
 - `JobRomScanRefresh(JobMister)` — real-time progress of scan/matching jobs
 
+Détail complet (contrôleurs, routes, auth JWT) : voir [MiSTerLauncher.Server/CLAUDE.md](MiSTerLauncher.Server/CLAUDE.md).
+
 ### Frontend (`misterlauncher.client/`)
 
 Angular 18 with CoreUI 5. Key services:
 - `mister-signalr.service.ts` — SignalR client, maintains live connection to hub
 - `auth.service.ts` — JWT auth with `@auth0/angular-jwt`
 - Models mirror the C# entities from `libMisterLauncher/Entity/`
+
+Détail complet (structure, conventions Angular réelles, routes) : voir [misterlauncher.client/CLAUDE.md](misterlauncher.client/CLAUDE.md).
 
 ### Authentication
 
@@ -96,6 +117,12 @@ JWT Bearer auth is required on all controllers (`MapControllers().RequireAuthori
 - **MediaDb** — media reference (stored path + source URL), downloaded on demand
 - **MisterManagerCache** — in-memory snapshot broadcast to all clients via SignalR
 - **HaSwitchState** — DTO returned by `GET /api/core/haswitch` with `state` ("on"/"off") and `lastChanged` date
+
+## Conventions transversales
+
+- Code (classes, méthodes, variables) : **anglais**. Documentation et commentaires : **français** quand c'est pertinent (cohérent avec le reste de ce fichier).
+- Pas de secrets en dur dans le code — connexion Mongo via variable d'environnement, clé JWT auto-générée au premier démarrage dans `MiSTerLauncher.Server/data/jwt-key.json` (à ne pas committer).
+- Les settings de chaque module métier vivent en base Mongo, jamais dans `appsettings.json`.
 
 ### Notes techniques importantes
 
