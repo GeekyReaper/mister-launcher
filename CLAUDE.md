@@ -53,7 +53,7 @@ npm run build    # production build
 ng test          # run Karma/Jasmine unit tests
 ```
 
-**Full-stack dev**: Running `dotnet run --project MiSTerLauncher.Server` launches the SPA proxy automatically (via `SpaProxyLaunchCommand=npm start`), serving Angular at `https://localhost:4200` and the API on the .NET port.
+**Full-stack dev**: Running `dotnet run --project MiSTerLauncher.Server` launches the SPA proxy automatically (via `SpaProxyLaunchCommand=npm start`), serving Angular at `https://localhost:4201` and the API on the .NET port.
 
 ## Variables d'environnement
 

@@ -1,7 +1,7 @@
 # misterlauncher.client — Contexte
 
 Frontend Angular 18 avec CoreUI 5 (Free). SPA servie par `MiSTerLauncher.Server` en production (fichiers statiques + fallback `/index.html`).
-En dev, tourne sur `https://localhost:4200` avec proxy HTTPS vers le backend (`npm start` → `aspnetcore-https` génère/lit le certificat dans `%APPDATA%\ASP.NET\https`, puis `ng serve --ssl`). Build de prod → `dist/misterlauncher.client/browser/`.
+En dev, tourne sur `https://localhost:4201` avec proxy HTTPS vers le backend (`npm start` → `aspnetcore-https` génère/lit le certificat dans `%APPDATA%\ASP.NET\https`, puis `ng serve --ssl`, port fixé via `angular.json` → `serve.options.port`). Build de prod → `dist/misterlauncher.client/browser/`.
 
 > Ce projet n'est **pas** un frontend Angular "moderne" strict façon standalone/signals-only — voir la section Conventions ci-dessous pour l'état réel observé dans le code.
 
