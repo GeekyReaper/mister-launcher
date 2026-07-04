@@ -166,6 +166,51 @@
         </tbody>
       </table>
 
+      <table cTable calign="top" class="w-100" *ngIf="currentJob.jobType == jobtypefilter && currentJob.jobType=='GENERATEGAMELIST'">
+        <tbody class="m-0 border-1">
+          <tr>
+            <th scope="row" class="w-25 bg-light">Launched date</th>
+            <td>
+              {{currentJob.start | date:'HH:mm:ss'}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Delay</th>
+            <td>
+              {{currentJob.delay | timelapse}}
+            </td>
+          </tr>
+          <tr *ngIf="currentJob.logs!= undefined && currentJob.logs.length >0">
+            <td colspan="2">
+              <c-alert color="light" class="m-1 p-1">
+                <small *ngFor="let log of currentJob.logs" class="fs-6 font-monospace {{log.result=='FAILED' ? 'text-danger' : (log.result=='SUCCEED' ? 'text-success' : 'text-black')}}">[{{log.start | date:'HH:mm'}}]&nbsp;<strong *ngIf="log.title!=''">{{log.title}}|&nbsp;</strong><span>{{log.body}}</span><br /></small>
+              </c-alert>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Games found</th>
+            <td>
+              {{currentJob.result.income}}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Progress</th>
+            <td>
+              <c-progress [value]="currentJob.result.progress">
+                {{currentJob.result.progress}}%
+              </c-progress>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="w-25 bg-light">Folders processed</th>
+            <td>
+              {{currentJob.foldersScanned}} &nbsp;
+              <span *ngIf="currentJob.foldersRemaining > 0" class="badge bg-info">{{currentJob.foldersRemaining}} remaining</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
       <c-alert color="info" *ngIf="currentJob.jobType != jobtypefilter &&  currentJob.jobName!='none' && currentJob.state != 'DONE' ">
         <strong>Another job running</strong>
       </c-alert>

@@ -98,7 +98,14 @@
                       <th cTableColor="light" class="w-25" scope="row">Company</th>
                       <td><c-badge style="margin:4px" color="secondary" shape="rounded-pill">{{system.company}}</c-badge> </td>
                     </tr>
-                  </tbody>                
+                    <tr *ngIf="system.category === 'Console'">
+                      <th cTableColor="light" class="w-25" scope="row">Gamelist.xml</th>
+                      <td>
+                        <span *ngIf="system.lastGamelistGenerated">Generated on {{system.lastGamelistGenerated | date:'medium'}}</span>
+                        <span *ngIf="!system.lastGamelistGenerated">Never generated</span>
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
                 <!--<c-container>
                   <c-row>
@@ -128,6 +135,10 @@
                 </button>
                 <app-modaledit-system [systeminfo]="system" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
                 </app-modaledit-system>
+                <button *ngIf="system.category === 'Console'" (click)="generateGamelist()" cButton class="m-2 float-start" variant="outline">
+                  <svg cIcon name="cilFile" size="2xl" title="Regenerate gamelist.xml" />
+                  Regenerate gamelist.xml
+                </button>
               </c-col>
               <c-col class="p-0 m-0">
                 <button (click)="this.goBack()" cButton color="primary" class="m-2 float-end">
@@ -139,6 +150,7 @@
           </c-container>
         </c-card-footer>
       </c-card>
+      <app-view-job *ngIf="system.category === 'Console'" jobtypefilter="GENERATEGAMELIST" (JobFinished)="onGamelistJobFinished($event)"></app-view-job>
     </div>
   </c-col>
 </c-row>

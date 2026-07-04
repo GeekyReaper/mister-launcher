@@ -14,7 +14,7 @@ namespace libMisterLauncher.Entity
     public enum JobState { RUNNING, DONE, CANCEL}
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum JobType { SCANROM, MATCHINGROM, SCANSYSTEM, UNDEFINNED }
+    public enum JobType { SCANROM, MATCHINGROM, SCANSYSTEM, GENERATEGAMELIST, UNDEFINNED }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum LogResult { INFO, WARNING, SUCCEED, FAILED }

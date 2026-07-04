@@ -29,13 +29,13 @@ namespace MiSTerLauncher.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<ActionResult<VideoGameDb>> Index(string id, string token)
+        public async Task<ActionResult<VideoGameDb>> Index(string id, string? token = null)
         {
 
             if (string.IsNullOrEmpty(id))
                 return NotFound(id);
 
-            if (!TokenIsValid(token))
+            if (!_misterManager.AllowAnonymousMedia() && !TokenIsValid(token))
             {
                 return Unauthorized();
             }
@@ -56,7 +56,7 @@ namespace MiSTerLauncher.Server.Controllers
         }
 
 
-        private bool TokenIsValid (string token)
+        private bool TokenIsValid (string? token)
         {
             if (string.IsNullOrEmpty(token))
                 return false;

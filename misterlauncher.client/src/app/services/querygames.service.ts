@@ -476,9 +476,19 @@ export class QuerygamesService implements OnInit, OnDestroy {
     return this.http.get<JobRomscan>('api/Core/currentjob', { headers: headers });
   }
 
+  LaunchJobGenerateGamelist(systemid: string): Observable<Boolean> {
+    let headers = new HttpHeaders();
+    var payload = `
+    {
+      "systemid" : "${systemid}"
+    }`;
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<Boolean>(`api/system/generategamelist`, payload, { headers: headers });
+  }
+
   LaunchJobScanSystem(): Observable<Boolean> {
     let headers = new HttpHeaders();
-    
+
     headers = headers.set('Content-Type', 'application/json');
     return this.http.get<Boolean>(`api/system/scan`, { headers: headers });
   }

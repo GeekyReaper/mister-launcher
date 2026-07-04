@@ -105,6 +105,11 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
   formHaModule!: FormGroup;
   hacurrenthealthcheck!: ModuleHealthcheck;
 
+  subGeneralModuleSettings!: Subscription
+  public GeneralModuleSettings!: ModuleSetting[];
+  formGeneralModule!: FormGroup;
+  generalcurrenthealthcheck!: ModuleHealthcheck;
+
   subscriptionCache!: Subscription;
 
   currentAction: string = "";
@@ -165,6 +170,9 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
         if (h.name == "HomeAssistant") {
           this.hacurrenthealthcheck = h;
         }
+        if (h.name == "GeneralSettings") {
+          this.generalcurrenthealthcheck = h;
+        }
 
       });
     });
@@ -185,6 +193,9 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
       formDefault: [""]
     });
     this.formHaModule = this.formBuilder.group({
+      formDefault: [""]
+    });
+    this.formGeneralModule = this.formBuilder.group({
       formDefault: [""]
     });
 
@@ -216,6 +227,10 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
       this.HaModuleSettings = items;
       this.formHaModule = this.setForm(this.HaModuleSettings);
     });
+    this.subGeneralModuleSettings = this.querygamesservice.GetModuleSettings("GeneralSettings").subscribe((items: ModuleSetting[]) => {
+      this.GeneralModuleSettings = items;
+      this.formGeneralModule = this.setForm(this.GeneralModuleSettings);
+    });
   }
   ngOnDestroy(): void {
     this.subFtpModuleSettings?.unsubscribe();
@@ -224,16 +239,21 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     this.subRemoteModuleSettings?.unsubscribe();
     this.subScreenScrapperModuleSettings?.unsubscribe();
     this.subHaModuleSettings?.unsubscribe();
+    this.subGeneralModuleSettings?.unsubscribe();
     this.subscriptionCache?.unsubscribe();
   }
 
   public setForm(settings: ModuleSetting[]): FormGroup {
     const group: any = {};
     settings.forEach((setting: ModuleSetting) => {
-      group[setting.name] = new FormControl(setting.value, Validators.required);
+      if (setting.valueType === 'checkbox') {
+        group[setting.name] = new FormControl(setting.value === 'true');
+      } else {
+        group[setting.name] = new FormControl(setting.value, Validators.required);
+      }
     });
     return this.formBuilder.group(group);
-  } 
+  }
 
   public OnSubmitFtp(): void {
     
@@ -252,7 +272,8 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
 
     console.log(settings);
     settings.forEach((setting: ModuleSetting) => {
-      setting.value = form.controls[setting.name].value;
+      const raw = form.controls[setting.name].value;
+      setting.value = setting.valueType === 'checkbox' ? (raw ? 'true' : 'false') : raw;
     });
     this.querygamesservice.SetModuleSettings(settings).subscribe((b: Boolean) => {
       this.currentAction = ""; // RESET
@@ -271,9 +292,10 @@ export class MisterSettingsComponent implements OnInit, OnDestroy {
     this.currentAction = `check_${modulename}`;
 
     console.log("check");
-    
+
     settings.forEach((setting: ModuleSetting) => {
-      setting.value = form.controls[setting.name].value;
+      const raw = form.controls[setting.name].value;
+      setting.value = setting.valueType === 'checkbox' ? (raw ? 'true' : 'false') : raw;
     });
     this.querygamesservice.CheckModuleSettings(settings).subscribe(
       (b: ModuleHealthcheck) => {

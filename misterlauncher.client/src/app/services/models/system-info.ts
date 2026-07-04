@@ -35,4 +35,5 @@ export interface SystemInfo {
   allowSaveStates: boolean;
   allowSaveMemory: boolean;
   core: string;
+  lastGamelistGenerated: string | null;
 }

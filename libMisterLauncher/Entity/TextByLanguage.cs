@@ -139,6 +139,8 @@ namespace libMisterLauncher.Entity
         public int statromfound{ get; set; }
         public int statrommatch { get; set; }
 
+        public DateTime? lastGamelistGenerated { get; set; } = null;
+
         public List<string> GetAllowExtensions()
         {
             return extensions.Split(",").Select( s => s.Trim()).ToList();

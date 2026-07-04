@@ -805,6 +805,18 @@ namespace libMisterLauncher.Service
 
         }
 
+        public async Task<bool> SetSystemGamelistGenerated(string id, DateTime date)
+        {
+            if (_health.MisterState != MisterStateEnum.OK)
+            {
+                return false;
+            }
+            var collection = _database.GetCollection<SystemDb>(_settings.collectionNameSystems);
+            var update = Builders<SystemDb>.Update.Set(s => s.lastGamelistGenerated, date);
+            var updateresult = await collection.UpdateOneAsync(s => s._id == id, update, new UpdateOptions { IsUpsert = false });
+            return updateresult.MatchedCount == 1;
+        }
+
         public async Task<SystemDb?> UpdateSettingsSystem (SystemDb uptadesystem)
         {
             var collectionname = _settings.collectionNameSystems;

@@ -285,6 +285,37 @@ namespace libMisterLauncher.Service
             }
         }
 
+        public bool UploadFile(byte[] content, string remotePath, FtpClient? conn = null)
+        {
+            bool localConnection = conn == null;
+            FtpClient? localConn = null;
+
+            if (localConnection)
+            {
+                localConn = new FtpClient(_settings.host, _settings.user, _settings.password);
+                localConn.Connect();
+                conn = localConn;
+            }
+
+            try
+            {
+                var status = conn.UploadBytes(content, remotePath, FtpRemoteExists.Overwrite, true);
+                return status == FtpStatus.Success || status == FtpStatus.Skipped;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                if (localConnection)
+                {
+                    localConn?.Disconnect();
+                    localConn?.Dispose();
+                }
+            }
+        }
+
         internal bool CheckPaterns (List<string> paterns, string input)
         {
             if (paterns.Count == 0)

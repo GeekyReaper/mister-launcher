@@ -116,6 +116,18 @@ namespace libMisterLauncher.Manager
             }
         }
 
+        internal GeneralSettingsService generalSettingsService
+        {
+            get
+            {
+                var t = getModule<GeneralSettingsService>();
+                if (t == null)
+                    LoadModules();
+
+                return getModule<GeneralSettingsService>();
+            }
+        }
+
         internal MisterManagerCache _cache = new MisterManagerCache();
 
         internal JobMister? _currentJob = null;
@@ -163,7 +175,8 @@ namespace libMisterLauncher.Manager
                 loadModule<ScrapperScService, ScrapperScServiceSettings>();
                 loadModule<MisterAuthService, AuthServiceSettings>();
                 loadModule<HomeAssistantService, HomeAssistantServiceSettings>();
-            
+                loadModule<GeneralSettingsService, GeneralSettingsServiceSettings>();
+
             }
             RefreshCache();
         }
@@ -1631,6 +1644,112 @@ namespace libMisterLauncher.Manager
             return job;
         }
 
+        public bool AutomaticGenerateGamelist(string systemid)
+        {
+            if (_currentJob != null)
+                return false;
+            var j = GenerateGamelist(systemid);
+            return true;
+        }
+
+        internal async Task<JobMister> GenerateGamelist(string systemid)
+        {
+            var job = new JobMister();
+            job.jobName = string.Format("Generate gamelist.xml for {0}", systemid);
+            job.jobType = JobType.GENERATEGAMELIST;
+            job.state = JobState.RUNNING;
+            _currentJob = job;
+            if (OnJobRomUpdate != null)
+                OnJobRomUpdate(job);
+
+            if (!misterftpService.isOk)
+            {
+                job.AddLog("Initialize", "FTP is not reachable", LogResult.FAILED);
+                job.state = JobState.DONE;
+                if (OnJobRomUpdate != null)
+                    OnJobRomUpdate(job);
+                _currentJob = null;
+                return job;
+            }
+
+            bool isArcade = systemid == "Arcade";
+            if (!isArcade && _cache.GetSystem(systemid) == null)
+            {
+                job.AddLog("Initialize", "System not found", LogResult.FAILED);
+                job.state = JobState.DONE;
+                if (OnJobRomUpdate != null)
+                    OnJobRomUpdate(job);
+                _currentJob = null;
+                return job;
+            }
+
+            var search = new VideoGameSearchRequest { limit = 0, AllowUnknowYear = true, AllowUnRated = true };
+            if (isArcade)
+                search.SystemCategory = "Arcade";
+            else
+                search.Systems.Add(systemid);
+
+            var videogames = gamedbService.GetMatchVideoGame(search);
+            job.result.Initialize(videogames.Count);
+            job.AddLog("Initialize", string.Format("{0} video game(s) found", videogames.Count), LogResult.INFO);
+            if (OnJobRomUpdate != null)
+                OnJobRomUpdate(job);
+
+            var folderGroups = new Dictionary<string, List<(VideoGameDb game, RomDb rom)>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var vg in videogames)
+            {
+                foreach (var rom in vg.roms ?? new List<RomDb>())
+                {
+                    if (string.IsNullOrEmpty(rom.fullpath))
+                        continue;
+                    var dir = GamelistXmlBuilder.GetDirectory(rom.fullpath);
+                    if (!folderGroups.TryGetValue(dir, out var list))
+                    {
+                        list = new List<(VideoGameDb, RomDb)>();
+                        folderGroups[dir] = list;
+                    }
+                    list.Add((vg, rom));
+                }
+                job.result.Newiteration();
+            }
+
+            job.foldersRemaining = folderGroups.Count;
+            job.AddLog("Initialize", string.Format("{0} folder(s) to update", folderGroups.Count), LogResult.INFO);
+            if (OnJobRomUpdate != null)
+                OnJobRomUpdate(job);
+
+            var baseUrl = generalSettingsService.PublicBaseUrl;
+            int successCount = 0;
+            using (var ftp = misterftpService.CreateConnection())
+            {
+                foreach (var (dir, entries) in folderGroups)
+                {
+                    var xml = GamelistXmlBuilder.Build(dir, entries, baseUrl);
+                    var remotePath = dir + "gamelist.xml";
+                    var ok = misterftpService.UploadFile(Encoding.UTF8.GetBytes(xml), remotePath, ftp);
+                    job.AddLog("FTP", string.Format("{0} {1} ({2} game(s))", ok ? "Uploaded" : "FAILED to upload", remotePath, entries.Count), ok ? LogResult.SUCCEED : LogResult.FAILED);
+                    if (ok)
+                        successCount++;
+                    job.foldersScanned++;
+                    job.foldersRemaining--;
+                    job.UpdateDelay();
+                    if (OnJobRomUpdate != null)
+                        OnJobRomUpdate(job);
+                }
+            }
+
+            if (successCount > 0)
+            {
+                await gamedbService.SetSystemGamelistGenerated(systemid, DateTime.Now);
+            }
+
+            job.state = JobState.DONE;
+            if (OnJobRomUpdate != null)
+                OnJobRomUpdate(job);
+            _currentJob = null;
+            return job;
+        }
+
         public async Task<GbdRomUpdateResult> ScanConsoleRom(string? systemid = null)
         {
             
@@ -2243,6 +2362,9 @@ namespace libMisterLauncher.Manager
                     case "HomeAssistant":
                     initialSettings = new HomeAssistantServiceSettings().GetModuleSettings();
                     break;
+                case "GeneralSettings":
+                    initialSettings = new GeneralSettingsServiceSettings().GetModuleSettings();
+                    break;
 
             }
 
@@ -2309,6 +2431,9 @@ namespace libMisterLauncher.Manager
                     case "HomeAssistant":
                         loadModule<HomeAssistantService, HomeAssistantServiceSettings>();
                         break;
+                    case "GeneralSettings":
+                        loadModule<GeneralSettingsService, GeneralSettingsServiceSettings>();
+                        break;
                 }
                 RefreshCache();
                 if (OnCacheUpdated != null)
@@ -2358,6 +2483,11 @@ namespace libMisterLauncher.Manager
                     has.LoadModuleSettings(settings);
                     var hamod = new HomeAssistantService(has);
                     return hamod.CheckHealth();
+                case "GeneralSettings":
+                    var gs = new GeneralSettingsServiceSettings();
+                    gs.LoadModuleSettings(settings);
+                    var gsmod = new GeneralSettingsService(gs);
+                    return gsmod.CheckHealth();
             }
             return null;
         }
@@ -2391,6 +2521,18 @@ namespace libMisterLauncher.Manager
             var ha = homeAssistantService;
             if (ha == null || !ha._settings.isValid()) return false;
             return turnOn ? await ha.TurnOn() : await ha.TurnOff();
+        }
+
+        public bool AllowAnonymousMedia()
+        {
+            var gs = generalSettingsService;
+            return gs != null && gs.AllowAnonymousMedia;
+        }
+
+        public string PublicBaseUrl()
+        {
+            var gs = generalSettingsService;
+            return gs != null ? gs.PublicBaseUrl : "";
         }
 
         public async Task<RemoteServiceScriptResult> GetScripts()

@@ -27,6 +27,7 @@
               <button cTab itemKey="auth">Auth <c-badge class="ms-2 float-end" color="{{authcurrenthealthcheck.misterState| misterstateColor}}"> {{authcurrenthealthcheck.misterState}}</c-badge></button>
               <button cTab itemKey="media">Media <c-badge class="ms-2 float-end" color="{{mediacurrenthealthcheck.misterState| misterstateColor}}"> {{mediacurrenthealthcheck.misterState}}</c-badge></button>
               <button cTab itemKey="homeassistant">Home Assistant <c-badge class="ms-2 float-end" color="{{hacurrenthealthcheck.misterState| misterstateColor}}"> {{hacurrenthealthcheck.misterState}}</c-badge></button>
+              <button cTab itemKey="general">General <c-badge class="ms-2 float-end" color="{{generalcurrenthealthcheck.misterState| misterstateColor}}"> {{generalcurrenthealthcheck.misterState}}</c-badge></button>
             </c-tabs-list>
             <c-tabs-content>
               <c-tab-panel class="p-3" itemKey="remote">
@@ -338,6 +339,53 @@
                         </button>
                         <button cButton class="me-1" color="primary" type="submit">
                           <c-spinner aria-hidden="true" *ngIf="CheckSpinner(HaModuleSettings,'save')" size="sm" />
+                          Save
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </c-container>
+                </form>
+              </c-tab-panel>
+              <c-tab-panel class="p-3" itemKey="general">
+                <form cForm [formGroup]="formGeneralModule" (ngSubmit)="submitForm(formGeneralModule,GeneralModuleSettings)" #formDirective="ngForm">
+                  <c-container>
+                    <c-row>
+                      <c-col>
+                        <c-alert color="light">
+                          <p><strong>General</strong> settings used to build absolute media links (screenshots, videos, manuals) for external tools such as Zaparoo's gamelist.xml, and to control whether media can be accessed without a token.</p>
+                        </c-alert>
+                      </c-col>
+                    </c-row>
+                    <c-row *ngFor="let setting of GeneralModuleSettings">
+                      <c-col>
+                        <ng-container *ngIf="setting.valueType !== 'checkbox'; else checkboxTemplate">
+                          <c-input-group class="mb-0">
+                            <span cInputGroupText class="fw-bold">{{setting.name}}</span>
+                            <input cFormControl
+                                   formControlName="{{setting.name}}"
+                                   placeholder=""
+                                   type="{{setting.valueType}}" />
+                          </c-input-group>
+                        </ng-container>
+                        <ng-template #checkboxTemplate>
+                          <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" formControlName="{{setting.name}}" id="general-{{setting.name}}" />
+                            <label class="form-check-label fw-bold" for="general-{{setting.name}}">{{setting.name}}</label>
+                          </div>
+                        </ng-template>
+                        <span cInputGroupText class="text-wrap w-100 mb-3" *ngIf="setting.description !=''">
+                          {{setting.description}}
+                        </span>
+                      </c-col>
+                    </c-row>
+                    <c-row>
+                      <c-col>
+                        <button cButton class="me-1" color="secondary" (click)="checkForm(formGeneralModule,GeneralModuleSettings)" variant="outline">
+                          <c-spinner aria-hidden="true" *ngIf="CheckSpinner(GeneralModuleSettings,'check')" size="sm" />
+                          Check
+                        </button>
+                        <button cButton class="me-1" color="primary" type="submit">
+                          <c-spinner aria-hidden="true" *ngIf="CheckSpinner(GeneralModuleSettings,'save')" size="sm" />
                           Save
                         </button>
                       </c-col>

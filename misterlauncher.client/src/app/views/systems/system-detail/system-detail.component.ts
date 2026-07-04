@@ -51,6 +51,7 @@ import { VideogameSearchResult } from '../../../services/models/videogame-search
 import { VideogameSearchRequest } from '../../../services/models/videogame-search-request';
 import { ItemlistVideogameComponent } from '../../../components/itemlist-videogame/itemlist-videogame.component'
 import { ModaleditSystemComponent } from '../../../components/modaledit-system/modaledit-system.component'
+import { ViewJobComponent } from '../../../components/view-job/view-job.component'
 import { MediaurlPipe } from '../../../pipe/mediaurl.pipe'
 import { MisterSignalrService } from '../../../services/mister-signalr.service';
 import { ManagerCache } from '../../../services/models/manager-cache';
@@ -65,7 +66,7 @@ import { ModuleHealthcheck } from '../../../services/models/module-healthcheck';
   imports: [RowComponent, CommonModule, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, CardTitleDirective, CardTextDirective, ButtonDirective, CardSubtitleDirective, CardLinkDirective, ListGroupDirective, ListGroupItemDirective, CardFooterComponent, NavComponent, NavItemComponent, NavLinkDirective, BorderDirective, CardGroupComponent, GutterDirective, CardImgDirective,
     FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, BadgeComponent, CollapseDirective, FormSelectDirective, ContainerComponent, ProgressComponent, ProgressBarComponent, TableModule, UtilitiesModule, GridModule,
     ThemeDirective, CarouselComponent, CarouselInnerComponent, CarouselItemComponent, CarouselControlComponent, RouterLink, CarouselIndicatorsComponent, ImgModule, IconDirective,
-    Tabs2Module, ItemlistVideogameComponent, ModaleditSystemComponent, MediaurlPipe,
+    Tabs2Module, ItemlistVideogameComponent, ModaleditSystemComponent, ViewJobComponent, MediaurlPipe,
     ModalComponent, ModalBodyComponent, ModalHeaderComponent, ModalFooterComponent],
 })
 export class SystemDetailComponent implements OnInit, OnDestroy {
@@ -282,5 +283,15 @@ export class SystemDetailComponent implements OnInit, OnDestroy {
     this.modalSettingsVisible = false;
     this.ngOnInit();
   }
- 
+
+  generateGamelist() {
+    this.querygamesservice.LaunchJobGenerateGamelist(this.id).subscribe();
+  }
+
+  onGamelistJobFinished(state: string) {
+    this.subQuery = this.querygamesservice.getSystemDetail(this.id).subscribe((s: SystemInfo) => {
+      this.system = s;
+    });
+  }
+
 }

@@ -66,6 +66,16 @@ namespace MiSTerLauncher.Server.Controllers
             return Ok(result);
         }
 
+        [HttpPost("generategamelist")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<bool>> GenerateGamelist(BodyAutomaticMatchRom parameters)
+        {
+            if (string.IsNullOrEmpty(parameters.systemid))
+                return NotFound();
+            var result = _misterManager.AutomaticGenerateGamelist(parameters.systemid);
+            return Ok(result);
+        }
+
 
     }
 }
