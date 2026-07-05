@@ -1673,7 +1673,8 @@ namespace libMisterLauncher.Manager
             }
 
             bool isArcade = systemid == "Arcade";
-            if (!isArcade && _cache.GetSystem(systemid) == null)
+            var system = _cache.GetSystem(systemid);
+            if (!isArcade && system == null)
             {
                 job.AddLog("Initialize", "System not found", LogResult.FAILED);
                 job.state = JobState.DONE;
@@ -1695,37 +1696,54 @@ namespace libMisterLauncher.Manager
             if (OnJobRomUpdate != null)
                 OnJobRomUpdate(job);
 
-            var folderGroups = new Dictionary<string, List<(VideoGameDb game, RomDb rom)>>(StringComparer.OrdinalIgnoreCase);
+            var allEntries = new List<(VideoGameDb game, RomDb rom)>();
             foreach (var vg in videogames)
             {
                 foreach (var rom in vg.roms ?? new List<RomDb>())
                 {
                     if (string.IsNullOrEmpty(rom.fullpath))
                         continue;
-                    var dir = GamelistXmlBuilder.GetDirectory(rom.fullpath);
-                    if (!folderGroups.TryGetValue(dir, out var list))
-                    {
-                        list = new List<(VideoGameDb, RomDb)>();
-                        folderGroups[dir] = list;
-                    }
-                    list.Add((vg, rom));
+                    allEntries.Add((vg, rom));
                 }
                 job.result.Newiteration();
             }
-
-            job.foldersRemaining = folderGroups.Count;
-            job.AddLog("Initialize", string.Format("{0} folder(s) to update", folderGroups.Count), LogResult.INFO);
-            if (OnJobRomUpdate != null)
-                OnJobRomUpdate(job);
 
             var baseUrl = generalSettingsService.PublicBaseUrl;
             int successCount = 0;
             using (var ftp = misterftpService.CreateConnection())
             {
-                foreach (var (dir, entries) in folderGroups)
+                // Racine physique du systeme : un seul gamelist.xml par point de montage,
+                // couvrant tous les sous-dossiers (ex. NES/A/, NES/B/) via des chemins relatifs.
+                List<string> roots;
+                if (isArcade)
                 {
-                    var xml = GamelistXmlBuilder.Build(dir, entries, baseUrl);
-                    var remotePath = dir + "gamelist.xml";
+                    roots = new List<string> { "/media/fat/_Arcade/" };
+                }
+                else
+                {
+                    roots = misterftpService.GetAvailableRomPath(ftp)
+                        .Select(rompath => (rompath + system!.gamepath).TrimEnd('/') + "/")
+                        .ToList();
+                }
+
+                var rootGroups = roots
+                    .Select(root => (root, entries: allEntries.Where(e => e.rom.fullpath.StartsWith(root, StringComparison.OrdinalIgnoreCase)).ToList()))
+                    .Where(g => g.entries.Count > 0)
+                    .ToList();
+
+                var unmatchedCount = allEntries.Count - rootGroups.Sum(g => g.entries.Count);
+                if (unmatchedCount > 0)
+                    job.AddLog("Initialize", string.Format("{0} rom(s) did not match any known root path and were skipped", unmatchedCount), LogResult.INFO);
+
+                job.foldersRemaining = rootGroups.Count;
+                job.AddLog("Initialize", string.Format("{0} gamelist.xml file(s) to update", rootGroups.Count), LogResult.INFO);
+                if (OnJobRomUpdate != null)
+                    OnJobRomUpdate(job);
+
+                foreach (var (root, entries) in rootGroups)
+                {
+                    var xml = GamelistXmlBuilder.Build(root, entries, baseUrl);
+                    var remotePath = root + "gamelist.xml";
                     var ok = misterftpService.UploadFile(Encoding.UTF8.GetBytes(xml), remotePath, ftp);
                     job.AddLog("FTP", string.Format("{0} {1} ({2} game(s))", ok ? "Uploaded" : "FAILED to upload", remotePath, entries.Count), ok ? LogResult.SUCCEED : LogResult.FAILED);
                     if (ok)

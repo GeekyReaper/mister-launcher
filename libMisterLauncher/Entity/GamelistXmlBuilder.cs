@@ -9,12 +9,6 @@ namespace libMisterLauncher.Entity
 {
     internal static class GamelistXmlBuilder
     {
-        public static string GetDirectory(string fullpath)
-        {
-            var idx = fullpath.LastIndexOf('/');
-            return idx >= 0 ? fullpath.Substring(0, idx + 1) : fullpath;
-        }
-
         public static string Build(string folderPath, List<(VideoGameDb game, RomDb rom)> entries, string publicBaseUrl)
         {
             var root = new XElement("gameList");
@@ -52,10 +46,11 @@ namespace libMisterLauncher.Entity
                 }
                 else
                 {
-                    // Clone (rom additionnelle du meme jeu) : entree minimale rattachee a la rom primaire.
+                    // Clone (rom additionnelle du meme jeu) : entree minimale rattachee a la rom primaire,
+                    // seulement si la rom primaire est aussi presente dans ce meme fichier.
                     var primaryRom = game.roms[0];
-                    var primaryDir = GetDirectory(primaryRom.fullpath ?? "");
-                    if (!string.IsNullOrEmpty(primaryRom.fullpath) && string.Equals(primaryDir, folderPath, StringComparison.OrdinalIgnoreCase))
+                    var primaryInThisFile = !string.IsNullOrEmpty(primaryRom.fullpath) && entries.Any(e => e.rom.romid == primaryRom.romid);
+                    if (primaryInThisFile)
                     {
                         root.Add(new XElement("game",
                             new XElement("path", relativePath),
@@ -64,7 +59,7 @@ namespace libMisterLauncher.Entity
                     }
                     else
                     {
-                        // La rom primaire est dans un autre dossier (donc un autre gamelist.xml) :
+                        // La rom primaire est sur une autre racine physique (donc un autre gamelist.xml) :
                         // <parent> ne peut pas referencer un fichier externe, on duplique toutes les metadonnees.
                         root.Add(BuildGameElement(relativePath, game, publicBaseUrl, parent: null));
                     }

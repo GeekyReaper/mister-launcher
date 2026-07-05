@@ -80,6 +80,7 @@ export class SystemDetailComponent implements OnInit, OnDestroy {
   subUpdateCache !: Subscription;
   public managercache$: Observable<ManagerCache> = this.misterSignalr.managerCacheRefresh$;
   canLaunch: Boolean = true;
+  canGenerateGamelist: Boolean = false;
 
   //subQueryVideoGameLaunch!: Subscription;
 
@@ -199,6 +200,9 @@ export class SystemDetailComponent implements OnInit, OnDestroy {
 
         if (h.name == "MisterRemote") {
           this.canLaunch = h.misterState == "OK";
+        }
+        if (h.name == "MisterFtp") {
+          this.canGenerateGamelist = h.misterState == "OK";
         }
       });
     });

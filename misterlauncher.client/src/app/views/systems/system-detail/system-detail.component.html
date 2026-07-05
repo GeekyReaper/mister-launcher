@@ -135,7 +135,7 @@
                 </button>
                 <app-modaledit-system [systeminfo]="system" [visible]="modalSettingsVisible" (NeedRefresh)="Refresh($event)">
                 </app-modaledit-system>
-                <button *ngIf="system.category === 'Console'" (click)="generateGamelist()" cButton class="m-2 float-start" variant="outline">
+                <button *ngIf="system.category === 'Console'" [disabled]="!canGenerateGamelist" (click)="generateGamelist()" cButton class="m-2 float-start" variant="outline">
                   <svg cIcon name="cilFile" size="2xl" title="Regenerate gamelist.xml" />
                   Regenerate gamelist.xml
                 </button>
